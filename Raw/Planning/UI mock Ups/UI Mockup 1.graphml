@@ -1,0 +1,1603 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Created by yFiles for HTML 2.6.0.3-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:Vue2jsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:Vue3jsNodeStyle="http://www.yworks.com/demos/yfiles-vue-node-style/3.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
+	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+		<default>true</default>
+	</key>
+	<key id="d2" for="node" attr.type="string" attr.name="url"/>
+	<key id="d3" for="node" attr.type="string" attr.name="description"/>
+	<key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d5" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d6" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d7" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d8" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d9" for="edge" attr.type="string" attr.name="url"/>
+	<key id="d10" for="edge" attr.type="string" attr.name="description"/>
+	<key id="d11" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d12" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d13" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d14" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<key id="d15" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d16" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+		<default>
+			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+		</default>
+	</key>
+	<key id="d17" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+		<default>
+			<x:Static Member="y:VoidPortStyle.Instance"/>
+		</default>
+	</key>
+	<key id="d18" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d19">
+		<y:SharedData>
+			<y:InteriorLabelModel x:Key="1"/>
+			<y:CompositeLabelModelParameter x:Key="2">
+				<y:CompositeLabelModelParameter.Parameter>
+					<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 1}"/>
+				</y:CompositeLabelModelParameter.Parameter>
+				<y:CompositeLabelModelParameter.Model>
+					<y:CompositeLabelModel>
+						<y:CompositeLabelModel.LabelModels>
+							<y:ExteriorLabelModel Insets="5"/>
+							<y:GraphMLReference ResourceKey="1"/>
+							<x:Static Member="y:FreeNodeLabelModel.Instance"/>
+						</y:CompositeLabelModel.LabelModels>
+					</y:CompositeLabelModel>
+				</y:CompositeLabelModelParameter.Model>
+			</y:CompositeLabelModelParameter>
+			<yjs:SolidColorFill x:Key="3" color="#FFD2DEEE"/>
+			<yjs:Font x:Key="4" fontSize="12"/>
+			<yjs:SolidColorFill x:Key="5" color="#FFD2DEEE"/>
+			<yjs:SolidColorFill x:Key="6" color="#00D2DEEE"/>
+			<yjs:Stroke x:Key="7" fill="#FF3200FF" thickness="5"/>
+			<y:FreeNodePortLocationModelParameter x:Key="8" Ratio="0.5,0.0021881838074398474"/>
+			<yjs:Font x:Key="9"/>
+			<y:FreeNodePortLocationModelParameter x:Key="10" Ratio="0.9971264367816092,0.5"/>
+			<y:FreeNodePortLocationModelParameter x:Key="11" Ratio="0.9971264367816092,0.5"/>
+			<y:FreeNodePortLocationModelParameter x:Key="12" Ratio="0.5,0.9978118161925602"/>
+			<y:FreeNodePortLocationModelParameter x:Key="13" Ratio="0.5,0.9978118161925602"/>
+			<y:FreeNodePortLocationModelParameter x:Key="14" Ratio="0.9971264367816092,0.5"/>
+			<y:FreeNodePortLocationModelParameter x:Key="15" Ratio="0.9971264367816092,0.5"/>
+			<yjs:Stroke x:Key="16" fill="#FFFFFFFF"/>
+			<yjs:PolylineEdgeStyle x:Key="17" stroke="{y:GraphMLReference 16}" targetArrow="{y:GraphMLReference 18}"/>
+			<yjs:Arrow x:Key="18" type="TRIANGLE" scale="0.75" stroke="{y:GraphMLReference 16}" fill="#FFFFFFFF" cropLength="1"/>
+		</y:SharedData>
+	</data>
+	<graph id="G" edgedefault="directed">
+		<data key="d6">
+			<y:Json>{"version":"2.0.0","origin":"yed-live","theme":{"name":"dark","version":"1.0.0"},"layout":"layout-flowchart","config":{"p_positiveBranchLabel":[],"p_negativeBranchLabel":[],"p_layoutOrientation":0,"p_preferredPositiveBranchDirection":1,"p_preferredNegativeBranchDirection":12,"p_inEdgeGrouping":"optimized","p_allowFlatwiseEdges":true,"p_nodeToNodeDistance":30,"p_minimumEdgeDistance":30,"p_minimumEdgeLength":20,"p_placeNodeLabels":true}}</y:Json>
+		</data>
+		<node id="n0">
+			<data key="d0">1</data>
+			<data key="d5">
+				<y:RectD X="-97.5" Y="-237.5" Width="346" Height="455"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" stroke="{y:GraphMLReference 7}" fill="{y:GraphMLReference 6}"/>
+			</data>
+			<data key="d8">
+				<y:ViewState>
+					<y:FolderNodeState x:Key="c|view" Layout="-97.5,-237.5,346,455"/>
+				</y:ViewState>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="8"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="10"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="11"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="12"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="13"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.002873563218390829,0.5"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.002873563218390829,0.5"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p7">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.0115440834496047,0.5065934065934066"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p8">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.0115440834496047,0.5065934065934066"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+		</node>
+		<node id="n1">
+			<data key="d0">2</data>
+			<data key="d5">
+				<y:RectD X="-94.59375" Y="-234.4375" Width="340.0625" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n2">
+			<data key="d0">3</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Profile</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 9}" textFill="BLACK" textSize="10"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="197" Y="-234.4375" Width="48.46875" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n3">
+			<data key="d0">5</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-88" Y="-178.25" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n4">
+			<data key="d0">6</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-88" Y="-178.25" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n5">
+			<data key="d0">10</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-130.25" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n6">
+			<data key="d0">11</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-130.25" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n7">
+			<data key="d0">12</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-82.25" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n8">
+			<data key="d0">13</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-82.25" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n9">
+			<data key="d0">14</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-34.25" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n10">
+			<data key="d0">15</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="-34.25" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n11">
+			<data key="d0">16</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="13.75" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n12">
+			<data key="d0">17</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="13.75" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n13">
+			<data key="d0">18</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="61.75" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n14">
+			<data key="d0">19</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="61.75" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n15">
+			<data key="d0">20</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="109.75" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n16">
+			<data key="d0">21</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-87" Y="109.75" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n17">
+			<data key="d0">22</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat Title]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-88" Y="157.75" Width="325" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n18">
+			<data key="d0">23</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Chat
+Profile]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-88" Y="157.75" Width="43" Height="36"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n19">
+			<data key="d0">24</data>
+			<data key="d5">
+				<y:RectD X="422.96875" Y="-237.5" Width="346" Height="455"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" stroke="{y:GraphMLReference 7}" fill="{y:GraphMLReference 6}"/>
+			</data>
+			<data key="d8">
+				<y:ViewState>
+					<y:FolderNodeState x:Key="c|view" Layout="-82.5,-222.5,346,455"/>
+				</y:ViewState>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="8"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.002873563218390829,0.5"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.9978118161925602"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.9978118161925602"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.011544083449604782,0.5065934065934066"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5086705202312138,0.5065934065934066"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+		</node>
+		<node id="n20">
+			<data key="d0">25</data>
+			<data key="d5">
+				<y:RectD X="425.875" Y="-234.4375" Width="340.0625" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n21">
+			<data key="d0">26</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Profile</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 9}" textFill="BLACK" textSize="10"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="717.46875" Y="-234.4375" Width="48.46875" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n22">
+			<data key="d0">28</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[<< Back]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="545.96875" Y="-228.46875" Width="100" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n23">
+			<data key="d0">29</data>
+			<data key="d5">
+				<y:RectD X="425.875" Y="144.5625" Width="340.28125" Height="69.75"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n24">
+			<data key="d0">30</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Input Feild]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="438.71875" Y="157.5" Width="267.125" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n25">
+			<data key="d0">31</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Send</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="715.34375" Y="157.5" Width="41.625" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n26">
+			<data key="d0">32</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Message from local user]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="432.46875" Y="-189" Width="163" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n27">
+			<data key="d0">33</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Message from non local user]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="595.46875" Y="-125.5" Width="161.5" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n28">
+			<data key="d0">35</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Message from local user]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="432.46875" Y="-63.75" Width="163" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n29">
+			<data key="d0">36</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Message from non local user]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="595.46875" Y="-0.25" Width="161.5" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n30">
+			<data key="d0">37</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Message from local user]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="432.46875" Y="72.15625" Width="163" Height="41"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n31">
+			<data key="d0">38</data>
+			<data key="d5">
+				<y:RectD X="170.75" Y="348.625" Width="346" Height="455"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" stroke="{y:GraphMLReference 7}" fill="{y:GraphMLReference 6}"/>
+			</data>
+			<data key="d8">
+				<y:ViewState>
+					<y:FolderNodeState x:Key="c|view" Layout="-82.5,-222.5,346,455"/>
+				</y:ViewState>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="8"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="10"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.0021881838074398474"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.0021881838074398474"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.0021881838074398474"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.0021881838074398474"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5086705202312138,0.008781590400846383"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p7">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5086705202312138,0.008781590400846383"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+		</node>
+		<node id="n32">
+			<data key="d0">39</data>
+			<data key="d5">
+				<y:RectD X="173.65625" Y="351.6875" Width="340.0625" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n33">
+			<data key="d0">40</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Profile</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 9}" textFill="BLACK" textSize="10"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="465.25" Y="351.6875" Width="48.46875" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n34">
+			<data key="d0">42</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Profile image]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="180.25" Y="400" Width="132.25" Height="123.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="start2" fill="{y:GraphMLReference 5}"/>
+			</data>
+		</node>
+		<node id="n35">
+			<data key="d0">43</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[User Name]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="324" Y="400" Width="175.75" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n36">
+			<data key="d0">44</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Other user data]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="324" Y="431.25" Width="175.75" Height="92.25"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n37">
+			<data key="d0">45</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[<< Back]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="293.6875" Y="357.65625" Width="100" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n38">
+			<data key="d0">46</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Other settings]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="180.25" Y="546.125" Width="319.5" Height="230.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n39">
+			<data key="d0">47</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Logout</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="25.4375" Y="-228.46875" Width="100" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n40">
+			<data key="d0">48</data>
+			<data key="d5">
+				<y:RectD X="-633.71875" Y="-243.75" Width="346" Height="455"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" stroke="{y:GraphMLReference 7}" fill="{y:GraphMLReference 6}"/>
+			</data>
+			<data key="d8">
+				<y:ViewState>
+					<y:FolderNodeState x:Key="c|view" Layout="-82.5,-222.5,346,455"/>
+				</y:ViewState>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="8"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="10"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="11"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="12"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="13"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="14"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="15"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p7">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.9978118161925602"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+		</node>
+		<node id="n41">
+			<data key="d0">49</data>
+			<data key="d5">
+				<y:RectD X="-630.8125" Y="-240.6875" Width="340.0625" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n42">
+			<data key="d0">67</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Quit</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-510.78125" Y="-234.71875" Width="100" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n43">
+			<data key="d0">68</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Login</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="-39" Width="258.75" Height="60"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n44">
+			<data key="d0">69</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Username field]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-511.34375" Y="-173.25" Width="179.375" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n45">
+			<data key="d0">70</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Password field]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-511.34375" Y="-106.125" Width="179.375" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n46">
+			<data key="d0">71</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Password</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="-106.125" Width="63.125" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n47">
+			<data key="d0">72</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Username</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="-173.25" Width="63.125" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n48">
+			<data key="d0">73</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[New Account]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="76" Width="258.75" Height="60"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n49">
+			<data key="d0">74</data>
+			<data key="d5">
+				<y:RectD X="-633.71875" Y="275.40625" Width="346" Height="455"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" stroke="{y:GraphMLReference 7}" fill="{y:GraphMLReference 6}"/>
+			</data>
+			<data key="d8">
+				<y:ViewState>
+					<y:FolderNodeState x:Key="c|view" Layout="-67.5,-207.5,346,455"/>
+				</y:ViewState>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="8"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="10"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="11"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="12"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="13"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="14"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d16">
+					<y:GraphMLReference ResourceKey="15"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+			<port name="p7">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0.0021881838074398474"/>
+				</data>
+				<data key="d18">
+					<y:ViewState>
+						<y:Port x:Key="c|view"/>
+					</y:ViewState>
+				</data>
+			</port>
+		</node>
+		<node id="n50">
+			<data key="d0">75</data>
+			<data key="d5">
+				<y:RectD X="-630.8125" Y="278.46875" Width="340.0625" Height="32.9375"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n51">
+			<data key="d0">76</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[<< Back]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-510.78125" Y="284.4375" Width="100" Height="21"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n52">
+			<data key="d0">77</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Create Account]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="623.15625" Width="258.75" Height="60"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n53">
+			<data key="d0">78</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Username field]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-511.34375" Y="345.90625" Width="179.375" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n54">
+			<data key="d0">79</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Password field]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-511.34375" Y="413.03125" Width="179.375" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n55">
+			<data key="d0">80</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Password</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="413.03125" Width="63.125" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n56">
+			<data key="d0">81</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text>Username</y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="345.90625" Width="63.125" Height="44.5"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<node id="n57">
+			<data key="d0">82</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 2}">
+						<y:Label.Text><![CDATA[Other info]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" clipText="false" textWrappingShape="LABEL_SHAPE" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-590.71875" Y="480.15625" Width="258.75" Height="113.75"/>
+			</data>
+			<data key="d7">
+				<demostyle:FlowchartNodeStyle type="process" fill="{y:GraphMLReference 3}"/>
+			</data>
+		</node>
+		<edge id="e0" source="n0" target="n19" sourceport="p1" targetport="p1">
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e1" source="n19" target="n0" sourceport="p2" targetport="p2">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="421.984375,-43.25"/>
+					<y:Bend Location="247.50574712643675,-43.25"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e2" source="n0" target="n31" sourceport="p3" targetport="p2">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="75.5,269.9321316315694"/>
+					<y:Bend Location="343.75,269.9321316315694"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e3" source="n19" target="n31" sourceport="p3" targetport="p3">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="595.96875,272.25"/>
+					<y:Bend Location="403.5,272.25"/>
+					<y:Bend Location="403.5,349.6206236323851"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e4" source="n31" target="n0" sourceport="p4" targetport="p4">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="270.25,349.6206236323851"/>
+					<y:Bend Location="164.75,349.6206236323851"/>
+					<y:Bend Location="15.5,349.6206236323851"/>
+					<y:Bend Location="15.5,216.5043763676149"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e5" source="n31" target="n19" sourceport="p5" targetport="p4">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="646.75,349.6206236323851"/>
+					<y:Bend Location="644.9883578431372,216.5043763676149"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e6" source="n40" target="n0" sourceport="p5" targetport="p5">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="-288.71300287356325,20.25"/>
+					<y:Bend Location="-96.50574712643677,20.25"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e7" source="n0" target="n40" sourceport="p6" targetport="p6">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="-96.50574712643677,-16.25"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+		<edge id="e8" source="n49" target="n0" sourceport="p5" targetport="p7">
+			<data key="d12">
+				<x:List>
+					<y:Bend Location="-288.71300287356325,539.40625"/>
+					<y:Bend Location="-96.50574712643677,539.40625"/>
+				</x:List>
+			</data>
+			<data key="d13">
+				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 16}" targetArrow="{y:GraphMLReference 18}"/>
+			</data>
+		</edge>
+		<edge id="e9" source="n40" target="n49" sourceport="p7" targetport="p7">
+			<data key="d13">
+				<y:GraphMLReference ResourceKey="17"/>
+			</data>
+		</edge>
+	</graph>
+</graphml>
