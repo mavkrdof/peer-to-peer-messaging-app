@@ -9,18 +9,37 @@ from toga.style.pack import COLUMN, ROW
 
 class PeertoPeerMessagingApp(toga.App):
     def startup(self):
-        """Construct and show the Toga application.
-
-        Usually, you would add your application to a main content box.
-        We then create a main window (with a name matching the app), and
-        show the main window.
         """
-        main_box = toga.Box()
+        Constructs and shows the Toga application.
+        Args:
+            None
+        Returns: None
+        """
+        main_box = toga.Box()  # holds all GUI the content in the app
 
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = main_box
         self.main_window.show()
 
+    def HomeScreen(chats=None):
+        home_box = toga.Box()
+        chat_list_GUI = toga.ScrollContainer(
+            id=None,
+            style=None,
+            horizontal=True,
+            vertical=True,
+            on_scroll=None,
+            content=None
+            )
+        chat_list = {}
+        for chat in chats:
+            chat_list[chat.uniqueID] = (
+                toga.Button(
+                    icon=chat.icon_path,
+                    text=chat.text,
+                    on_press=chat.open  # when button pressed calls the open function for that chat
+                )
+            )
 
 def main():
     return PeertoPeerMessagingApp()
