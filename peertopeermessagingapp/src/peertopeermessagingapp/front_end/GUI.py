@@ -3,6 +3,7 @@ this module holds the functions for the GUI
 """
 import toga
 
+
 class GUI:
     """
     manages the graphical user interface
