@@ -21,25 +21,5 @@ class PeertoPeerMessagingApp(toga.App):
         self.main_window.content = main_box
         self.main_window.show()
 
-    def HomeScreen(chats=None):
-        home_box = toga.Box()
-        chat_list_GUI = toga.ScrollContainer(
-            id=None,
-            style=None,
-            horizontal=True,
-            vertical=True,
-            on_scroll=None,
-            content=None
-            )
-        chat_list = {}
-        for chat in chats:
-            chat_list[chat.uniqueID] = (
-                toga.Button(
-                    icon=chat.icon_path,
-                    text=chat.text,
-                    on_press=chat.open  # when button pressed calls the open function for that chat
-                )
-            )
-
 def main():
     return PeertoPeerMessagingApp()
