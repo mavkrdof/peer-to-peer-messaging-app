@@ -1,10 +1,10 @@
 """
-A messaging app utilizing peer to peer technology, aimed at usage in high schools.
+A messaging app utilizing peer to peer technology,
+aimed at usage in high schools.
 """
 
 import toga
-from toga.style import Pack
-from toga.style.pack import COLUMN, ROW
+from peertopeermessagingapp.graphical_user_interface import GUI
 
 
 class PeertoPeerMessagingApp(toga.App):
@@ -15,11 +15,16 @@ class PeertoPeerMessagingApp(toga.App):
             None
         Returns: None
         """
-        main_box = toga.Box()  # holds all GUI the content in the app
+        GUI_manager = GUI(app=self)
+        GUI_manager.init_main_GUI()
 
         self.main_window = toga.MainWindow(title=self.formal_name)
-        self.main_window.content = main_box
+        self.main_window.content = GUI_manager.main_box
         self.main_window.show()
+
+    def exit(self) -> None:
+        pass
+
 
 def main():
     return PeertoPeerMessagingApp()
