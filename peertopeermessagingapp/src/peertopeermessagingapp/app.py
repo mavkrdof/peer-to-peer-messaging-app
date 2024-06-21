@@ -4,7 +4,7 @@ aimed at usage in high schools.
 """
 
 import toga
-from peertopeermessagingapp.graphical_user_interface import GUI
+from peertopeermessagingapp.graphical_user_interface import GUI_manager
 
 
 class PeertoPeerMessagingApp(toga.App):
@@ -15,7 +15,7 @@ class PeertoPeerMessagingApp(toga.App):
             None
         Returns: None
         """
-        GUI_manager = GUI(app=self)
+        GUI_manager = GUI_manager(app=self)
         GUI_manager.init_main_GUI()
 
         self.main_window = toga.MainWindow(title=self.formal_name)

@@ -1,10 +1,11 @@
 """
 this module holds the functions for the GUI
 """
+from tkinter import N
 import toga
 
 
-class GUI:
+class GUI_manager:
     """
     manages the graphical user interface
     vars:
@@ -39,16 +40,12 @@ class GUI:
 
     def __init__(self, app) -> None:
         """
-        init class
+        init main GUI manager class
         """
         self.app = app
         # static
         self.current_screen = None
         self.main_box = None
-        self.nav_bar_box = None
-        self.chat_box = None
-        self.settings_box = None
-        self.chat_list_GUI = None
         self.current_screen = 'Login'
         self.return_to = {
             'Login': app.exit,
@@ -57,80 +54,23 @@ class GUI:
             'Settings-chat': self.display_chat_screen,
             'Settings-home': self.display_home_screen
         }
-    
-    def display_home_screen(self) -> None:
-        pass
-
-    def display_chat_screen(self) -> None:
-        pass
-
-    def logout(self) -> None:
-        pass
-
-    def init_main_GUI(self) -> None:
-        """
-        initializes the main box
-         args:
-             none
-         returns:
-             none
-        """
-        self.main_box = toga.Box()
-        self.init_nav_bar()
-        self.main_box.add(self.nav_bar_box)
-
-    def init_nav_bar(self) -> None:
-        """
-        initializes the nav bar
-        args:
-            none
-        returns:
-            none
-        """
-        self.nav_bar_box = toga.Box()
-        self.back_button = toga.Button(
-            text='Back',
-            on_press=self.return_to[self.current_screen]
+        # init screens
+        self.login_screen = login_screen(
+            main_box=self.main_box,
+            GUI_manager=self
             )
-        self.settings_button = toga.Button(
-            text='Settings',
-            on_press=self.init_settings_screen
+        self.home_screen = home_screen(
+            main_box=self._main_box,
+            GUI_manager=self
             )
-        self.nav_title = toga.Label(
-            text=self.current_screen
-        )
+        # TODO: finish screen init
+        # self.chat_screen =
+        # self.create_account_screen = 
+        # self.settings_screen = 
 
-        # Add buttons to nav bar
-        self.nav_bar_box.add(self.back_button)
-        self.nav_bar_box.add(self.settings_button)
-        self.nav_bar_box.add(self.nav_title)
+        
 
-    def init_home_screen(self) -> None:
-        """
-         initializes the home screen
-         args:
-             none
-         returns:
-             none
-        """
-        self.home_box = toga.Box()
-        self.chat_list_GUI = toga.ScrollContainer(
-            vertical=True,
-            horizontal=False
-        )
 
-        # Add content to home screen box
-        self.home_box.add(self.chat_list_GUI)
-
-    def init_settings_screen(self) -> None:
-        """
-         initializes the settings screen
-         args:
-             none
-         returns:
-             none
-        """
-        self.settings_box = toga.Box()
 
 
 class screen():
@@ -138,7 +78,7 @@ class screen():
     a template class for all screens
     """
 
-    def __init__(self, main_box) -> None:
+    def __init__(self, main_box, GUI_manager) -> None:
         """
         initializes the screen
         args:
@@ -147,6 +87,7 @@ class screen():
              none
         """
         self.main_box: toga.Box = main_box
+        self.GUI_manager: GUI_manager = GUI_manager
         # static
         self.name = None
         self.__box = None
@@ -173,20 +114,23 @@ class home_screen(screen):
     the screen that displays all chats
     """
 
-    def __init__(self, main_box) -> None:
+    def __init__(self, main_box, GUI_manager) -> None:
         """
         initializes the home screen
         args:
             main_box (toga.Box): the main box of the app
         """
         super().__init__(main_box=main_box)
+        self.chat_scroll_segment_count = 0
+        self.chat_load_per_segment_limit = 5
+        self.max_chat_list_segments = 5
+
         self.name = 'home_screen'
         self.__box = toga.Box()
         self.chat_list_scroll = toga.ScrollContainer(
             vertical=True,
             horizontal=False
         )
-
         # Add content to home screen box
         self.__box.add(self.chat_list_GUI)
 
@@ -197,10 +141,21 @@ class home_screen(screen):
             chat_list (list): a list of chats to be displayed
         returns:
             none
-         """
-        self.chat_list_scroll.add(self.create_chat_list_segment(chats=chat_list, chat_load_per_segment_limit=10))
+        """
+        if self.chat_scroll_segment_count >= self.max_chat_list_segments:
+            pass  # TODO: implement  max segments
 
-    def create_chat_list_segment(self, chats, chat_load_per_segment_limit) -> toga.Box:
+        segment = self.create_chat_list_segment(
+                chats=chat_list,
+                chat_load_per_segment_limit=10
+                )
+        if segment:
+            self.chat_scroll_segment_count += 1
+            self.chat_list_scroll.add(segment)
+        else:
+            return None
+
+    def create_chat_list_segment(self, chats, start_index) -> toga.Box:
         """
         creates a segment for the chat list
         args:
@@ -208,12 +163,49 @@ class home_screen(screen):
          returns:
              box (toga.Box): a box containing all elements of this segment
          """
+        # value checking
+        final_index = start_index + self.chat_load_per_segment_limit
+        if start_index or final_index > len(chats):
+            return None
+        # create segment
         segment = toga.Box()
-        for chat in chats:
+        # fill segment
+        for chat in chats[start_index: final_index]:
             chat_button = toga.Button(
                 text=chat.name,
                 on_press=self.display_chat_screen(chat)
-            )  # TODO: maybe make into toga.box to make more complex / good looking
+            )  # TODO: maybe make into toga.box to make more good looking
             # add content to chat box
             segment.add(chat_button)
         return segment
+
+
+class login_screen(screen):
+    """
+    the login screen
+    """
+
+    def __init__(self, main_box, GUI_manager) -> None:
+        super().__init__(main_box=main_box, GUI_manager=GUI_manager)
+
+        self.__username_field = toga.TextInput()
+        self.__username_label = toga.Label()
+        self.__password_field = toga.PasswordInput()
+        self.__login_button = toga.Button(
+            text='LOGIN',
+            on_press=self.validate_login
+        )
+        self.__create_account_button = toga.Button(
+            text='CREATE ACCOUNT',
+            on_press=self.GUI_manager.Display_create_account
+        )
+        # add content to __box
+        self.__box.add(self.__username_field)
+        self.__box.add(self.__username_label)
+        self.__box.add(self.__password_field)
+        self.__box.add(self.__password_field)
+        self.__box.add(self.__login_button)
+        self.__box.add(self.__create_account_button)
+
+    def validate_login(self) -> None:
+        pass
