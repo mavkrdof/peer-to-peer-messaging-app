@@ -4,6 +4,8 @@ aimed at usage in high schools.
 """
 
 import toga
+import toga.style
+import toga.style.pack
 from peertopeermessagingapp.graphical_user_interface import GUI_manager
 
 
@@ -23,7 +25,7 @@ class PeertoPeerMessagingApp(toga.App):
         self.main_window.show()
 
     def exit(self) -> None:
-        pass
+        super().exit()
 
 
 def main() -> PeertoPeerMessagingApp:
