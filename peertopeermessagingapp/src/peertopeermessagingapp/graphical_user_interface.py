@@ -1,42 +1,22 @@
 """
 this module holds the functions for the GUI
 """
-from struct import pack
 import toga
 import toga.style
+import toga.style.pack
 
 
 class GUI_manager:
     """
     manages the graphical user interface
     vars:
-    home_box: toga.Box
-        the home screen Box
-    chat_list_GUI: toga.ScrollContainer
-        the scroll container for chats
-    main_box: toga.Box
-        the main box
-    nav_bar_box: toga.Box
-        the navigation bar container
-    chat_box toga.box
-        the chat screen container
-    settings_box: toga.Box
-        the settings screen container
+        current_screen: str
+            the name of the current screen being displayed
     methods:
         __init__: none
             the initializer function
-        home_screen: none
-            displays the home screen
-        init_nav_bar: none
-            initializes the nav bar
-        init_home_screen: none
-            initializes the home screen
-        init_chat_screen: none
-            initializes the home screen
-        init_settings_screen: none
-            initializes the home screen
-        main_GUI_init: none
-            initializes the main box
+        start: none
+            displays the initial screen of the gui
     """
 
     def __init__(self, app) -> None:
@@ -46,7 +26,11 @@ class GUI_manager:
         self.app = app
         # static
         self.current_screen = None
-        self.main_box = toga.Box()
+        self.main_box = toga.Box(
+            style=toga.style.Pack(
+                direction="column"
+                )
+            )
         self.current_screen = ''
         # init screens
         self.login_screen = login_screen(
@@ -77,20 +61,42 @@ class GUI_manager:
         self.nav_bar.init_GUI()
 
     def start(self) -> None:
+        self.main_box.clear()
         self.nav_bar.display()
-        self.change_screen(new_screen=self.login_screen)
+        self.change_screen(new_screen='login')
 
     def back(self, *args, **kwargs) -> None:
-        pass
+        match self.current_screen:
+            case 'login':
+                self.app.exit()
+            case 'home':
+                self.change_screen(new_screen='login')
+            case 'create_account':
+                self.change_screen(new_screen='login')
+            case 'chat':
+                self.change_screen(new_screen='home')
+            case _:
+                self.app.exit()
 
-    def change_screen(self, new_screen) -> None:
+    def change_screen(self, new_screen, *args, **kwargs) -> None:
+        screen_dict = {
+            'login': self.login_screen,
+            'create_account': self.create_account_screen,
+            'home': self.home_screen,
+            'chat': self.chat_screen,
+            'settings_screen': self.settings_screen,
+        } # TODO Make work with multiple buttons per action could just add more segments
+        if isinstance(new_screen, str):
+            pass
+        else:
+            new_screen = new_screen.id
         for content in self.main_box.children:
             if content.id == 'nav_bar':
                 pass
             else:
                 self.main_box.remove(content)
-        new_screen.display()
-        self.current_screen = new_screen.name  # TODO: make look pretty when displayed - use dict to change from machine name to display name?
+        screen_dict[new_screen].display()
+        self.current_screen = new_screen  # TODO: make look pretty when displayed - use dict to change from machine name to display name?
         self.nav_bar.update()
 
 
@@ -110,7 +116,12 @@ class screen():
         self.GUI_manager = GUI_manager
         # static
         self.name = name
-        self.box = toga.Box(id=self.name)
+        self.box = toga.Box(
+            id=self.name,
+            style=toga.style.Pack(
+                direction='column'
+                )
+            )
 
     def init_GUI(self) -> None:
         pass
@@ -127,7 +138,6 @@ class screen():
              none
         """
         self.GUI_manager.main_box.add(self.box)
-
 
 
 class home_screen(screen):
@@ -218,6 +228,9 @@ class nav_bar(screen):
         }
 
     def init_GUI(self) -> None:
+        self.box.style = toga.style.Pack(
+            direction='row'
+        )
         # create navigation bar
         # add buttons for each screen
         if self.GUI_manager.current_screen in self.back_button_text:
@@ -226,16 +239,36 @@ class nav_bar(screen):
             back_text = ''
         self.back_button = toga.Button(
             text=back_text,
-            on_press=self.GUI_manager.back
+            on_press=self.GUI_manager.back,
+            style=toga.style.Pack(
+                padding=10,
+                flex=0.2
+            )
         )
 
         self.title = toga.Label(
-            text=self.GUI_manager.current_screen
+            text=self.GUI_manager.current_screen,
+            style=toga.style.Pack(
+                padding=10,
+                flex=0.6,
+                text_align='center',
+                font_size=15
+            )
+        )
+        self.settings_button = toga.Button(
+            id='settings_screen',
+            text='Settings',
+            on_press=self.GUI_manager.change_screen,
+            style=toga.style.Pack(
+                padding=10,
+                flex=0.2
+            )
         )
         # add to box
         self.box.add(self.back_button)
         self.box.add(self.title)
-    
+        self.box.add(self.settings_button)
+
     def update(self) -> None:
         self.title.text = self.GUI_manager.current_screen
         if self.GUI_manager.current_screen in self.back_button_text:
@@ -254,32 +287,100 @@ class login_screen(screen):
         super().__init__(GUI_manager=GUI_manager, name='login')
 
     def init_GUI(self) -> None:
-        self.__username_field = toga.TextInput()
-        self.__username_label = toga.Label(
-            text='USERNAME'
+        self.__username_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                alignment='center',
+            )
         )
-        self.__password_field = toga.PasswordInput()
+        self.__username_field = toga.TextInput(
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+            ),
+            on_confirm=self.validate_login
+        )
+        self.__username_label = toga.Label(
+            text='Username',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold'
+            )
+        )
+        self.__username_box.add(self.__username_label)
+        self.__username_box.add(self.__username_field)
+
+        # password
+        self.__password_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+            )
+        )
+        self.__password_field = toga.PasswordInput(
+            style=toga.style.Pack(
+                flex=0.5,
+                padding=10,
+            ),
+        )
         self.__password_label = toga.Label(
-            text='PASSWORD'
+            text='Password',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold'
+            )
+        )
+        self.__password_box.add(self.__password_label)
+        self.__password_box.add(self.__password_field)
+        # buttons
+        self.__button_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+            )
         )
         self.__login_button = toga.Button(
             text='LOGIN',
-            on_press=self.validate_login
+            on_press=self.validate_login,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+            ),
         )
         self.__create_account_button = toga.Button(
+            id='create_account',
             text='CREATE ACCOUNT',
-            on_press=self.GUI_manager.create_account_screen.display
+            on_press=self.GUI_manager.change_screen,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+            ),
         )
+        self.__button_box.add(self.__login_button)
+        self.__button_box.add(self.__create_account_button)
         # add content to box
-        self.box.add(self.__username_field)
-        self.box.add(self.__username_label)
-        self.box.add(self.__password_field)
-        self.box.add(self.__password_label)
-        self.box.add(self.__login_button)
-        self.box.add(self.__create_account_button)
+        self.box.add(self.__username_box)
+        self.box.add(self.__password_box)
+        self.box.add(self.__button_box)
 
-    def validate_login(self) -> None:
-        pass
+    def validate_login(self, *args, **kwargs) -> None:
+        valid = True  # TODO: connect to back end
+        if valid:
+            self.GUI_manager.change_screen('home')
+
+    def display(self) -> None:
+        super().display()
+        # TODO: logout
 
 
 class settings_screen(screen):
