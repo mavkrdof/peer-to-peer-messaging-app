@@ -1,5 +1,5 @@
 """
-this module holds the functions for the GUI
+this module holds the GUI manager
 """
 import toga
 import toga.style
@@ -13,11 +13,33 @@ class GUI_manager:
     vars:
         current_screen: str
             the name of the current screen being displayed
+            possible values: 'home', 'login', 'create_account',
+            'nav_bar', 'chat_screen'
+        home_screen: peertopeermessagingapp.screens.home_screen
+            the screen that displays all chats
+        login_screen: peertopeermessagingapp.screens.login_screen
+            the login screen
+        create_account_screen: peertopeermessagingapp.screens.create_account_screen
+            the create account screen
+        nav_bar: peertopeermessagingapp.screens.nav_bar
+            the navigation bar
+        chat_screen: peertopeermessagingapp.screens.chat_screen
+            the chat screen
+        settings_screen: peertopeermessagingapp.screens.settings_screen
+            the settings screen
+        app: app.PeertoPeerMessagingApp
+            the toga application instance
+        main_box: toga.Box
+            the main box of the app
     methods:
         __init__: none
             the initializer function
         start: none
             displays the initial screen of the gui
+        back: none
+            goes back to the previous screen
+        change_screen: none
+            changes the current screen being displayed
     """
 
     def __init__(self, app) -> None:

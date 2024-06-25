@@ -1,3 +1,6 @@
+"""
+this module holds all the different screens the GUI can display
+"""
 import toga
 import toga.style
 
@@ -5,13 +8,32 @@ import toga.style
 class screen():
     """
     a template class for all screens
+    vars:
+    GUI_manager: GUI_manager
+        the GUI manager instance
+    name: str
+        the name of the screen
+    box: toga.Box
+        the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
     """
 
     def __init__(self, GUI_manager, name) -> None:
         """
         initializes the screen
         args:
-             none
+             GUI_manager: GUI_manager
+                 the GUI manager instance
+             name: str
+                 the name of the screen
          returns:
              none
         """
@@ -26,18 +48,32 @@ class screen():
             )
 
     def init_GUI(self) -> None:
+        """
+        initializes the GUI elements of the screen
+        args:
+            none
+        returns:
+            none
+        """
         pass
 
     def update(self) -> None:
+        """
+        updates dynamic elements on the screen
+        args:
+            none
+        returns:
+            none
+        """
         pass
 
     def display(self) -> None:
         """
-         displays the screen
-         args:
-             none
-         returns:
-             none
+        displays the screen
+        args:
+            none
+        returns:
+            none
         """
         self.GUI_manager.main_box.add(self.box)
 
@@ -45,13 +81,36 @@ class screen():
 class home_screen(screen):
     """
     the screen that displays all chats
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
+        populate_chat_list: none
+            populates the list of chats on the screen
+        create_chat_list_segment: none
+                creates a segment for the chat list
     """
 
     def __init__(self, GUI_manager) -> None:
         """
         initializes the home screen
         args:
-            main_box (toga.Box): the main box of the app
+            GUI_manager: GUI_manager
+                the GUI manager instance
+        returns:
+            none
         """
         super().__init__(GUI_manager=GUI_manager, name='home_screen')
         self.chat_scroll_segment_count = 0
@@ -91,9 +150,12 @@ class home_screen(screen):
         """
         creates a segment for the chat list
         args:
-            chats (Chat): the chats to be displayed
-         returns:
-             box (toga.Box): a box containing all elements of this segment
+            chats: [Chat]
+                the chats to be displayed
+            start_index: int
+                the index of the first chat to be displayed
+        returns:
+            box (toga.Box): a box containing all elements of this segment
          """
         # value checking
         final_index = start_index + self.chat_load_per_segment_limit
@@ -103,22 +165,47 @@ class home_screen(screen):
             # create segment
             segment = toga.Box()
             # fill segment
-            # for chat in chats[start_index: final_index]:
-            #     chat_button = toga.Button(
-            #         text=chat.name,
-            #         on_press=self.GUI_manager.chat_screen.display(chat)
-            #     )  # TODO: maybe make into toga.box to make more good looking
+            for chat in chats[start_index: final_index]:
+                chat_button = toga.Button(
+                    id=chat.id,
+                    text=chat.name,
+                    on_press=self.GUI_manager.chat_screen.display
+                )  # TODO: maybe make into toga.box to make more good looking
             # add content to chat box
-            # segment.add(chat_button)
+            segment.add(chat_button)
             return segment
 
 
 class nav_bar(screen):
     """
     the navigation bar
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        initializes the navigation bar
+        args:
+            GUI_manager: GUI_manager
+                the GUI manager instance
+        returns:
+            none
+        """
         super().__init__(GUI_manager=GUI_manager, name='nav_bar')
         self.back_button_text = {
             'home': 'Logout',
@@ -130,6 +217,13 @@ class nav_bar(screen):
         }
 
     def init_GUI(self) -> None:
+        """
+        initializes the navigation bar
+        args:
+            none
+        returns:
+            none
+        """
         self.box.style = toga.style.Pack(
             direction='row'
         )
@@ -183,6 +277,24 @@ class nav_bar(screen):
 class login_screen(screen):
     """
     the login screen
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
+        validate_login: none
+            validates the login credentials
     """
 
     def __init__(self, GUI_manager) -> None:
@@ -288,6 +400,22 @@ class login_screen(screen):
 class settings_screen(screen):
     """
     the settings screen
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
     """
 
     def __init__(self, GUI_manager) -> None:
@@ -300,6 +428,22 @@ class settings_screen(screen):
 class create_account_screen(screen):
     """
     the create account screen
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
     """
 
     def __init__(self, GUI_manager) -> None:
@@ -345,6 +489,22 @@ class create_account_screen(screen):
 class chat_screen(screen):
     """
     the chat screen
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
     """
 
     def __init__(self, GUI_manager) -> None:
