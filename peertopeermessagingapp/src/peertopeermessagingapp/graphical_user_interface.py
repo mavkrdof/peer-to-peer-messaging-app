@@ -4,6 +4,7 @@ this module holds the GUI manager
 import toga
 import toga.style
 import toga.style.pack
+import toga.constants
 from peertopeermessagingapp.screens import home_screen, login_screen, create_account_screen, nav_bar, chat_screen, settings_screen
 
 
@@ -31,6 +32,8 @@ class GUI_manager:
             the toga application instance
         main_box: toga.Box
             the main box of the app
+        theme: dict[toga.constants]
+            the overall theme for the app
     methods:
         __init__: none
             the initializer function
@@ -48,10 +51,17 @@ class GUI_manager:
         """
         self.app = app
         # static
+        self.theme = {
+            'font_color': toga.constants.BLACK,
+            'background': toga.constants.GRAY,
+            'middleground': toga.constants.SILVER,
+            'foreground': toga.constants.LIGHTGREY,
+        }
         self.current_screen = None
         self.main_box = toga.Box(
             style=toga.style.Pack(
-                direction="column"
+                direction="column",
+                background_color=self.theme['background']
                 )
             )
         self.current_screen = ''

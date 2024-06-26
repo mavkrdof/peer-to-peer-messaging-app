@@ -43,7 +43,8 @@ class screen():
         self.box = toga.Box(
             id=self.name,
             style=toga.style.Pack(
-                direction='column'
+                direction='column',
+                background_color=self.GUI_manager.theme['background']
                 )
             )
 
@@ -301,18 +302,104 @@ class login_screen(screen):
         super().__init__(GUI_manager=GUI_manager, name='login')
 
     def init_GUI(self) -> None:
+        self.box.style = toga.style.Pack(
+                direction='row'
+                )
+        self.content_padding()
+        self.username_entry_field()
+        self.password_entry_field()
+        self.buttons()
+        self.add_content_to_box()
+
+    def add_content_to_box(self) -> None:
+        self.__button_box.add(self.__login_button)
+        self.__button_box.add(self.__create_account_button)
+        # add content to content_box
+        self.content_box.add(self.__username_box)
+        self.content_box.add(self.__password_box)
+        self.content_box.add(self.__button_box)
+        # add content and pad boxes
+        self.box.add(self.left_pad_box)
+        self.box.add(self.content_box)
+        self.box.add(self.right_pad_box)
+
+    def buttons(self) -> None:
+        self.__button_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__login_button = toga.Button(
+            text='LOGIN',
+            on_press=self.validate_login,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__create_account_button = toga.Button(
+            id='create_account',
+            text='CREATE ACCOUNT',
+            on_press=self.GUI_manager.change_screen,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+
+    def password_entry_field(self) -> None:
+        self.__password_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__password_field = toga.PasswordInput(
+            style=toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__password_label = toga.Label(
+            text='Password',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__password_box.add(self.__password_label)
+        self.__password_box.add(self.__password_field)
+
+    def username_entry_field(self) -> None:
         self.__username_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
                 padding=10,
                 flex=1,
                 alignment='center',
+                background_color=self.GUI_manager.theme['middleground'],
             )
         )
         self.__username_field = toga.TextInput(
             style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
+                flex=0.75,
+                background_color=self.GUI_manager.theme['foreground']
             ),
             on_confirm=self.validate_login
         )
@@ -323,69 +410,37 @@ class login_screen(screen):
                 padding_right=10,
                 text_align='center',
                 font_size=20,
-                font_weight='bold'
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
             )
         )
         self.__username_box.add(self.__username_label)
         self.__username_box.add(self.__username_field)
 
-        # password
-        self.__password_box = toga.Box(
+    def content_padding(self) -> None:
+        content_width_percent = 0.33
+        pad_width_percent = (1-content_width_percent)/2
+        self.left_pad_box = toga.Box(
             style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
+                flex=pad_width_percent,
+                background_color=self.GUI_manager.theme['background']
             )
         )
-        self.__password_field = toga.PasswordInput(
+        self.right_pad_box = toga.Box(
             style=toga.style.Pack(
-                flex=0.5,
-                padding=10,
-            ),
-        )
-        self.__password_label = toga.Label(
-            text='Password',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold'
+                flex=pad_width_percent,
+                background_color=self.GUI_manager.theme['background']
             )
         )
-        self.__password_box.add(self.__password_label)
-        self.__password_box.add(self.__password_field)
-        # buttons
-        self.__button_box = toga.Box(
+        self.content_box = toga.Box(
             style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
+                flex=content_width_percent,
+                direction='column',
+                background_color=self.GUI_manager.theme['middleground']
             )
         )
-        self.__login_button = toga.Button(
-            text='LOGIN',
-            on_press=self.validate_login,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-            ),
-        )
-        self.__create_account_button = toga.Button(
-            id='create_account',
-            text='CREATE ACCOUNT',
-            on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-            ),
-        )
-        self.__button_box.add(self.__login_button)
-        self.__button_box.add(self.__create_account_button)
-        # add content to box
-        self.box.add(self.__username_box)
-        self.box.add(self.__password_box)
-        self.box.add(self.__button_box)
 
     def validate_login(self, *args, **kwargs) -> None:
         valid = True  # TODO: connect to back end
