@@ -702,3 +702,50 @@ class chat_screen(screen):
 
     def init_GUI(self) -> None:
         super().init_GUI()
+        self.create_message_bar()
+        self.create_message_scroll()
+        self.add_to_box()
+
+    def add_to_box(self) -> None:
+        self.box.add(self.__message_bar_box)
+        self.box.add(self.__message_scroll_box)
+
+    def create_message_bar(self) -> None:
+        self.__message_bar_box = toga.Box(
+            id='message_bar_box',
+            style=toga.style.Pack(
+                direction='row',
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__message_entry = toga.TextInput(
+            id='message_entry',
+            style=toga.style.Pack(
+                flex=1,
+                background_color=self.GUI_manager.theme['foreground'],
+                color=self.GUI_manager.theme['font_color']
+                )
+        )
+        self.__send_button = toga.Button(
+            id='send_button',
+            text='Send',
+            on_press=self.send_message,
+            style=toga.style.Pack(
+                background_color=self.GUI_manager.theme['foreground'],
+                color=self.GUI_manager.theme['font_color']
+                )
+        )
+        self.__message_bar_box.add(self.__message_entry)
+        self.__message_bar_box.add(self.__send_button)
+
+    def create_message_scroll(self) -> None:
+        self.__message_scroll_box = toga.Box(
+            id='message_scroll_box',
+            style=toga.style.Pack(
+                direction='row',
+                background_color=self.GUI_manager.theme['background']
+            )
+        )
+
+    def send_message(self, *args, **kwargs) -> None:
+        pass
