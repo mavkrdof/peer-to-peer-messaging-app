@@ -20,8 +20,12 @@ def generate2PrimeNumbers(generatorSeed, complexity=2) -> tuple[int, int]:
     """
     if isinstance(generatorSeed, int):
         if isinstance(complexity, int):
-            p = math_stuff.FindNearestPrime(number=generatorSeed ** round(complexity/2), searchDirection=1)
-            q = math_stuff.FindNearestPrime(number=generatorSeed ** complexity, searchDirection=1)
+            p = math_stuff.FindNearestPrime(
+                number=generatorSeed ** round(complexity/2), searchDirection=1
+                )
+            q = math_stuff.FindNearestPrime(
+                number=generatorSeed ** complexity, searchDirection=1
+                )
             return p, q
         else:
             raise ValueError(f"expected complexity type int instead got {type(complexity)}")
@@ -29,7 +33,7 @@ def generate2PrimeNumbers(generatorSeed, complexity=2) -> tuple[int, int]:
         raise ValueError(f"expected generatorSeed type int instead got {type(generatorSeed)}")
 
 
-def randomPrimeNumsFromCache(cache, errorHandling, complexity=100) -> int:
+def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
     """
     a simple algorithm too generate a prime number from a cache of primes - stable performance no matter size of desired prime unless error checking is enabled, requires a large cache file for best security. - less secure
     args:
@@ -429,19 +433,27 @@ def genKeys(seed, complexity) -> tuple[list[int], list[int]]:
             the seed for the primes
         complexity: int
             the complexity of the primes
-    returns: list[int, int], list[int, int]
-        the public and private keys
+    returns: private key: list[int, int], public key: list[int, int]
+        the private and public keys
     """
     if isinstance(seed, int):
         if isinstance(complexity, int):
-            p, q = generate2PrimeNumbers(seed, complexity)  # only needs to run once at creation of account - larger num = better but longer initial calc time - does not matter
-            while True:  # TODO: not have this while loop only have to create keys once - issue is sometimes n < 10 causing issues with chunking and finding coPrimes find a way to make sure that p * q is never less than 10
-                try:
-                    privateKey, publicKey = createKey(p, q)  # only needs to run once at creation of account
-                    break
-                except ValueError:
-                    pass
-            return privateKey, publicKey
+            if seed > 9:
+                if complexity >= 1:
+                    p, q = generate2PrimeNumbers(
+                        generatorSeed=seed, complexity=complexity
+                        )  # only needs to run once at creation of account - larger num = better but longer initial calc time - does not matter
+                    # TODO: not have this while loop only have to create keys once - issue is sometimes n < 10 causing issues with chunking and finding coPrimes find a way to make sure that p * q is never less than 10
+                    publicKey, privateKey = createKey(p, q)  # only needs to run once at creation of account
+                    return privateKey, publicKey
+                else:
+                    raise ValueError(
+                        f'expected complexity greater than or = to 1 instead got {complexity}'
+                    )
+            else:
+                raise ValueError(
+                    f'expected seed greater than 9 instead got {seed}'
+                )
         else:
             raise ValueError(
                 f"expected complexity type int instead got type {type(complexity)}"
