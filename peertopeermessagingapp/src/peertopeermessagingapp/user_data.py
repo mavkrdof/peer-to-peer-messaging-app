@@ -22,9 +22,17 @@ class user_data:
             print('If this is not a NEW ACCOUNT make sure you have transferred data correctly!')
 
     def decrypt_user_data(self, data) -> None:
-        decrypt_checker = RSA.decrypt(data['decrypt_checker'])
+        decrypt_checker = RSA.decryptPadded(
+            encrypted=data['decrypt_checker'],
+            privateKN=self.__user_data['privateKN'],
+            privateKD=self.__user_data['privateKD']
+            )
         if decrypt_checker == data['username']:
-            user_data_decrypted = RSA.decrypt(data['user_data'])
+            user_data_decrypted = RSA.decryptPadded(
+                encrypted=data['user_data'],
+                privateKD=self.__user_data['privateKD'],
+                privateKN=self.__user_data['privateKN']
+                )
             self.__user_data = json.loads(user_data_decrypted)
         else:
             return None
@@ -35,12 +43,14 @@ class user_data:
             'decrypt_checker': '',
             'data': ''
         }
-        encrypted_data['data'] = RSA.encrypt(
-            json.dumps(
+        encrypted_data['data'] = RSA.encryptChunkedPadded(
+            plainText=json.dumps(
                 obj=self.__user_data,
                 sort_keys=True,
                 indent=4
-                )
+                ),
+            publicKE=self.__user_data['publicKE'],
+            publicKN=self.__user_data['publicKN']
             )
         return encrypted_data
 
@@ -61,7 +71,8 @@ class user_data:
     def remove_chat(self, chat) -> None:
         self.__chats.remove(chat)
 
-    def get_chats()
+    def get_chats(self) -> None:
+        pass
 
     def update_settings(self, settings: dict) -> None:
         for key, value in settings.items():
