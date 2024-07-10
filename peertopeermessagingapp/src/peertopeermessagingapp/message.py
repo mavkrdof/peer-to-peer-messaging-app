@@ -1,7 +1,7 @@
 """
 this module holds the message class
 """
-import RSA_cryptosystem as RSA
+import peertopeermessagingapp.RSA_cryptosystem as RSA
 import json
 import logging
 
