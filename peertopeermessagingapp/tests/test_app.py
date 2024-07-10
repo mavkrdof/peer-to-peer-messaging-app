@@ -1,7 +1,9 @@
 import pytest
 # from src.peertopeermessagingapp.user_data import user_data as user_data
 from src.peertopeermessagingapp.RSA_cryptosystem import encryptChunkedPadded, decryptPadded, genKeys
+import src.peertopeermessagingapp.RSA_cryptosystem as RSA
 from src.peertopeermessagingapp.message import message
+import json
 
 
 class Test_Encrypt_Chunked_Padded:
@@ -123,7 +125,7 @@ class Test_Encrypt_Chunked_Padded:
     #         assert decrypted == plainText
 
 
-class Test_encrypt:
+class Test_message_encrypt:
 
     # Encrypts valid message data correctly with the correct module import
     def test_encrypts_valid_message_data_correctly(self, mocker):
@@ -183,3 +185,83 @@ class Test_encrypt:
 
             assert f"expected publicKN type int instead got type {type('force error')}" in caplog.text
             assert encrypted_data is None
+
+
+class Test_message_decrypt:
+
+    # correctly decrypts a valid encrypted message
+    def test_correctly_decrypts_valid_encrypted_message(self, mocker):
+
+        # Mock user and RSA decryption
+        mock_user = mocker.Mock()
+        mock_user.private_key = (12345, 67890)
+        mock_user.message_list = {1: [111, 222, 333]}
+        decrypted_data = json.dumps({
+            'plain_text': 'Hello, World!',
+            'sender': 'user123',
+            'sent_time_stamp': 1622547800,
+            'received_time_stamp': 1622547900
+        })
+        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
+
+        # Initialize message object and call decrypt
+        msg = message(user=mock_user, message_id=1)
+        msg.decrypt(message_data=[111, 222, 333])  # Random data
+
+        # Assertions
+        assert msg.plain_text == 'Hello, World!'
+        assert msg.sender == 'user123'
+        assert msg.sent_time_stamp == 1622547800
+        assert msg.received_time_stamp == 1622547900
+
+    # handles missing plain_text in decrypted data
+    def test_handles_missing_plain_text_in_decrypted_data(self, mocker):
+
+        # Mock user and RSA decryption
+        mock_user = mocker.Mock()
+        mock_user.private_key = (12345, 67890)
+        mock_user.message_list = {1: [111, 222, 333]}
+        decrypted_data = json.dumps({
+            'sender': 'user123',
+            'sent_time_stamp': 1622547800,
+            'received_time_stamp': 1622547900
+        })
+        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
+
+        # Initialize message object and call decrypt
+        msg = message(user=mock_user, message_id=1)
+        msg.decrypt(message_data=[111, 222, 333])
+
+        # Assertions
+        assert msg.plain_text is None
+        assert msg.sender == 'user123'
+        assert msg.sent_time_stamp == 1622547800
+        assert msg.received_time_stamp == 1622547900
+
+    # logs warning for missing plain_text attribute
+    def test_logs_warning_for_missing_plain_text_attribute(self, mocker, caplog):
+        import logging
+
+        # Mock user and RSA decryption
+        mock_user = mocker.Mock()
+        mock_user.private_key = (12345, 67890)
+        mock_user.message_list = {1: [111, 222, 333]}
+        decrypted_data = json.dumps({
+            'sender': 'user123',
+            'sent_time_stamp': 1622547800,
+            'received_time_stamp': 1622547900
+        })
+        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
+
+        # Initialize message object and call decrypt
+        msg = message(user=mock_user, message_id=1)
+        msg.decrypt(message_data=[111, 222, 333])
+
+        caplog.at_level(logging.WARNING)
+
+        # Assertions
+        assert msg.plain_text == ''
+        assert msg.sender == 'user123'
+        assert msg.sent_time_stamp == 1622547800
+        assert msg.received_time_stamp == 1622547900
+        assert 'INVALID message | missing plain_text attribute | message id = 1' in caplog.text
