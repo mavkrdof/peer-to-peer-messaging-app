@@ -19,7 +19,7 @@ class user_data:
         else:
             # runs with the default user data as is new account
             print('WARNING: no user data file detected')  # DEBUG
-            print('If this is not a NEW ACCOUNT make sure you have transferred data correctly!')
+            print('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
     def decrypt_user_data(self, data) -> None:
         decrypt_checker = RSA.decryptPadded(
