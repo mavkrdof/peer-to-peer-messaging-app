@@ -4,6 +4,11 @@ import peertopeermessagingapp.RSA_cryptosystem as RSA
 
 class user_data:
     """
+    vars
+        private_key: [int, int]
+            the private key [N, D]
+        public_key: [int, int]
+            the public key [N, E]
     """
     def __init__(self, app, username) -> None:  # TODO: make private variable accessible eg add funcs to access them
         self.__username = username
@@ -11,6 +16,7 @@ class user_data:
         self.__settings = {}
         self.__app = app
         self.__user_data = {}
+        self.private_key = None
 
     def read_from_file(self) -> None:
         with open(file=self.__app.user_data_filepath, mode='r') as user_data_file:
