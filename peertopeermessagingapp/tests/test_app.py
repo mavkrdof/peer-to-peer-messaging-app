@@ -3,7 +3,7 @@ import pytest
 from src.peertopeermessagingapp.RSA_cryptosystem import encryptChunkedPadded, decryptPadded, genKeys
 
 
-class TestEncryptChunkedPadded:
+class Test_Encrypt_Chunked_Padded:
 
     # encrypts plain text correctly with valid public keys and plain text
     def test_encrypts_and_decrypts_plain_text_correctly(self) -> None:
