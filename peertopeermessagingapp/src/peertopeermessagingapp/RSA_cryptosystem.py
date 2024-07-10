@@ -385,7 +385,7 @@ def decryptPadded(encrypted, privateKN, privateKD) -> str:
             )
 
 
-def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list | None:
+def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list[int]:
     """
     encrypts plain text
     args:
@@ -402,7 +402,7 @@ def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list |
     if isinstance(publicKN, int):
         if isinstance(publicKE, int):
             if isinstance(plainText, str):
-                data = strToBase10Padded(plainText)
+                data = strToBase10Padded(string=plainText)
                 dataChunks = chunkData(data=data, publicKeyN=publicKN)
                 encrypted = []
                 for chunk in dataChunks:
@@ -414,6 +414,10 @@ def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list |
                             )
                         )
                 return encrypted
+            else:
+                raise ValueError(
+                f"expected plainText type str instead got type {type(plainText)}"
+                )
         else:
             raise ValueError(
                 f"expected publicKN type int instead got type {type(publicKN)}"
