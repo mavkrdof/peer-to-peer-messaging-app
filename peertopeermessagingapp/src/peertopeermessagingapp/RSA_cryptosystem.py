@@ -420,7 +420,7 @@ def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list[i
                 )
         else:
             raise ValueError(
-                f"expected publicKN type int instead got type {type(publicKN)}"
+                f"expected publicKE type int instead got type {type(publicKE)}"
                 )
     else:
         raise ValueError(
