@@ -202,7 +202,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA.decryptPadded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
         msg = message(user=mock_user, message_id=1)
@@ -210,30 +210,6 @@ class Test_message_decrypt:
 
         # Assertions
         assert msg.plain_text == 'Hello, World!'
-        assert msg.sender == 'user123'
-        assert msg.sent_time_stamp == 1622547800
-        assert msg.received_time_stamp == 1622547900
-
-    # handles missing plain_text in decrypted data
-    def test_handles_missing_plain_text_in_decrypted_data(self, mocker):
-
-        # Mock user and RSA decryption
-        mock_user = mocker.Mock()
-        mock_user.private_key = (12345, 67890)
-        mock_user.message_list = {1: [111, 222, 333]}
-        decrypted_data = json.dumps({
-            'sender': 'user123',
-            'sent_time_stamp': 1622547800,
-            'received_time_stamp': 1622547900
-        })
-        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
-
-        # Initialize message object and call decrypt
-        msg = message(user=mock_user, message_id=1)
-        msg.decrypt(message_data=[111, 222, 333])
-
-        # Assertions
-        assert msg.plain_text is None
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
@@ -251,8 +227,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch.object(RSA, 'decryptPadded', return_value=decrypted_data)
-
+        mocker.patch('src.peertopeermessagingapp.message.RSA.decryptPadded', return_value=decrypted_data)  # TODO: take note of the fact that mocker calls must not be too the actual module but to the module calling that module
         # Initialize message object and call decrypt
         msg = message(user=mock_user, message_id=1)
         msg.decrypt(message_data=[111, 222, 333])
@@ -260,8 +235,8 @@ class Test_message_decrypt:
         caplog.at_level(logging.WARNING)
 
         # Assertions
-        assert msg.plain_text == ''
+        assert msg.plain_text is None
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
-        assert 'INVALID message | missing plain_text attribute | message id = 1' in caplog.text
+        assert f'INVALID message | missing plain_text attribute | message id = {msg.message_id}' in caplog.text
