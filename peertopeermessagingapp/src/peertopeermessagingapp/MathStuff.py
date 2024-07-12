@@ -1,5 +1,5 @@
 """
-a module with a bunch of math stuff
+a module with a bunch of math stuff used by RSA cryptosystem
 """
 
 
