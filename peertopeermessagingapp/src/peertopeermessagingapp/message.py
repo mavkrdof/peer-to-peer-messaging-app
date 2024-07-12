@@ -82,7 +82,8 @@ class message:
 
         # check for valid message and assign data
         if 'plain_text' in decrypted:
-            self.plain_text = decrypted['plain_text']  # TODO: decide if plain_test should default to NONE or '' - must update tests
+            self.plain_text = decrypted['plain_text']
+            # TODO: decide if plain_test should default to NONE or '' - must update tests
         else:
             logging.warning(
                 msg=f'INVALID message | missing plain_text attribute | message id = {self.message_id}'

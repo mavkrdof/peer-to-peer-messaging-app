@@ -6,6 +6,7 @@
     ],
     "python.analysis.typeCheckingMode": "basic",
     "cSpell.words": [
+        "cryptosystem",
         "maximise",
         "middleground",
         "optimise",

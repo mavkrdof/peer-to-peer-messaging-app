@@ -164,7 +164,15 @@ class Test_message_encrypt:
 
         encrypted_data = msg.encrypt()
         valid_encrypted_data = [
-            6211, 8659, 3094, 195, 6190, 3985, 2511, 4285, 2440, 2770, 1080, 10609, 1120, 511, 11154, 3196, 10540, 3210, 9271, 10356, 9346, 2065, 3199, 6679, 106, 10356, 7065, 11950, 10540, 11461, 9115, 3199, 8230, 4596, 4596, 6085, 8781, 11700, 6076, 2511, 1171, 874, 2806, 1794, 8359, 4285, 4875, 7080, 7570, 10750, 8430, 5830, 3001, 9361, 4285, 5061, 2406, 9556, 1585, 6309, 4596, 9576, 9271, 9556, 6610, 9585, 106, 646, 10501, 2440, 1080, 10609, 11950, 8365, 1555, 4555, 3600, 5884, 1335, 9024
+            6211, 8659, 3094, 195, 6190, 3985, 2511, 4285, 2440, 2770,
+            1080, 10609, 1120, 511, 11154, 3196, 10540, 3210, 9271,
+            10356, 9346, 2065, 3199, 6679, 106, 10356, 7065, 11950,
+            10540, 11461, 9115, 3199, 8230, 4596, 4596, 6085, 8781,
+            11700, 6076, 2511, 1171, 874, 2806, 1794, 8359, 4285, 4875,
+            7080, 7570, 10750, 8430, 5830, 3001, 9361, 4285, 5061, 2406,
+            9556, 1585, 6309, 4596, 9576, 9271, 9556, 6610, 9585, 106,
+            646, 10501, 2440, 1080, 10609, 11950, 8365, 1555, 4555,
+            3600, 5884, 1335, 9024
             ]
         assert encrypted_data == valid_encrypted_data
 
@@ -173,7 +181,8 @@ class Test_message_encrypt:
         import logging
 
         mock_user = mocker.Mock()
-        mock_user.public_key = ('force error', 67890)  # an encryption key as type sting will cause an encryption failure
+        mock_user.public_key = ('force error', 67890)
+        # an encryption key as type string will cause an encryption failure
         msg = message(user=mock_user, message_id="1")
         msg.plain_text = "Hello, World!"
         msg.sender = "user_123"
@@ -227,7 +236,9 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)  # TODO: take note of the fact that mocker calls must not be too the actual module but to the module calling that module
+        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
+        # TODO: take note of the fact that mocker calls must not be too the
+        # TODO cont: actual module but to the module calling that module
         # Initialize message object and call decrypt
         msg = message(user=mock_user, message_id=1)
         msg.decrypt(message_data=[111, 222, 333])
