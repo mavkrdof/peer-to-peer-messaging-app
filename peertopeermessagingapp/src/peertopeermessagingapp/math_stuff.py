@@ -6,7 +6,7 @@ a module with a bunch of math stuff used by RSA cryptosystem
 def carmichael(n) -> int:
     """
     finds the number k.
-    that all coPrimes of n when to the power of k is mod n = 1
+    that all co_primes of n when to the power of k is mod n = 1
     (for num all x x**k % n = 1)
     args:
         n: int
@@ -15,9 +15,9 @@ def carmichael(n) -> int:
         the values k
     """
     if isinstance(n, int):
-        coPrimes = FindCoPrime(n)
+        co_primes = find_co_prime(n)
         k = 1
-        while not all(x**k % n == 1 for x in coPrimes):
+        while not all(x**k % n == 1 for x in co_primes):
             k += 1
         return k
     else:
@@ -26,29 +26,29 @@ def carmichael(n) -> int:
             )
 
 
-def FindNearestPrime(number, searchDirection=1) -> int:
+def find_nearest_prime(number, search_direction=1) -> int:
     """
-    finds the nearest prime to number in the searchDirection
+    finds the nearest prime to number in the search_direction
     args:
         number: int
             the number to find the nearest prime to
-        searchDirection: 1 or -1
+        search_direction: 1 or -1
             the direction to search
     returns: int
         the nearest prime number to number
     """
     if isinstance(number, int):
-        if searchDirection == 1 or -1:
+        if search_direction == 1 or -1:
             if number % 2 == 0:
                 number += 1
             else:
                 number += 2
-            while not isPrime(number):
-                number += 2 * searchDirection
+            while not is_prime(number):
+                number += 2 * search_direction
             return number
         else:
             raise ValueError(
-                f"expected searchDirection 1 or 0 instead got type {searchDirection}"
+                f"expected search_direction 1 or 0 instead got type {search_direction}"
                 )
     else:
         raise ValueError(
@@ -56,28 +56,28 @@ def FindNearestPrime(number, searchDirection=1) -> int:
             )
 
 
-def FindCoPrime(a):
+def find_co_prime(a) -> list[int]:
     """
-    finds coPrimes of a - values that their only greatest common divisor is 1 ignores one cause one is coPrime to all
+    finds co_primes of a - values that their only greatest common divisor is 1 ignores one cause one is coPrime to all
     args:
         a: int
             values a
     returns:
-        all coPrimes of a
+        all co_primes of a
     """
     if isinstance(a, int):
-        coPrimes = []
+        co_primes = []
         for x in range(2, a):
-            if isCoPrime(x, a):
-                coPrimes.append(x)
-        return coPrimes
+            if is_co_prime(a=x, b=a):
+                co_primes.append(x)
+        return co_primes
     else:
         raise ValueError(
             f"expected a type int instead got type {type(a)}"
             )
 
 
-def FindModularMultiplicativeInverse(a, m) -> int | None:
+def find_modular_multiplicative_inverse(a, m) -> int:
     """
     finds the modular multiplicative inverse x of a to m
     args:
@@ -90,9 +90,8 @@ def FindModularMultiplicativeInverse(a, m) -> int | None:
     """
     if isinstance(a, int) or isinstance(a, float):
         if isinstance(m, int) or isinstance(m, float):
-            notFound = True
             x = 1
-            while notFound:
+            while True:  # TODO ensure this is not an infinite loop
                 if (a * x) % m == 1:
                     return x
                 x += 1
@@ -106,7 +105,7 @@ def FindModularMultiplicativeInverse(a, m) -> int | None:
             )
 
 
-def isPrime(n) -> bool:
+def is_prime(n) -> bool:
     """
     checks if n is prime
     args:
@@ -125,7 +124,7 @@ def isPrime(n) -> bool:
         )
 
 
-def isCoPrime(a, b) -> bool:
+def is_co_prime(a, b) -> bool:
     """
     checks if a is coPrime to b
     args:
@@ -138,7 +137,7 @@ def isCoPrime(a, b) -> bool:
     """
     if isinstance(a, int):
         if isinstance(b, int):
-            if greatestCommonDivisor(a, b) == 1:
+            if greatest_common_divisor(a, b) == 1:
                 return True
             else:
                 return False
@@ -152,7 +151,7 @@ def isCoPrime(a, b) -> bool:
             )
 
 
-def greatestCommonDivisor(x, y) -> int:
+def greatest_common_divisor(x, y) -> int:
     """
     finds the gdc of x, y
     args:
@@ -180,26 +179,26 @@ def greatestCommonDivisor(x, y) -> int:
             )
 
 
-def appendToInt(num, toAdd) -> int:
+def append_to_int(num, to_add) -> int:
     """
-    appends integers to an integer eg: num = 134, toAdd = 23: Returns 13423
+    appends integers to an integer eg: num = 134, to_add = 23: Returns 13423
     args:
         num: int or str nums only
             the number to append to
-        toAdd: int or str nums only
+        to_add: int or str nums only
             the number to append
     returns:
-        toAdd appended to Num: int
+        to_add appended to Num: int
     """
     if isinstance(num, int) or (isinstance(num, str) and num.isnumeric()):
-        if isinstance(toAdd, int) or (isinstance(toAdd, str) and toAdd.isnumeric()):
-            toAddStr = str(toAdd)
+        if isinstance(to_add, int) or (isinstance(to_add, str) and to_add.isnumeric()):
+            to_addStr = str(to_add)
             strNum = str(num)
-            final = int(strNum + toAddStr)
+            final = int(strNum + to_addStr)
             return final
         else:
             raise ValueError(
-                f"expected toAdd type int or num str instead got type {type(toAdd)}"
+                f"expected to_add type int or num str instead got type {type(to_add)}"
                 )
     else:
         raise ValueError(

@@ -61,10 +61,10 @@ class message:
         }
         message_data_json = json.dumps(obj=message_data)
         try:
-            encrypted = RSA.encryptChunkedPadded(
-                publicKN=self.user.public_key[0],
-                publicKE=self.user.public_key[1],
-                plainText=message_data_json
+            encrypted = RSA.encrypt_chunked_padded(
+                public_key_n=self.user.public_key[0],
+                public_key_e=self.user.public_key[1],
+                plain_text=message_data_json
                 )
         except ValueError as error:
             logging.error(msg=error)
@@ -72,10 +72,10 @@ class message:
         return encrypted
 
     def decrypt(self, message_data: list[int]) -> None:
-        decrypted_raw: str = RSA.decryptPadded(
+        decrypted_raw: str = RSA.decrypt_padded(
             encrypted=message_data,
-            privateKD=self.user.private_key[1],
-            privateKN=self.user.private_key[0]
+            private_key_d=self.user.private_key[1],
+            private_key_n=self.user.private_key[0]
             )
         print(decrypted_raw)
         decrypted: dict = json.loads(decrypted_raw)

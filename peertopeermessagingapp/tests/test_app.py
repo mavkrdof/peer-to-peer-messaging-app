@@ -1,6 +1,6 @@
 import pytest
 # from src.peertopeermessagingapp.user_data import user_data as user_data
-from src.peertopeermessagingapp.RSA_cryptosystem import encryptChunkedPadded, decryptPadded, genKeys
+from src.peertopeermessagingapp.RSA_cryptosystem import encrypt_chunked_padded, decrypt_padded, gen_keys
 from src.peertopeermessagingapp.message import message
 import json
 
@@ -9,20 +9,20 @@ class Test_Encrypt_Chunked_Padded:
 
     # encrypts plain text correctly with valid public keys and plain text
     def test_encrypts_and_decrypts_plain_text_correctly(self) -> None:
-        private, public = genKeys(
+        private, public = gen_keys(
             seed=10,
             complexity=2
         )
         plainText = "hello"
-        result = encryptChunkedPadded(
-            publicKN=public[0],
-            publicKE=public[1],
-            plainText=plainText
+        result = encrypt_chunked_padded(
+            public_key_n=public[0],
+            public_key_e=public[1],
+            plain_text=plainText
             )
-        decrypted = decryptPadded(
+        decrypted = decrypt_padded(
             encrypted=result,
-            privateKD=private[1],
-            privateKN=private[0]
+            private_key_d=private[1],
+            private_key_n=private[0]
         )
         assert decrypted == plainText
 
@@ -32,34 +32,34 @@ class Test_Encrypt_Chunked_Padded:
         publicKE = 17
         plainText = "hello"
         with pytest.raises(ValueError, match="expected publicKN type int instead got type <class 'str'>"):
-            encryptChunkedPadded(
-                publicKN=publicKN,
-                publicKE=publicKE,
-                plainText=plainText
+            encrypt_chunked_padded(
+                public_key_n=publicKN,
+                public_key_e=publicKE,
+                plain_text=plainText
                 )
 
     # handles plain text with special characters
     def test_handles_plain_text_with_special_characters(self):
-        private, public = genKeys(
+        private, public = gen_keys(
             seed=10,
             complexity=2
         )
         plainText = "hello$%$_#@_@!)"
-        result = encryptChunkedPadded(
-            publicKN=public[0],
-            publicKE=public[1],
-            plainText=plainText
+        result = encrypt_chunked_padded(
+            public_key_n=public[0],
+            public_key_e=public[1],
+            plain_text=plainText
             )
-        decrypted = decryptPadded(
+        decrypted = decrypt_padded(
             encrypted=result,
-            privateKD=private[1],
-            privateKN=private[0]
+            private_key_d=private[1],
+            private_key_n=private[0]
         )
         assert decrypted == plainText
 
     # processes plain text of varying lengths
     def test_encrypts_plain_text_length_varying_correctly(self) -> None:
-        private, public = genKeys(
+        private, public = gen_keys(
             seed=10,
             complexity=2
         )
@@ -69,15 +69,15 @@ class Test_Encrypt_Chunked_Padded:
                      'f8h328h2fhsho[ecdnano[h[hr[238ehd[oshfofhwodfhweo[fh'
                      ]
         for plain_text in test_text:
-            result = encryptChunkedPadded(
-                publicKN=public[0],
-                publicKE=public[1],
-                plainText=plain_text
+            result = encrypt_chunked_padded(
+                public_key_n=public[0],
+                public_key_e=public[1],
+                plain_text=plain_text
                 )
-            decrypted = decryptPadded(
+            decrypted = decrypt_padded(
                 encrypted=result,
-                privateKD=private[1],
-                privateKN=private[0]
+                private_key_d=private[1],
+                private_key_n=private[0]
             )
             assert decrypted == plain_text
 
@@ -97,7 +97,7 @@ class Test_Encrypt_Chunked_Padded:
     #             publicKE=public[1],
     #             plainText=plainText
     #             )
-    #         decrypted = decryptPadded(
+    #         decrypted = decrypt_padded(
     #             encrypted=result,
     #             privateKD=private[1],
     #             privateKN=private[0]
@@ -117,7 +117,7 @@ class Test_Encrypt_Chunked_Padded:
     #             publicKE=public[1],
     #             plainText=plainText
     #             )
-    #         decrypted = decryptPadded(
+    #         decrypted = decrypt_padded(
     #             encrypted=result,
     #             privateKD=private[1],
     #             privateKN=private[0]
@@ -130,7 +130,7 @@ class Test_message_encrypt:
     # Encrypts valid message data correctly with the correct module import
     def test_encrypts_valid_message_data_correctly(self, mocker):
         mock_user = mocker.Mock()
-        mock_user.public_key = (12345, 67890) # TODO
+        mock_user.public_key = (12345, 67890)
         msg = message(user=mock_user, message_id="1")
         msg.plain_text = "Hello, World!"
         msg.sender = "user_123"
@@ -202,7 +202,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decryptPadded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
         msg = message(user=mock_user, message_id=1)
@@ -227,7 +227,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decryptPadded', return_value=decrypted_data)  # TODO: take note of the fact that mocker calls must not be too the actual module but to the module calling that module
+        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)  # TODO: take note of the fact that mocker calls must not be too the actual module but to the module calling that module
         # Initialize message object and call decrypt
         msg = message(user=mock_user, message_id=1)
         msg.decrypt(message_data=[111, 222, 333])

@@ -29,16 +29,16 @@ class user_data:
             print('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
     def decrypt_user_data(self, data) -> None:
-        decrypt_checker = RSA.decryptPadded(
+        decrypt_checker = RSA.decrypt_padded(
             encrypted=data['decrypt_checker'],
-            privateKN=self.__user_data['privateKN'],
-            privateKD=self.__user_data['privateKD']
+            private_key_n=self.__user_data['privateKN'],
+            private_key_d=self.__user_data['privateKD']
             )
         if decrypt_checker == data['username']:
-            user_data_decrypted = RSA.decryptPadded(
+            user_data_decrypted = RSA.decrypt_padded(
                 encrypted=data['user_data'],
-                privateKD=self.__user_data['privateKD'],
-                privateKN=self.__user_data['privateKN']
+                private_key_d=self.__user_data['privateKD'],
+                private_key_n=self.__user_data['privateKN']
                 )
             self.__user_data = json.loads(user_data_decrypted)
         else:
@@ -50,14 +50,14 @@ class user_data:
             'decrypt_checker': '',
             'data': ''
         }
-        encrypted_data['data'] = RSA.encryptChunkedPadded(
-            plainText=json.dumps(
+        encrypted_data['data'] = RSA.encrypt_chunked_padded(
+            plain_text=json.dumps(
                 obj=self.__user_data,
                 sort_keys=True,
                 indent=4
                 ),
-            publicKE=self.__user_data['publicKE'],
-            publicKN=self.__user_data['publicKN']
+            public_key_e=self.__user_data['publicKE'],
+            public_key_n=self.__user_data['publicKN']
             )
         return encrypted_data
 

@@ -1,12 +1,12 @@
 import random  # NOT required if NOT using prime from cache
 import csv  # NOT required if NOT using prime from cache
-import peertopeermessagingapp.MathStuff as math_stuff
+import peertopeermessagingapp.math_stuff as math_stuff
 """
 a module implementing RSA encryption
 """
 
 
-def generate2PrimeNumbers(generatorSeed, complexity=2) -> tuple[int, int]:
+def generate_2_prime_numbers(generator_seed, complexity=2) -> tuple[int, int]:
     """
     a simple algorithm too generate 2 prime numbers
     args:
@@ -18,22 +18,22 @@ def generate2PrimeNumbers(generatorSeed, complexity=2) -> tuple[int, int]:
         p, q: int, int
             prime nums
     """
-    if isinstance(generatorSeed, int):
+    if isinstance(generator_seed, int):
         if isinstance(complexity, int):
-            p = math_stuff.FindNearestPrime(
-                number=generatorSeed ** round(complexity/2), searchDirection=1
+            p = math_stuff.find_nearest_prime(
+                number=generator_seed ** round(complexity/2), search_direction=1
                 )
-            q = math_stuff.FindNearestPrime(
-                number=generatorSeed ** complexity, searchDirection=1
+            q = math_stuff.find_nearest_prime(
+                number=generator_seed ** complexity, search_direction=1
                 )
             return p, q
         else:
             raise ValueError(f"expected complexity type int instead got {type(complexity)}")
     else:
-        raise ValueError(f"expected generatorSeed type int instead got {type(generatorSeed)}")
+        raise ValueError(f"expected generatorSeed type int instead got {type(generator_seed)}")
 
 
-def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
+def random_prime_nums_from_cache(cache, error_handling=False, complexity=100) -> int:
     """
     a simple algorithm to generate a prime number from a cache of primes
     - stable performance no matter size of desired prime unless error checking is enabled
@@ -42,7 +42,7 @@ def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
     args:
         cache: int
             the prime cache
-        errorHandling: bool
+        error_handling: bool
             whether or not to do error handling
         complexity: int
             the complexity default 100
@@ -51,15 +51,15 @@ def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
             a prime num
     """
     with open(cache, "r") as file:
-        primeCache = list(set(list(csv.reader(file))[0][:complexity]))
-    seed = random.randint(0, len(primeCache)-1)
+        prime_cache = list(set(list(csv.reader(file))[0][:complexity]))
+    seed = random.randint(0, len(prime_cache)-1)
     prime = "str"
     try:
-        prime = int(primeCache[seed])
+        prime = int(prime_cache[seed])
     except ValueError:
         raise ValueError(f"prime Cache Invalid {prime}")
-    if errorHandling:
-        if math_stuff.isPrime(prime):  # reduces efficiency as isPrime is expensive.
+    if error_handling:
+        if math_stuff.is_prime(prime):  # reduces efficiency as is_prime is expensive.
             return prime
         else:
             raise ValueError(f"prime Cache Invalid: {prime}")
@@ -67,7 +67,7 @@ def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
         return prime
 
 
-def gen2PrimeNumsFromCache(cache) -> tuple[int, int]:
+def gen_2_prime_nums_from_cache(cache) -> tuple[int, int]:
     """
     a simple algorithm to generate
     2 prime number from a cache of prime - less secure
@@ -79,20 +79,20 @@ def gen2PrimeNumsFromCache(cache) -> tuple[int, int]:
             2 prime nums
     """
     return (
-        randomPrimeNumsFromCache(
+        random_prime_nums_from_cache(
             cache=cache,
-            errorHandling=True,
+            error_handling=True,
             complexity=100
             ),
-        randomPrimeNumsFromCache(
+        random_prime_nums_from_cache(
             cache=cache,
-            errorHandling=True,
+            error_handling=True,
             complexity=100
             )
     )
 
 
-def createKey(p, q) -> tuple[list[int], list[int]]:
+def create_key(p, q) -> tuple[list[int], list[int]]:
     """
     creates public and private keys based on to prime numbers
     args:
@@ -101,28 +101,28 @@ def createKey(p, q) -> tuple[list[int], list[int]]:
         q: int
             prime num 2 - should be large and unpredictable for best security - low performance with large ints
         returns:
-            publicKey: list[int, int]
-            privateKey: list[int, int]
+            public_key: list[int, int]
+            private_key: list[int, int]
     """
     if isinstance(p, int):
         if isinstance(q, int):
-            if math_stuff.isPrime(p):
-                if math_stuff.isPrime(q):
+            if math_stuff.is_prime(p):
+                if math_stuff.is_prime(q):
                     n = p * q
                     if n > 9:
                         k = math_stuff.carmichael(n=n)
-                        coPrimeList = math_stuff.FindCoPrime(a=k)
+                        co_prime_list = math_stuff.find_co_prime(a=k)
                         e = None
-                        for coPrime in coPrimeList:
-                            if math_stuff.isPrime(n=coPrime):
-                                e = coPrime
-                        d = math_stuff.FindModularMultiplicativeInverse(
+                        for co_prime in co_prime_list:
+                            if math_stuff.is_prime(n=co_prime):
+                                e = co_prime
+                        d = math_stuff.find_modular_multiplicative_inverse(
                             a=e,
                             m=k
                             )
-                        publicKey = [n, e]
-                        privateKey = [n, d]
-                        return publicKey, privateKey
+                        public_key = [n, e]
+                        private_key = [n, d]
+                        return public_key, private_key
                     else:
                         raise ValueError(
                             "n must be greater than 9 to accurately encrypt data"
@@ -145,105 +145,105 @@ def createKey(p, q) -> tuple[list[int], list[int]]:
             )
 
 
-def chunkData(data, publicKeyN) -> list[int]:
+def chunk_data(data, public_key_n) -> list[int]:
     """
     chunks the data into sizes manageable by encrypted.
     can only encrypt data smaller than public key n
     args:
         data: int
             raw unchanged data
-        publicKeyN: int
+        public_key_n: int
             the public key n
     returns:
-        chunkedData: list[int]
+        chunked_data: list[int]
             the chunked data
     """
     if isinstance(data, int):
-        if isinstance(publicKeyN, int):
-            if publicKeyN > 9:
-                if data < publicKeyN:
+        if isinstance(public_key_n, int):
+            if public_key_n > 9:
+                if data < public_key_n:
                     return [data]
                 else:
-                    length = len(str(publicKeyN)) - 1
+                    length = len(str(public_key_n)) - 1
                     chunks = round(len(str(data)) / length)
-                    chunkedData = []
+                    chunked_data = []
                     for i in range(chunks):
-                        chunkedData.append(int(str(data)[i*length: (i+1)*length]))
-                    return chunkedData
+                        chunked_data.append(int(str(data)[i*length: (i+1)*length]))
+                    return chunked_data
             else:
-                raise ValueError("publicKeyN must be greater than 9 to accurately encrypt data")
+                raise ValueError("public_key_n must be greater than 9 to accurately encrypt data")
         else:
-            raise ValueError(f"expected publicKeyN type int instead got type {type(publicKeyN)}")
+            raise ValueError(f"expected public_key_n type int instead got type {type(public_key_n)}")
     else:
         raise ValueError(f"expected data type int instead got type {type(data)}")
 
 
-def encrypt(publicKeyN, publicKeyE, toEncrypt) -> int:
+def encrypt(public_key_n, public_key_e, to_encrypt) -> int:
     """
     encrypts data
     args:
-        publicKeyN: int
+        public_key_n: int
             the public key n
-        publicKeyE: int
+        public_key_e: int
             the public key e
-        toEncrypt: int
-            data to encrypt must be int and < Public/PrivateKey N
+        to_encrypt: int
+            data to encrypt must be int and < Public/private_key N
     """
-    if isinstance(publicKeyN, int):
-        if isinstance(publicKeyE, int):
-            if isinstance(toEncrypt, int):
-                if toEncrypt < publicKeyN:
-                    encrypted = (toEncrypt**publicKeyE) % publicKeyN
+    if isinstance(public_key_n, int):
+        if isinstance(public_key_e, int):
+            if isinstance(to_encrypt, int):
+                if to_encrypt < public_key_n:
+                    encrypted = (to_encrypt**public_key_e) % public_key_n
                     return encrypted
                 else:
                     raise ValueError(
-                        "expected toEncrypt < publicKeyN instead got >"
+                        "expected to_encrypt < public_key_n instead got >"
                         )
             else:
                 raise ValueError(
-                    f"expected toEncrypt type int instead got type {type(toEncrypt)}"
+                    f"expected to_encrypt type int instead got type {type(to_encrypt)}"
                     )
         else:
             raise ValueError(
-                f"expected publicKeyE type int instead got type {type(publicKeyE)}"
+                f"expected public_key_e type int instead got type {type(public_key_e)}"
                 )
     else:
         raise ValueError(
-            f"expected publicKeyN type int instead got type {type(publicKeyN)}"
+            f"expected public_key_n type int instead got type {type(public_key_n)}"
             )
 
 
-def decrypt(privateKeyN, privateKeyD, toDecrypt) -> int:
+def decrypt(private_key_n, private_key_d, to_decrypt) -> int:
     """
     decrypts data
     args:
-        privateKeyN: int
+        private_key_n: int
             the private key n
-        privateKeyE: int
+        private_keyE: int
             the private key e
         to encrypt: int
-            the data to encrypt must be < Public/PrivateKey N
+            the data to encrypt must be < Public/private_key N
     """
-    if isinstance(privateKeyN, int):
-        if isinstance(privateKeyD, int):
-            if isinstance(toDecrypt, int):
-                decrypted = (toDecrypt**privateKeyD) % privateKeyN
+    if isinstance(private_key_n, int):
+        if isinstance(private_key_d, int):
+            if isinstance(to_decrypt, int):
+                decrypted = (to_decrypt**private_key_d) % private_key_n
                 return decrypted
             else:
                 raise ValueError(
-                    f"expected toEncrypt type int instead got type {type(toDecrypt)}"
+                    f"expected to_encrypt type int instead got type {type(to_decrypt)}"
                     )
         else:
             raise ValueError(
-                f"expected privateKeyE type int instead got type {type(privateKeyD)}"
+                f"expected private_keyE type int instead got type {type(private_key_d)}"
                 )
     else:
         raise ValueError(
-            f"expected privateKeyN type int instead got type {type(privateKeyN)}"
+            f"expected private_key_n type int instead got type {type(private_key_n)}"
             )
 
 
-def strToBase10(string) -> int:
+def str_to_base_10(string) -> int:
     """
     converts string to base 10 - error prone when uncovering as not all 3 ints long
     args:
@@ -253,18 +253,18 @@ def strToBase10(string) -> int:
         base 10 version
     """
     if isinstance(string, str):
-        intList = [ord(i) for i in string]
-        cleanInt = intList[0]
-        for num in intList[1:]:
-            cleanInt = math_stuff.appendToInt(cleanInt, num)
-        return cleanInt
+        int_list = [ord(i) for i in string]
+        clean_int = int_list[0]
+        for num in int_list[1:]:
+            clean_int = math_stuff.append_to_int(clean_int, num)
+        return clean_int
     else:
         raise ValueError(
             f"expected string type str instead got type {type(string)}"
             )
 
 
-def strToBase10Padded(string) -> int:
+def str_to_base10_padded(string) -> int:
     """
     converts string to base 10 - fixes errors in strToBase10 by adding padding that cancels out when unconverted
     args:
@@ -274,16 +274,16 @@ def strToBase10Padded(string) -> int:
         base 10 version
     """
     if isinstance(string, str):
-        intStrList = [str(ord(i)).rjust(3, '0') for i in string]
-        cleanInt = 111
-        for num in intStrList:
-            cleanInt = math_stuff.appendToInt(cleanInt, num)
-        return cleanInt
+        int_str_list = [str(ord(i)).rjust(3, '0') for i in string]
+        clean_int = 111
+        for num in int_str_list:
+            clean_int = math_stuff.append_to_int(num=clean_int, to_add=num)
+        return clean_int
     else:
         raise ValueError(f"expected string type str instead got type {type(string)}")
 
 
-def strToBase10List(string) -> list[int]:
+def str_to_base10_list(string) -> list[int]:
     """
     converts string to base 10 - fixes errors in strToBase10
     args:
@@ -293,82 +293,82 @@ def strToBase10List(string) -> list[int]:
         base 10 version
     """
     if isinstance(string, str):
-        intList = [ord(i) for i in string]
-        return intList
+        int_list = [ord(i) for i in string]
+        return int_list
     else:
         raise ValueError(
             f"expected string type str instead got type {type(string)}"
             )
 
 
-def base10ToString(base10List) -> str:
+def base_10_to_string(base10_list) -> str:
     """
     converts string to base 10
     args:
-    base10List: list[int]
+    base10_list: list[int]
         the string to convert
     returns: int
         base 10 version
     """
-    if isinstance(base10List, list):
-        if False not in [False for i in base10List if not isinstance(i, int)]:
-            charList = [chr(i) for i in base10List]
-            cleanStr = "".join(charList)
-            return cleanStr
+    if isinstance(base10_list, list):
+        if False not in [False for i in base10_list if not isinstance(i, int)]:
+            char_list = [chr(i) for i in base10_list]
+            clean_str = "".join(char_list)
+            return clean_str
         else:
             raise ValueError(
-                f"expected base10List type list[int] instead got {[type(i) for i in base10List]}"
+                f"expected base10_list type list[int] instead got {[type(i) for i in base10_list]}"
                 )
     else:
         raise ValueError(
-            f"expected base10List type list instead got type {type(base10List)}"
+            f"expected base10_list type list instead got type {type(base10_list)}"
             )
 
 
-def decryptPadded(encrypted, privateKN, privateKD) -> str:
+def decrypt_padded(encrypted, private_key_n, private_key_d) -> str:
     """
     decrypts encrypted text
     args:
         encrypted: list[int]
             a list of encrypted chunks
-        privateKN: int
+        private_key_n: int
             private key n
-        privateKD: int
+        private_key_d: int
             private key d
     returns:
         decrypted: str
             decrypted text
     """
-    if isinstance(privateKN, int):
-        if isinstance(privateKD, int):
+    if isinstance(private_key_n, int):
+        if isinstance(private_key_d, int):
             if isinstance(encrypted, list):
                 if False not in [False for i in encrypted if not isinstance(i, int)]:
-                    decryptedBase10 = []
-                    for eChunk in encrypted:
-                        decryptedBase10.append(
+                    decrypted_base10 = []
+                    for e_chunk in encrypted:
+                        decrypted_base10.append(
                             str(
                                 object=decrypt(
-                                    privateKeyN=privateKN,
-                                    privateKeyD=privateKD,
-                                    toDecrypt=eChunk
+                                    private_key_n=private_key_n,
+                                    private_key_d=private_key_d,
+                                    to_decrypt=e_chunk
                                     )
                                 )
                             )
-                    cleanDecryptedBase10 = ""
-                    length = len(str(privateKN)) - 1
-                    for chunk in decryptedBase10:
+                    clean_decrypted_base_10 = ""
+                    length = len(str(private_key_n)) - 1
+                    for chunk in decrypted_base10:
                         while len(chunk) < length:
                             chunk = "0" + chunk
-                        cleanDecryptedBase10 += chunk
-                    decryptedSplitBase10 = []
+                        clean_decrypted_base_10 += chunk
+                    decrypted_split_base_10 = []
                     splitLen = 3
-                    for i in range(int(len(cleanDecryptedBase10) / splitLen)):
-                        decryptedSplitBase10.append(
+                    for i in range(int(len(clean_decrypted_base_10) / splitLen)):
+                        decrypted_split_base_10.append(
                             int(
-                                cleanDecryptedBase10[splitLen*i:splitLen*i+splitLen]
+                                clean_decrypted_base_10[splitLen*i:splitLen*i+splitLen]
                                 )
                             )
-                    decrypted = base10ToString(decryptedSplitBase10[1:])
+                    decrypted = base_10_to_string(base10_list=decrypted_split_base_10[1:])
                     return decrypted
                 else:
                     raise ValueError(
@@ -380,58 +380,58 @@ def decryptPadded(encrypted, privateKN, privateKD) -> str:
                     )
         else:
             raise ValueError(
-                f"expected privateKN type int instead got type {type(privateKN)}"
+                f"expected privateKN type int instead got type {type(private_key_n)}"
                 )
     else:
         raise ValueError(
-            f"expected privateKD type int instead got type {type(privateKD)}"
+            f"expected privateKD type int instead got type {type(private_key_d)}"
             )
 
 
-def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list[int]:
+def encrypt_chunked_padded(public_key_n=None, public_key_e=None, plain_text=None) -> list[int]:
     """
     encrypts plain text
     args:
-        publicKN: int
+        public_key_n: int
             public key n
-        publicKE: int
+        public_key_e: int
             public key e
-        plainText: str
+        plain_text: str
             plain text
     returns:
         encrypted: list[int]
             encrypted data
     """
-    if isinstance(publicKN, int):
-        if isinstance(publicKE, int):
-            if isinstance(plainText, str):
-                data = strToBase10Padded(string=plainText)
-                dataChunks = chunkData(data=data, publicKeyN=publicKN)
+    if isinstance(public_key_n, int):
+        if isinstance(public_key_e, int):
+            if isinstance(plain_text, str):
+                data = str_to_base10_padded(string=plain_text)
+                data_chunks = chunk_data(data=data, public_key_n=public_key_n)
                 encrypted = []
-                for chunk in dataChunks:
+                for chunk in data_chunks:
                     encrypted.append(
                         encrypt(
-                            publicKeyN=publicKN,
-                            publicKeyE=publicKE,
-                            toEncrypt=chunk
+                            public_key_n=public_key_n,
+                            public_key_e=public_key_e,
+                            to_encrypt=chunk
                             )
                         )
                 return encrypted
             else:
                 raise ValueError(
-                    f"expected plainText type str instead got type {type(plainText)}"
+                    f"expected plainText type str instead got type {type(plain_text)}"
                     )
         else:
             raise ValueError(
-                f"expected publicKE type int instead got type {type(publicKE)}"
+                f"expected publicKE type int instead got type {type(public_key_e)}"
                 )
     else:
         raise ValueError(
-            f"expected publicKN type int instead got type {type(publicKN)}"
+            f"expected publicKN type int instead got type {type(public_key_n)}"
             )
 
 
-def genKeys(seed, complexity) -> tuple[list[int], list[int]]:
+def gen_keys(seed, complexity) -> tuple[list[int], list[int]]:
     """
     generates prime numbers and then
     gens public and private keys for RSA encryption.
@@ -447,12 +447,12 @@ def genKeys(seed, complexity) -> tuple[list[int], list[int]]:
         if isinstance(complexity, int):
             if seed > 9:
                 if complexity >= 1:
-                    p, q = generate2PrimeNumbers(
-                        generatorSeed=seed, complexity=complexity
+                    p, q = generate_2_prime_numbers(
+                        generator_seed=seed, complexity=complexity
                         )  # only needs to run once at creation of account
                     # larger num = better but longer initial calc time
-                    publicKey, privateKey = createKey(p, q)  # only needs to run once at creation of account
-                    return privateKey, publicKey
+                    public_key, private_key = create_key(p, q)  # only needs to run once at creation of account
+                    return private_key, public_key
                 else:
                     raise ValueError(
                         f'expected complexity greater than or = to 1 instead got {complexity}'
@@ -472,7 +472,7 @@ def genKeys(seed, complexity) -> tuple[list[int], list[int]]:
 
 
 if __name__ == '__main__':
-    privateKey, publicKey = genKeys(
+    private_key, public_key = gen_keys(
         seed=random.randint(0, 10),
         complexity=2
         )
@@ -480,16 +480,16 @@ if __name__ == '__main__':
         message = input(
             "Message: "
             )
-        e = encryptChunkedPadded(
-            publicKN=publicKey[0],
-            publicKE=publicKey[1],
-            plainText=message
+        e = encrypt_chunked_padded(
+            public_key_n=public_key[0],
+            public_key_e=public_key[1],
+            plain_text=message
             )
         print(e)
         print(
-            decryptPadded(
+            decrypt_padded(
                 encrypted=e,
-                privateKN=privateKey[0],
-                privateKD=privateKey[1]
+                private_key_n=private_key[0],
+                private_key_d=private_key[1]
                 )
             )
