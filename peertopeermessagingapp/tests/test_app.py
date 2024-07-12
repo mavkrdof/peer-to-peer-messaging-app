@@ -1,7 +1,6 @@
 import pytest
 # from src.peertopeermessagingapp.user_data import user_data as user_data
 from src.peertopeermessagingapp.RSA_cryptosystem import encryptChunkedPadded, decryptPadded, genKeys
-import src.peertopeermessagingapp.RSA_cryptosystem as RSA
 from src.peertopeermessagingapp.message import message
 import json
 
@@ -83,6 +82,7 @@ class Test_Encrypt_Chunked_Padded:
             assert decrypted == plain_text
 
 # the below are to annoying to test take too much processing time
+# TODO optimise key generation
 
     # def test_gen_key_with_varying_complexity(self) -> None:
     #     for complexity in range(1, 4):
