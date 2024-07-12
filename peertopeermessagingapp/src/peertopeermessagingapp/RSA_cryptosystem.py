@@ -1,5 +1,5 @@
-import random  # not require if not using prime from cache
-import csv  # not requires if not using prime from cache
+import random  # NOT required if NOT using prime from cache
+import csv  # NOT required if NOT using prime from cache
 import peertopeermessagingapp.MathStuff as math_stuff
 """
 a module implementing RSA encryption
@@ -35,7 +35,10 @@ def generate2PrimeNumbers(generatorSeed, complexity=2) -> tuple[int, int]:
 
 def randomPrimeNumsFromCache(cache, errorHandling=False, complexity=100) -> int:
     """
-    a simple algorithm too generate a prime number from a cache of primes - stable performance no matter size of desired prime unless error checking is enabled, requires a large cache file for best security. - less secure
+    a simple algorithm to generate a prime number from a cache of primes
+    - stable performance no matter size of desired prime unless error checking is enabled
+    - requires a large cache file for best security.
+    - less secure
     args:
         cache: int
             the prime cache
@@ -282,7 +285,7 @@ def strToBase10Padded(string) -> int:
 
 def strToBase10List(string) -> list[int]:
     """
-    converts string to base 10 - fixes errors in strToBase10 by keeping as list results in slower encryption as not able to maximise chunk size
+    converts string to base 10 - fixes errors in strToBase10
     args:
     string: str
         the string to convert
@@ -416,8 +419,8 @@ def encryptChunkedPadded(publicKN=None, publicKE=None, plainText=None) -> list[i
                 return encrypted
             else:
                 raise ValueError(
-                f"expected plainText type str instead got type {type(plainText)}"
-                )
+                    f"expected plainText type str instead got type {type(plainText)}"
+                    )
         else:
             raise ValueError(
                 f"expected publicKE type int instead got type {type(publicKE)}"
@@ -446,8 +449,8 @@ def genKeys(seed, complexity) -> tuple[list[int], list[int]]:
                 if complexity >= 1:
                     p, q = generate2PrimeNumbers(
                         generatorSeed=seed, complexity=complexity
-                        )  # only needs to run once at creation of account - larger num = better but longer initial calc time - does not matter
-                    # TODO: not have this while loop only have to create keys once - issue is sometimes n < 10 causing issues with chunking and finding coPrimes find a way to make sure that p * q is never less than 10
+                        )  # only needs to run once at creation of account
+                    # larger num = better but longer initial calc time
                     publicKey, privateKey = createKey(p, q)  # only needs to run once at creation of account
                     return privateKey, publicKey
                 else:
