@@ -33,7 +33,7 @@ class message:
     """
 
     def __init__(self, user, message_id) -> None:
-        self.plain_text = ''
+        self.plain_text = None
         self.user = user
         self.sender = None
         self.sent_time_stamp = None
@@ -72,35 +72,36 @@ class message:
         return encrypted
 
     def decrypt(self, message_data: list[int]) -> None:
-        decrypted_raw = RSA.decryptPadded(
+        decrypted_raw: str = RSA.decryptPadded(
             encrypted=message_data,
             privateKD=self.user.private_key[1],
             privateKN=self.user.private_key[0]
             )
+        print(decrypted_raw)
         decrypted: dict = json.loads(decrypted_raw)
 
         # check for valid message and assign data
         if 'plain_text' in decrypted:
-            self.plain_text = decrypted['plain_text']
-            if 'sent_time_stamp' in decrypted:
-                self.sent_time_stamp = decrypted['sent_time_stamp']
-                if 'received_time_stamp' in decrypted:
-                    self.received_time_stamp = decrypted['received_time_stamp']
-                    if 'sender' in decrypted:
-                        self.sender = decrypted['sender']
-                    else:
-                        logging.warning(
-                            msg=f'INVALID message | missing sender attribute | message id = {self.message_id}'
-                            )
-                else:
-                    logging.warning(
-                        msg=f'INVALID message | missing received_time_stamp attribute | message id = {self.message_id}'
-                                    )
-            else:
-                logging.warning(
-                    msg=f'INVALID message | missing sent_time_stamp attribute | message id = {self.message_id}'
-                                )
+            self.plain_text = decrypted['plain_text']  # TODO: decide if plain_test should default to NONE or '' - must update tests
         else:
             logging.warning(
                 msg=f'INVALID message | missing plain_text attribute | message id = {self.message_id}'
-                            )
+                )
+        if 'sent_time_stamp' in decrypted:
+            self.sent_time_stamp = decrypted['sent_time_stamp']
+        else:
+            logging.warning(
+                msg=f'INVALID message | missing sent_time_stamp attribute | message id = {self.message_id}'
+                )
+        if 'received_time_stamp' in decrypted:
+            self.received_time_stamp = decrypted['received_time_stamp']
+        else:
+            logging.warning(
+                msg=f'INVALID message | missing received_time_stamp attribute | message id = {self.message_id}'
+                )
+        if 'sender' in decrypted:
+            self.sender = decrypted['sender']
+        else:
+            logging.warning(
+                msg=f'INVALID message | missing sender attribute | message id = {self.message_id}'
+                )
