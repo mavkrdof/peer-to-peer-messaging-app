@@ -131,7 +131,7 @@ class Test_message_encrypt:
     def test_encrypts_valid_message_data_correctly(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)
-        msg = message(user=mock_user, message_id="1")
+        msg = message(chat=mock_user, message_id="1")
         msg.plain_text = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -156,7 +156,7 @@ class Test_message_encrypt:
     def test_handles_empty_plain_text_without_errors(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)  # TODO
-        msg = message(user=mock_user, message_id="2")
+        msg = message(chat=mock_user, message_id="2")
         msg.plain_text = ""
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -183,7 +183,7 @@ class Test_message_encrypt:
         mock_user = mocker.Mock()
         mock_user.public_key = ('force error', 67890)
         # an encryption key as type string will cause an encryption failure
-        msg = message(user=mock_user, message_id="1")
+        msg = message(chat=mock_user, message_id="1")
         msg.plain_text = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -214,7 +214,7 @@ class Test_message_decrypt:
         mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
-        msg = message(user=mock_user, message_id=1)
+        msg = message(chat=mock_user, message_id=1)
         msg.decrypt(message_data=[111, 222, 333])  # Random data
 
         # Assertions
@@ -240,7 +240,7 @@ class Test_message_decrypt:
         # TODO: take note of the fact that mocker calls must not be too the
         # TODO cont: actual module but to the module calling that module
         # Initialize message object and call decrypt
-        msg = message(user=mock_user, message_id=1)
+        msg = message(chat=mock_user, message_id=1)
         msg.decrypt(message_data=[111, 222, 333])
 
         caplog.at_level(logging.WARNING)

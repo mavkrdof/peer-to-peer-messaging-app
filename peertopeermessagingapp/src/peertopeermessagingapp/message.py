@@ -32,16 +32,16 @@ class message:
             decrypts message
     """
 
-    def __init__(self, user, message_id) -> None:
+    def __init__(self, chat, message_id) -> None:
         self.plain_text = None
-        self.user = user
+        self.chat = chat
         self.sender = None
         self.sent_time_stamp = None
         self.received_time_stamp = None
         self.message_id = message_id
 
     def read_in(self) -> None:
-        message_raw = self.user.message_list[self.message_id]
+        message_raw = self.chat.message_list[self.message_id]
         self.decrypt(message_data=message_raw)
 
     def store(self) -> None:
@@ -50,7 +50,7 @@ class message:
             logging.warn(
                 msg='Storing invalid Message data likely due to encryption error.'
                 )
-        self.user.message_list.append(data)
+        self.chat.message_list.append(data)
 
     def encrypt(self) -> list[int] | None:
         message_data = {
@@ -62,8 +62,8 @@ class message:
         message_data_json = json.dumps(obj=message_data)
         try:
             encrypted = RSA.encrypt_chunked_padded(
-                public_key_n=self.user.public_key[0],
-                public_key_e=self.user.public_key[1],
+                public_key_n=self.chat.public_key[0],
+                public_key_e=self.chat.public_key[1],
                 plain_text=message_data_json
                 )
         except ValueError as error:
@@ -74,8 +74,8 @@ class message:
     def decrypt(self, message_data: list[int]) -> None:
         decrypted_raw: str = RSA.decrypt_padded(
             encrypted=message_data,
-            private_key_d=self.user.private_key[1],
-            private_key_n=self.user.private_key[0]
+            private_key_d=self.chat.private_key[1],
+            private_key_n=self.chat.private_key[0]
             )
         print(decrypted_raw)
         decrypted: dict = json.loads(decrypted_raw)
