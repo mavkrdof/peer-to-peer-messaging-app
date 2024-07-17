@@ -1,5 +1,6 @@
 import time
 
+
 class Chat:
     """
     Methods:
@@ -23,15 +24,15 @@ class Chat:
         self.name = None
         self.identifier = None
         self.icon_max_len = 4
+        self.users: list = []
 
-    def create_chat(self, name: str, icon):
+    def create_chat(self, name: str, icon: str) -> None:
         """
-        creates the chat
-        args:
-            name: str
-                the name of the chat
-            icon: str
-                the icon of the chat
+        create_chat creates a new chat
+
+        Args:
+            name (str): the name of the chat
+            icon (str): an icon to display for the chat
         """
         if isinstance(name, str):
             self.name = name
@@ -39,10 +40,20 @@ class Chat:
                 if len(icon) <= self.icon_max_len:
                     self.icon = icon
                     # set id
-                    self.identifier = time.time
+                    self.identifier = f'{name}{time.time}'
 
-    def add_user(user_id):
-        pass
+    def add_user(self, user_id: str) -> None:
+        """
+        add_user adds a user to the chat
 
-    def delete_chat():
+        Args:
+            user_id (str): the id of the user to add
+        """
+
+        self.users.append(user_id)
+
+    def delete_chat(self) -> None:
+        """
+        delete_chat deletes the chat
+        """
         pass
