@@ -119,6 +119,9 @@ class home_screen(screen):
         self.max_chat_list_segments = 5
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         self.create_title_box()
         # chat select
         self.chat_list_scroll = toga.ScrollContainer(
@@ -134,6 +137,9 @@ class home_screen(screen):
         self.box.add(self.chat_list_scroll)
 
     def create_title_box(self):
+        """
+        create_title_box creates the title box
+        """
         self.title_box = toga.Box(
             style=toga.style.Pack(
                 flex=1,
@@ -255,11 +261,7 @@ class nav_bar(screen):
 
     def init_GUI(self) -> None:
         """
-        initializes the navigation bar
-        args:
-            none
-        returns:
-            none
+        init_GUI initilizes the GUI elements of the screen
         """
         self.box.style = toga.style.Pack(
             direction='row',
@@ -271,11 +273,17 @@ class nav_bar(screen):
         self.add_content()
 
     def add_content(self) -> None:
+        """
+        add_content adds content to the screens main box
+        """
         self.box.add(self.back_button)
         self.box.add(self.title)
         self.box.add(self.settings_button)
 
     def settings(self) -> None:
+        """
+        settings creates the settings button
+        """
         self.settings_button = toga.Button(
             id='settings_screen',
             text='Settings',
@@ -289,6 +297,9 @@ class nav_bar(screen):
         )
 
     def create_title(self) -> None:
+        """
+        create_title creates the title of the screen displayed
+        """
         self.title = toga.Label(
             text=self.GUI_manager.current_screen,
             style=toga.style.Pack(
@@ -302,6 +313,9 @@ class nav_bar(screen):
         )
 
     def create_back_button(self) -> None:
+        """
+        create_back_button creates a back button
+        """
         if self.GUI_manager.current_screen in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen]
         else:
@@ -318,6 +332,9 @@ class nav_bar(screen):
         )
 
     def update(self) -> None:
+        """
+        update the nav bar to reflect the current screen
+        """
         self.title.text = self.GUI_manager.current_screen
         if self.GUI_manager.current_screen in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen]
@@ -350,9 +367,18 @@ class login_screen(screen):
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        __init__ initilises the login screen
+
+        Args:
+            GUI_manager (peertopeermessagingapp.screens.GUI_manager): the gui manager
+        """
         super().__init__(GUI_manager=GUI_manager, name='login')
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         self.box.style = toga.style.Pack(
                 direction='row'
                 )
@@ -363,6 +389,9 @@ class login_screen(screen):
         self.add_content_to_box()
 
     def add_content_to_box(self) -> None:
+        """
+        add_content_to_box adds content to the login screens main box
+        """
         self.__button_box.add(self.__login_button)
         self.__button_box.add(self.__create_account_button)
         # add content to content_box
@@ -375,6 +404,9 @@ class login_screen(screen):
         self.box.add(self.right_pad_box)
 
     def buttons(self) -> None:
+        """
+        buttons creates the login and create account buttons
+        """
         self.__button_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -406,6 +438,9 @@ class login_screen(screen):
         )
 
     def password_entry_field(self) -> None:
+        """
+        password_entry_field creates the password entry field
+        """
         self.__password_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -438,6 +473,9 @@ class login_screen(screen):
         self.__password_box.add(self.__password_field)
 
     def username_entry_field(self) -> None:
+        """
+        username_entry_field creates the username entry field
+        """
         self.__username_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -494,11 +532,17 @@ class login_screen(screen):
         )
 
     def validate_login(self, *args, **kwargs) -> None:
+        """
+        validate_login validates the login credentials
+        """
         valid = True  # TODO: connect to back end
         if valid:
             self.GUI_manager.change_screen('home')
 
     def display(self) -> None:
+        """
+        display displays the screen and logs the user out
+        """
         super().display()
         # TODO: logout
 
@@ -525,9 +569,18 @@ class settings_screen(screen):
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        __init__ initilises the settings screen
+
+        Args:
+            GUI_manager (peertopeermessagingapp.screens.GUI_manager): the gui manager
+        """
         super().__init__(GUI_manager=GUI_manager, name='settings')
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         super().init_GUI()
 
 
@@ -553,9 +606,18 @@ class create_account_screen(screen):
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        __init__ initilises the create account screen
+
+        Args:
+            GUI_manager (peertopeermessagingapp.screens.GUI_manager): the gui manager
+        """
         super().__init__(GUI_manager=GUI_manager, name='create_account')
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         self.box.style = toga.style.Pack(
                 direction='row'
                 )
@@ -566,6 +628,9 @@ class create_account_screen(screen):
         self.add_content_to_box()
 
     def add_content_to_box(self) -> None:
+        """
+        Adds content to the box by adding various elements to different sub-boxes.
+        """
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_account_button)
         # add content to content_box
@@ -578,6 +643,9 @@ class create_account_screen(screen):
         self.box.add(self.right_pad_box)
 
     def buttons(self) -> None:
+        """
+        buttons adds buttons to the button box
+        """
         self.__button_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -609,6 +677,9 @@ class create_account_screen(screen):
         )
 
     def password_entry_field(self) -> None:
+        """
+        password_entry_field creates the password entry field
+        """
         self.__password_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -641,6 +712,10 @@ class create_account_screen(screen):
         self.__password_box.add(self.__password_field)
 
     def username_entry_field(self) -> None:
+        """
+        Creates the username entry field with a box containing a text input field and a label.
+        Sets the style of the box, text input, and label based on the GUI theme.
+        """
         self.__username_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -674,6 +749,9 @@ class create_account_screen(screen):
         self.__username_box.add(self.__username_field)
 
     def content_padding(self) -> None:
+        """
+        content_padding generates the content padding for the box
+        """
         content_width_percent = 0.33
         pad_width_percent = (1-content_width_percent)/2
         self.left_pad_box = toga.Box(
@@ -697,6 +775,9 @@ class create_account_screen(screen):
         )
 
     def create_account(self, *args, **kwargs) -> None:
+        """
+        create_account activates all relevent backend functions to create an account
+        """
         pass
 
 
@@ -722,9 +803,18 @@ class chat_screen(screen):
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        __init__ initilises the chat screen
+
+        Args:
+            GUI_manager (peertopeermessagingapp.screens.GUI_manager): the GUI manager
+        """
         super().__init__(GUI_manager=GUI_manager, name='chats')
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         super().init_GUI()
         self.create_message_bar()
         self.create_message_scroll()
@@ -772,6 +862,9 @@ class chat_screen(screen):
         )
 
     def send_message(self, *args, **kwargs) -> None:
+        """
+        send_message activates relevent backend functions to send a message
+        """
         pass
 
 
@@ -797,9 +890,18 @@ class create_chat_screen(screen):
     """
 
     def __init__(self, GUI_manager) -> None:
+        """
+        __init__ initilises the create account screen
+
+        Args:
+            GUI_manager (peertopeermessagingapp.screens.GUI_manager): the GUI manager
+        """
         super().__init__(GUI_manager=GUI_manager, name='create_chat')
 
     def init_GUI(self) -> None:
+        """
+        init_GUI initilizes the GUI elements of the screen
+        """
         self.box.style = toga.style.Pack(
                 direction='row'
                 )
@@ -810,6 +912,9 @@ class create_chat_screen(screen):
         self.add_content_to_box()
 
     def add_content_to_box(self) -> None:
+        """
+        add_content_to_box adds the content of the screen to the box and sub boxes
+        """
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_chat_button)
         # add content to content_box
@@ -822,6 +927,9 @@ class create_chat_screen(screen):
         self.box.add(self.right_pad_box)
 
     def buttons(self) -> None:
+        """
+        buttons creates the buttons for the create chat screen
+        """
         self.__button_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -853,6 +961,9 @@ class create_chat_screen(screen):
         )
 
     def icon_entry_field(self) -> None:
+        """
+        icon_entry_field creates the icon entry field and its contianer
+        """
         self.__icon_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -885,6 +996,9 @@ class create_chat_screen(screen):
         self.__icon_box.add(self.__icon_field)
 
     def name_entry_field(self) -> None:
+        """
+        Generates a name entry field in the GUI with a label and input box for the user to enter the chats name.
+        """
         self.__name_box = toga.Box(
             style=toga.style.Pack(
                 direction='row',
@@ -918,6 +1032,9 @@ class create_chat_screen(screen):
         self.__name_box.add(self.__name_field)
 
     def content_padding(self) -> None:
+        """
+        Generate a padding around the content box.
+        """
         content_width_percent = 0.33
         pad_width_percent = (1-content_width_percent)/2
         self.left_pad_box = toga.Box(
@@ -941,6 +1058,13 @@ class create_chat_screen(screen):
         )
 
     def create_chat(self, *args, **kwargs) -> None:
+        """
+        Create a chat with the given name and icon.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         name = self.name_entry_field.text()
         icon = self.icon_entry_field.text()
         self.GUI_manager.app.backend.user_data.add_chat(name, icon)

@@ -32,4 +32,10 @@ class PeertoPeerMessagingApp(toga.App):
 
 
 def main() -> PeertoPeerMessagingApp:
+    """
+    main func that starts the app
+
+    Returns:
+        PeertoPeerMessagingApp: the toga application
+    """
     return PeertoPeerMessagingApp()

@@ -1,6 +1,7 @@
 """
 this module holds the GUI manager
 """
+import logging
 import toga
 import toga.style
 import toga.style.pack
@@ -47,7 +48,10 @@ class GUI_manager:
 
     def __init__(self, app) -> None:
         """
-        init main GUI manager class
+        __init__ initilizes the GUI manager
+
+        Args:
+            app (peertopeermessagingapp.app.PeertoPeerMessagingApp): the toga application
         """
         self.app = app
         # static
@@ -97,11 +101,17 @@ class GUI_manager:
         self.create_chat_screen.init_GUI()
 
     def start(self) -> None:
+        """
+        start starts the GUI
+        """
         self.main_box.clear()
         self.nav_bar.display()
         self.change_screen(new_screen='login')
 
     def back(self, *args, **kwargs) -> None:
+        """
+        back retruns to the previous screen
+        """
         match self.current_screen:
             case 'login':
                 self.app.exit()
@@ -117,6 +127,13 @@ class GUI_manager:
                 self.app.exit()
 
     def change_screen(self, new_screen, *args, **kwargs) -> None:
+        """
+        change_screen changes the screen being displayed
+
+        Args:
+            new_screen (str | toga.button): the nameo of the new screen or the button that was pressed
+            if button, id must be in screen_dict
+        """
         screen_dict = {
             'login': self.login_screen,
             'create_account': self.create_account_screen,
@@ -127,9 +144,20 @@ class GUI_manager:
             'add_chat': self.create_chat_screen,
         }
         if isinstance(new_screen, str):
-            pass
+            new_screen_name = new_screen
         else:
-            new_screen = new_screen.id
+            if isinstance(new_screen, toga.Button):
+                if new_screen.id in screen_dict:
+                    new_screen = new_screen.id
+                else:
+                    logging.error(
+                        f'Error: {new_screen} is not a valid screen'
+                    )
+            else:
+                logging.error(
+                    f"Error: expected type 'str or toga.Button', got {type(new_screen)}"
+                )
+
         # remove content from screen
         for content in self.main_box.children:
             if content.id == 'nav_bar':
@@ -137,6 +165,6 @@ class GUI_manager:
             else:
                 self.main_box.remove(content)
         # add content to screen
-        screen_dict[new_screen].display()
-        self.current_screen = new_screen.replace('_', ' ').capitalize()
+        screen_dict[new_screen_name].display()
+        self.current_screen = new_screen_name.replace('_', ' ').capitalize()
         self.nav_bar.update()

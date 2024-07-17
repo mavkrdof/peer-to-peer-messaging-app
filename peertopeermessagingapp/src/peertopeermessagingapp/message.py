@@ -32,7 +32,14 @@ class message:
             decrypts message
     """
 
-    def __init__(self, chat, message_id) -> None:
+    def __init__(self, chat, message_id: str) -> None:
+        """
+        __init__ initializes the message data object
+
+        Args:
+            chat (peertopeermessagingapp.chat.Chat): the chat that the message is from
+            message_id (str): the id of the message
+        """
         self.plain_text = None
         self.chat = chat
         self.sender = None
@@ -41,10 +48,16 @@ class message:
         self.message_id = message_id
 
     def read_in(self) -> None:
+        """
+        read_in reads in the message from storage
+        """
         message_raw = self.chat.message_list[self.message_id]
         self.decrypt(message_data=message_raw)
 
     def store(self) -> None:
+        """
+        store stores the message in encrypted form
+        """
         data = self.encrypt()
         if data is None:
             logging.warn(
@@ -53,6 +66,12 @@ class message:
         self.chat.message_list.append(data)
 
     def encrypt(self) -> list[int] | None:
+        """
+        encrypt converts the message to json and encrypts it
+
+        Returns:
+            list[int] | None: the encrypted message
+        """
         message_data = {
             'plain_text': self.plain_text,
             'sender': self.sender,
@@ -72,6 +91,12 @@ class message:
         return encrypted
 
     def decrypt(self, message_data: list[int]) -> None:
+        """
+        decrypt decrypts the message data and assigns the data
+
+        Args:
+            message_data (list[int]): the data to decrypt as a list of integers
+        """
         decrypted_raw: str = RSA.decrypt_padded(
             encrypted=message_data,
             private_key_d=self.chat.private_key[1],

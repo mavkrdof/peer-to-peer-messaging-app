@@ -20,6 +20,9 @@ class Chat:
     """
 
     def __init__(self) -> None:
+        """
+        __init__ initialises the chat data object
+        """
         self.members = None
         self.name = None
         self.identifier = None
@@ -49,7 +52,6 @@ class Chat:
         Args:
             user_id (str): the id of the user to add
         """
-
         self.users.append(user_id)
 
     def delete_chat(self) -> None:
