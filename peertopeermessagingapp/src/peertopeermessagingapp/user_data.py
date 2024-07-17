@@ -1,5 +1,6 @@
 import json
 import peertopeermessagingapp.RSA_cryptosystem as RSA
+import peertopeermessagingapp.chat as chat
 
 
 class user_data:
@@ -72,7 +73,9 @@ class user_data:
         with open(file=self.__app.user_data_filepath, mode='w') as user_data_file:
             user_data_file.write(user_data_json)
 
-    def add_chat(self, chat) -> None:
+    def add_chat(self, name, icon) -> None:
+        new_chat = chat.Chat()
+        new_chat.create_chat(name=name, icon=icon)
         self.__chats.append(chat)
 
     def remove_chat(self, chat) -> None:

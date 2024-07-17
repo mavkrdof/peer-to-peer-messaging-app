@@ -941,4 +941,6 @@ class create_chat_screen(screen):
         )
 
     def create_chat(self, *args, **kwargs) -> None:
-        pass
+        name = self.name_entry_field.text()
+        icon = self.icon_entry_field.text()
+        self.GUI_manager.app.backend.user_data.add_chat(name, icon)
