@@ -5,7 +5,7 @@ import toga
 import toga.style
 import toga.style.pack
 import toga.constants
-from peertopeermessagingapp.screens import home_screen, login_screen, create_account_screen, nav_bar, chat_screen, settings_screen
+from peertopeermessagingapp.screens import home_screen, login_screen, create_account_screen, nav_bar, chat_screen, settings_screen, create_chat_screen
 
 
 class GUI_manager:
@@ -15,7 +15,7 @@ class GUI_manager:
         current_screen: str
             the name of the current screen being displayed
             possible values: 'home', 'login', 'create_account',
-            'nav_bar', 'chat_screen'
+            'nav_bar', 'chat_screen', 'create_chat'
         home_screen: peertopeermessagingapp.screens.home_screen
             the screen that displays all chats
         login_screen: peertopeermessagingapp.screens.login_screen
@@ -84,6 +84,9 @@ class GUI_manager:
         self.nav_bar = nav_bar(
             GUI_manager=self
         )
+        self.create_chat_screen = create_chat_screen(
+            GUI_manager=self
+        )
         # init GUI
         self.login_screen.init_GUI()
         self.home_screen.init_GUI()
@@ -91,6 +94,7 @@ class GUI_manager:
         self.create_account_screen.init_GUI()
         self.settings_screen.init_GUI()
         self.nav_bar.init_GUI()
+        self.create_chat_screen.init_GUI()
 
     def start(self) -> None:
         self.main_box.clear()
@@ -107,6 +111,8 @@ class GUI_manager:
                 self.change_screen(new_screen='login')
             case 'chat':
                 self.change_screen(new_screen='home')
+            case 'create_chat':
+                self.change_screen(new_screen='home')
             case _:
                 self.app.exit()
 
@@ -117,16 +123,20 @@ class GUI_manager:
             'home': self.home_screen,
             'chat': self.chat_screen,
             'settings_screen': self.settings_screen,
-        } # TODO Make work with multiple buttons per action could just add more segments
+            'cancel_create_chat': self.home_screen,
+            'add_chat': self.create_chat_screen,
+        }
         if isinstance(new_screen, str):
             pass
         else:
             new_screen = new_screen.id
+        # remove content from screen
         for content in self.main_box.children:
             if content.id == 'nav_bar':
                 pass
             else:
                 self.main_box.remove(content)
+        # add content to screen
         screen_dict[new_screen].display()
-        self.current_screen = new_screen  # TODO: make look pretty when displayed - use dict to change from machine name to display name?
+        self.current_screen = new_screen.replace('_', ' ').capitalize()
         self.nav_bar.update()

@@ -119,6 +119,8 @@ class home_screen(screen):
         self.max_chat_list_segments = 5
 
     def init_GUI(self) -> None:
+        self.create_title_box()
+        # chat select
         self.chat_list_scroll = toga.ScrollContainer(
             vertical=True,
             horizontal=False,
@@ -130,6 +132,28 @@ class home_screen(screen):
         )
         # Add content to home screen box
         self.box.add(self.chat_list_scroll)
+
+    def create_title_box(self):
+        self.title_box = toga.Box(
+            style=toga.style.Pack(
+                flex=1,
+                direction='row',
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.add_chat_button = toga.Button(
+            id="add_chat",
+            text='Add Chat',
+            on_press=self.GUI_manager.change_screen,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.title_box.add(self.add_chat_button)
+        self.box.add(self.title_box)
 
     def populate_chat_list(self, chat_list: list) -> None:
         """
@@ -748,4 +772,173 @@ class chat_screen(screen):
         )
 
     def send_message(self, *args, **kwargs) -> None:
+        pass
+
+
+class create_chat_screen(screen):
+    """
+    the create account screen
+    vars:
+        GUI_manager: GUI_manager
+            the GUI manager instance
+        name: str
+            the name of the screen
+        box: toga.Box
+            the main box of the screen
+    methods:
+        __init__: none
+            the initializer function
+        init_GUI: none
+            initializes the GUI elements of the screen
+        update: none
+            updates any dynamic elements on the screen (e.g. chat messages)
+        display: none
+            displays the screen
+    """
+
+    def __init__(self, GUI_manager) -> None:
+        super().__init__(GUI_manager=GUI_manager, name='create_chat')
+
+    def init_GUI(self) -> None:
+        self.box.style = toga.style.Pack(
+                direction='row'
+                )
+        self.content_padding()
+        self.name_entry_field()
+        self.icon_entry_field()
+        self.buttons()
+        self.add_content_to_box()
+
+    def add_content_to_box(self) -> None:
+        self.__button_box.add(self.__cancel_button)
+        self.__button_box.add(self.__create_chat_button)
+        # add content to content_box
+        self.content_box.add(self.__name_box)
+        self.content_box.add(self.__icon_box)
+        self.content_box.add(self.__button_box)
+        # add content and pad boxes
+        self.box.add(self.left_pad_box)
+        self.box.add(self.content_box)
+        self.box.add(self.right_pad_box)
+
+    def buttons(self) -> None:
+        self.__button_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__cancel_button = toga.Button(
+            id='cancel_create_chat',
+            text='HOME',
+            on_press=self.GUI_manager.change_screen,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__create_chat_button = toga.Button(
+            text='CREATE CHAT',
+            on_press=self.create_chat,
+            style=toga.style.Pack(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+
+    def icon_entry_field(self) -> None:
+        self.__icon_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__icon_field = toga.PasswordInput(
+            style=toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__icon_label = toga.Label(
+            text='Icon',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__icon_box.add(self.__icon_label)
+        self.__icon_box.add(self.__icon_field)
+
+    def name_entry_field(self) -> None:
+        self.__name_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                alignment='center',
+                background_color=self.GUI_manager.theme['middleground'],
+            )
+        )
+        self.__name_field = toga.TextInput(
+            style=toga.style.Pack(
+                flex=0.75,
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+            on_confirm=self.create_chat
+        )
+        self.__name_label = toga.Label(
+            text='Name',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__name_box.add(self.__name_label)
+        self.__name_box.add(self.__name_field)
+
+    def content_padding(self) -> None:
+        content_width_percent = 0.33
+        pad_width_percent = (1-content_width_percent)/2
+        self.left_pad_box = toga.Box(
+            style=toga.style.Pack(
+                flex=pad_width_percent,
+                background_color=self.GUI_manager.theme['background']
+            )
+        )
+        self.right_pad_box = toga.Box(
+            style=toga.style.Pack(
+                flex=pad_width_percent,
+                background_color=self.GUI_manager.theme['background']
+            )
+        )
+        self.content_box = toga.Box(
+            style=toga.style.Pack(
+                flex=content_width_percent,
+                direction='column',
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+
+    def create_chat(self, *args, **kwargs) -> None:
         pass
