@@ -2,6 +2,7 @@
 this module holds all the different screens the GUI can display
 """
 import toga
+import toga.constants
 import toga.style
 
 
@@ -66,6 +67,7 @@ class screen():
         returns:
             none
         """
+        self.box.refresh()
         pass
 
     def display(self) -> None:
@@ -261,7 +263,7 @@ class nav_bar(screen):
 
     def init_GUI(self) -> None:
         """
-        init_GUI initilizes the GUI elements of the screen
+        init_GUI initialises the GUI elements of the screen
         """
         self.box.style = toga.style.Pack(
             direction='row',
@@ -316,10 +318,7 @@ class nav_bar(screen):
         """
         create_back_button creates a back button
         """
-        if self.GUI_manager.current_screen in self.back_button_text:
-            back_text = self.back_button_text[self.GUI_manager.current_screen]
-        else:
-            back_text = ''
+        back_text = self.back_button_text[self.GUI_manager.current_screen.name]
         self.back_button = toga.Button(
             text=back_text,
             on_press=self.GUI_manager.back,
@@ -335,9 +334,9 @@ class nav_bar(screen):
         """
         update the nav bar to reflect the current screen
         """
-        self.title.text = self.GUI_manager.current_screen
+        self.title.text = self.GUI_manager.current_screen.name
         if self.GUI_manager.current_screen in self.back_button_text:
-            back_text = self.back_button_text[self.GUI_manager.current_screen]
+            back_text = self.back_button_text[self.GUI_manager.current_screen.name]
         else:
             back_text = ''
         self.back_button.text = back_text
@@ -570,18 +569,112 @@ class settings_screen(screen):
 
     def __init__(self, GUI_manager) -> None:
         """
-        __init__ initilises the settings screen
+        __init__ initialises the settings screen
 
         Args:
             GUI_manager (peertopeermessagingapp.screens.GUI_manager): the gui manager
         """
         super().__init__(GUI_manager=GUI_manager, name='settings')
+        self.valid_colors = [color for color in dir(toga.constants) if color.isalpha()]
 
     def init_GUI(self) -> None:
         """
-        init_GUI initilizes the GUI elements of the screen
+        init_GUI initialises the GUI elements of the screen
         """
         super().init_GUI()
+        # theme select
+        self.__theme_customise_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.box.style = toga.style.Pack(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+            )
+        self.background_color_select()
+        self.__theme_customise_box.add(self.__background_color_select_box)
+        self.middleground_color_select()
+        self.__theme_customise_box.add(self.__middleground_color_select_box)
+
+        self.box.add(self.__theme_customise_box)
+
+    def background_color_select(self):
+        self.__background_color_select_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__background_color_select_label = toga.Label(
+            text='Background Color',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__background_color_select = toga.Selection(
+            id='background',
+            on_change=self.change_theme,
+            items=self.valid_colors,
+            style=toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__background_color_select_box.add(self.__background_color_select_label)
+        self.__background_color_select_box.add(self.__background_color_select)
+
+    def middleground_color_select(self):
+        self.__middleground_color_select_box = toga.Box(
+            style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__middleground_color_select_label = toga.Label(
+            text='Middleground Color',
+            style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        )
+        self.__middleground_color_select = toga.Selection(
+            id='middleground',
+            on_change=self.change_theme,
+            items=self.valid_colors,
+            style=toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        )
+        self.__background_color_select_box.add(self.__middleground_color_select_label)
+        self.__background_color_select_box.add(self.__middleground_color_select)
+
+    def change_theme(self, button: toga.Selection):
+        self.GUI_manager.theme[button.id] = button.value
+        self.GUI_manager.update_screens
 
 
 class create_account_screen(screen):

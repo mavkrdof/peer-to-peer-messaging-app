@@ -48,7 +48,7 @@ class GUI_manager:
 
     def __init__(self, app) -> None:
         """
-        __init__ initilizes the GUI manager
+        __init__ initialises the GUI manager
 
         Args:
             app (peertopeermessagingapp.app.PeertoPeerMessagingApp): the toga application
@@ -61,14 +61,12 @@ class GUI_manager:
             'middleground': toga.constants.SILVER,
             'foreground': toga.constants.LIGHTGREY,
         }
-        self.current_screen = None
         self.main_box = toga.Box(
             style=toga.style.Pack(
                 direction="column",
                 background_color=self.theme['background']
                 )
             )
-        self.current_screen = ''
         # init screens
         self.login_screen = login_screen(
             GUI_manager=self
@@ -91,6 +89,7 @@ class GUI_manager:
         self.create_chat_screen = create_chat_screen(
             GUI_manager=self
         )
+        self.current_screen = self.login_screen
         # init GUI
         self.login_screen.init_GUI()
         self.home_screen.init_GUI()
@@ -107,12 +106,16 @@ class GUI_manager:
         self.main_box.clear()
         self.nav_bar.display()
         self.change_screen(new_screen='login')
+    
+    def update_screens(self):
+        self.current_screen.update()
+        self.nav_bar.update()
 
     def back(self, *args, **kwargs) -> None:
         """
-        back retruns to the previous screen
+        back returns to the previous screen
         """
-        match self.current_screen:
+        match self.current_screen.name:
             case 'login':
                 self.app.exit()
             case 'home':
@@ -131,7 +134,7 @@ class GUI_manager:
         change_screen changes the screen being displayed
 
         Args:
-            new_screen (str | toga.button): the nameo of the new screen or the button that was pressed
+            new_screen (str | toga.button): the name of the new screen or the button that was pressed
             if button, id must be in screen_dict
         """
         screen_dict = {
@@ -143,12 +146,13 @@ class GUI_manager:
             'cancel_create_chat': self.home_screen,
             'add_chat': self.create_chat_screen,
         }
+        new_screen_name = ''
         if isinstance(new_screen, str):
             new_screen_name = new_screen
         else:
             if isinstance(new_screen, toga.Button):
                 if new_screen.id in screen_dict:
-                    new_screen = new_screen.id
+                    new_screen_name = new_screen.id
                 else:
                     logging.error(
                         f'Error: {new_screen} is not a valid screen'
@@ -166,5 +170,5 @@ class GUI_manager:
                 self.main_box.remove(content)
         # add content to screen
         screen_dict[new_screen_name].display()
-        self.current_screen = new_screen_name.replace('_', ' ').capitalize()
+        self.current_screen = screen_dict[new_screen_name]
         self.nav_bar.update()
