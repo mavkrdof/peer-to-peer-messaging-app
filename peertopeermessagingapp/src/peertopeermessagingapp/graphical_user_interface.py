@@ -106,7 +106,7 @@ class GUI_manager:
         self.main_box.clear()
         self.nav_bar.display()
         self.change_screen(new_screen='login')
-    
+
     def update_screens(self):
         self.current_screen.update()
         self.nav_bar.update()
@@ -155,11 +155,11 @@ class GUI_manager:
                     new_screen_name = new_screen.id
                 else:
                     logging.error(
-                        f'Error: {new_screen} is not a valid screen'
+                        msg=f'Error: {new_screen} is not a valid screen'
                     )
             else:
                 logging.error(
-                    f"Error: expected type 'str or toga.Button', got {type(new_screen)}"
+                    msg=f"Error: expected type 'str or toga.Button', got {type(new_screen)}"
                 )
 
         # remove content from screen

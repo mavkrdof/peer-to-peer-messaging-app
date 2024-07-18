@@ -67,7 +67,10 @@ class screen():
         returns:
             none
         """
+        self.clear_gui()
+        self.init_GUI()
         self.box.refresh()
+        print('hi')
         pass
 
     def display(self) -> None:
@@ -79,6 +82,12 @@ class screen():
             none
         """
         self.GUI_manager.main_box.add(self.box)
+
+    def clear_gui(self) -> None:
+        """
+        clear_gui clears the GUI elements
+        """
+        self.box.clear()
 
 
 class home_screen(screen):
@@ -257,7 +266,8 @@ class nav_bar(screen):
             'create_account': 'Back',
             'chat': 'Home',
             'create_chat': 'Back to create chat',
-            'login': 'Quit'
+            'login': 'Quit',
+            'settings': 'Home'
             # TODO: add more screens
         }
 
@@ -334,6 +344,7 @@ class nav_bar(screen):
         """
         update the nav bar to reflect the current screen
         """
+        super().update()
         self.title.text = self.GUI_manager.current_screen.name
         if self.GUI_manager.current_screen in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen.name]
@@ -669,12 +680,12 @@ class settings_screen(screen):
                 background_color=self.GUI_manager.theme['foreground']
             ),
         )
-        self.__background_color_select_box.add(self.__middleground_color_select_label)
-        self.__background_color_select_box.add(self.__middleground_color_select)
+        self.__middleground_color_select_box.add(self.__middleground_color_select_label)
+        self.__middleground_color_select_box.add(self.__middleground_color_select)
 
     def change_theme(self, button: toga.Selection):
         self.GUI_manager.theme[button.id] = button.value
-        self.GUI_manager.update_screens
+        self.GUI_manager.update_screens()
 
 
 class create_account_screen(screen):
