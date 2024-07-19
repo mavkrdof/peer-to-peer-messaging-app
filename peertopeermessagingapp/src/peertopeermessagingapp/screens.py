@@ -59,6 +59,18 @@ class screen():
         """
         pass
 
+    def set_style(self):
+        """
+        set_style sets the style for all GUI elements
+        """
+        pass
+
+    def add_to_box(self):
+        """
+        add_to_box adds GUI elements to the main box
+        """
+        pass
+
     def update(self) -> None:
         """
         updates dynamic elements on the screen
@@ -67,10 +79,8 @@ class screen():
         returns:
             none
         """
-        self.clear_gui()
-        self.init_GUI()
+        self.set_style()
         self.box.refresh()
-        print('hi')
         pass
 
     def display(self) -> None:
@@ -588,100 +598,111 @@ class settings_screen(screen):
         super().__init__(GUI_manager=GUI_manager, name='settings')
         self.valid_colors = [color for color in dir(toga.constants) if color.isalpha()]
 
+    def set_style(self):
+        self.__theme_customise_box.style = toga.style.Pack(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+            )
+        self.box.style = toga.style.Pack(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+            )
+        self.__background_color_select_box.style = toga.style.Pack(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__background_color_select_label.style = toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__background_color_select.style = toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+        self.__middleground_color_select_box.style=toga.style.Pack(
+                direction='row',
+                padding=10,
+                flex=1,
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__middleground_color_select_label.style=toga.style.Pack(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__middleground_color_select.style=toga.style.Pack(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),
+
+    def add_to_box(self):
+        # add to __middleground_color_select_box
+        self.__middleground_color_select_box.add(self.__middleground_color_select_label)
+        self.__middleground_color_select_box.add(self.__middleground_color_select)
+        # add to __background_color_select_box
+        self.__background_color_select_box.add(self.__background_color_select_label)
+        self.__background_color_select_box.add(self.__background_color_select)
+        # add to __theme_customise_box
+        self.__theme_customise_box.add(self.__middleground_color_select_box)
+        self.__theme_customise_box.add(self.__background_color_select_box)
+        # add to main box
+        self.box.add(self.__theme_customise_box)
+
     def init_GUI(self) -> None:
         """
         init_GUI initialises the GUI elements of the screen
         """
         super().init_GUI()
         # theme select
-        self.__theme_customise_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__theme_customise_box = toga.Box()
         self.box.style = toga.style.Pack(
             direction='row',
             background_color=self.GUI_manager.theme['background']
             )
         self.background_color_select()
-        self.__theme_customise_box.add(self.__background_color_select_box)
         self.middleground_color_select()
-        self.__theme_customise_box.add(self.__middleground_color_select_box)
 
-        self.box.add(self.__theme_customise_box)
+        self.set_style()
+        self.add_to_box()
 
     def background_color_select(self):
-        self.__background_color_select_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__background_color_select_box = toga.Box()
         self.__background_color_select_label = toga.Label(
             text='Background Color',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__background_color_select = toga.Selection(
             id='background',
             on_change=self.change_theme,
             items=self.valid_colors,
-            style=toga.style.Pack(
-                flex=0.75,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
-        self.__background_color_select_box.add(self.__background_color_select_label)
-        self.__background_color_select_box.add(self.__background_color_select)
 
     def middleground_color_select(self):
-        self.__middleground_color_select_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__middleground_color_select_box = toga.Box()
         self.__middleground_color_select_label = toga.Label(
             text='Middleground Color',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__middleground_color_select = toga.Selection(
             id='middleground',
             on_change=self.change_theme,
             items=self.valid_colors,
-            style=toga.style.Pack(
-                flex=0.75,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
-        self.__middleground_color_select_box.add(self.__middleground_color_select_label)
-        self.__middleground_color_select_box.add(self.__middleground_color_select)
 
     def change_theme(self, button: toga.Selection):
         self.GUI_manager.theme[button.id] = button.value
