@@ -61,12 +61,8 @@ class GUI_manager:
             'middleground': toga.constants.SILVER,
             'foreground': toga.constants.LIGHTGREY,
         }
-        self.main_box = toga.Box(
-            style=toga.style.Pack(
-                direction="column",
-                background_color=self.theme['background']
-                )
-            )
+        self.main_box = toga.Box()
+        self.main_box_update()
         # init screens
         self.login_screen = login_screen(
             GUI_manager=self
@@ -107,9 +103,16 @@ class GUI_manager:
         self.nav_bar.display()
         self.change_screen(new_screen='login')
 
+    def main_box_update(self) -> None:
+        self.main_box.style.update(
+            direction="column",
+            background_color=self.theme['background']
+        )
+
     def update_screens(self):
         self.current_screen.update()
         self.nav_bar.update()
+        self.main_box_update()
 
     def back(self, *args, **kwargs) -> None:
         """
@@ -126,6 +129,8 @@ class GUI_manager:
                 self.change_screen(new_screen='home')
             case 'create_chat':
                 self.change_screen(new_screen='home')
+            case 'settings':
+                self.change_screen(new_screen='login')
             case _:
                 self.app.exit()
 

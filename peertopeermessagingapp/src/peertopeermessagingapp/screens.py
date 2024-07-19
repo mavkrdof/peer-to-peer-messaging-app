@@ -44,10 +44,6 @@ class screen():
         self.name = name
         self.box = toga.Box(
             id=self.name,
-            style=toga.style.Pack(
-                direction='column',
-                background_color=self.GUI_manager.theme['background']
-                )
             )
 
     def init_GUI(self) -> None:
@@ -64,6 +60,10 @@ class screen():
         """
         set_style sets the style for all GUI elements
         """
+        self.box.style.update(
+            direction='column',
+            background_color=self.GUI_manager.theme['background']
+        )
         pass
 
     def add_to_box(self):
@@ -149,39 +149,54 @@ class home_screen(screen):
         self.chat_list_scroll = toga.ScrollContainer(
             vertical=True,
             horizontal=False,
-            style=toga.style.Pack(
-                flex=1,
-                direction='column',
-                background_color=self.GUI_manager.theme['background']
-            )
         )
-        # Add content to home screen box
+
+    def set_style(self) -> None:
+        self.chat_list_scroll.style.update(
+            flex=1,
+            direction='column',
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.title_box.style.update(
+            flex=1,
+            direction='row',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.add_chat_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        for segment in self.chat_list_scroll.children:
+            segment.style.update()
+            for message in segment.children:
+                message.style.update(
+                    flex=1,
+                    direction='row',
+                    padding_left=10,
+                    background_color=self.GUI_manager.theme['middleground'],
+                    color=self.GUI_manager.theme['font_color']
+                )
+        super().set_style()
+
+    def add_to_box(self) -> None:
+        # add to title box
+        self.title_box.add(self.add_chat_button)
+        self.box.add(self.title_box)
+        # add to main box
         self.box.add(self.chat_list_scroll)
 
-    def create_title_box(self):
+    def create_title_box(self) -> None:
         """
         create_title_box creates the title box
         """
-        self.title_box = toga.Box(
-            style=toga.style.Pack(
-                flex=1,
-                direction='row',
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.title_box = toga.Box()
         self.add_chat_button = toga.Button(
             id="add_chat",
             text='Add Chat',
             on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
-        self.title_box.add(self.add_chat_button)
-        self.box.add(self.title_box)
 
     def populate_chat_list(self, chat_list: list) -> None:
         """
@@ -286,18 +301,41 @@ class nav_bar(screen):
         """
         init_GUI initialises the GUI elements of the screen
         """
-        self.box.style = toga.style.Pack(
-            direction='row',
-            background_color=self.GUI_manager.theme['middleground']
-        )
         self.create_back_button()
         self.create_title()
         self.settings()
-        self.add_content()
+        self.add_to_box()
+        self.set_style()
 
-    def add_content(self) -> None:
+    def set_style(self):
+        self.settings_button.style.update(
+            padding=10,
+            flex=0.2,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.title.style.update(
+            padding=10,
+            flex=0.6,
+            text_align='center',
+            font_size=15,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.back_button.style.update(
+            padding=10,
+            flex=0.2,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+
+    def add_to_box(self) -> None:
         """
-        add_content adds content to the screens main box
+        add_to_box adds content to the screens main box
         """
         self.box.add(self.back_button)
         self.box.add(self.title)
@@ -311,12 +349,6 @@ class nav_bar(screen):
             id='settings_screen',
             text='Settings',
             on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                padding=10,
-                flex=0.2,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
 
     def create_title(self) -> None:
@@ -325,14 +357,6 @@ class nav_bar(screen):
         """
         self.title = toga.Label(
             text=self.GUI_manager.current_screen,
-            style=toga.style.Pack(
-                padding=10,
-                flex=0.6,
-                text_align='center',
-                font_size=15,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
 
     def create_back_button(self) -> None:
@@ -343,25 +367,19 @@ class nav_bar(screen):
         self.back_button = toga.Button(
             text=back_text,
             on_press=self.GUI_manager.back,
-            style=toga.style.Pack(
-                padding=10,
-                flex=0.2,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
 
     def update(self) -> None:
         """
         update the nav bar to reflect the current screen
         """
-        super().update()
         self.title.text = self.GUI_manager.current_screen.name
         if self.GUI_manager.current_screen in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen.name]
         else:
             back_text = ''
         self.back_button.text = back_text
+        super().update()
 
 
 class login_screen(screen):
@@ -457,6 +475,7 @@ class login_screen(screen):
                 background_color=self.GUI_manager.theme['foreground']
             ),
         )
+        super().set_style()
 
     def password_entry_field(self) -> None:
         """
@@ -630,7 +649,7 @@ class settings_screen(screen):
                 flex=0.75,
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['foreground']
-            ),
+            ),  # type: ignore
         self.__middleground_color_select_box.style.update(
                 direction='row',
                 padding=10,
@@ -651,7 +670,8 @@ class settings_screen(screen):
                 flex=0.75,
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['foreground']
-            ),
+            ),  # type: ignore
+    
 
     def add_to_box(self):
         # add to __middleground_color_select_box
