@@ -790,59 +790,58 @@ class create_account_screen(screen):
         self.box.add(self.content_box)
         self.box.add(self.right_pad_box)
 
+    def set_style(self):
+        self.__button_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__cancel_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__create_account_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__password_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__password_label.style.update(
+            flex=0.75,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+
     def buttons(self) -> None:
         """
         buttons adds buttons to the button box
         """
-        self.__button_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__button_box = toga.Box()
         self.__cancel_button = toga.Button(
             id='login',
             text='LOGIN',
             on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
         self.__create_account_button = toga.Button(
             text='CREATE ACCOUNT',
             on_press=self.create_account,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
 
     def password_entry_field(self) -> None:
         """
         password_entry_field creates the password entry field
         """
-        self.__password_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
-        self.__password_field = toga.PasswordInput(
-            style=toga.style.Pack(
-                flex=0.75,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
-        )
+        self.__password_box = toga.Box()
+        self.__password_field = toga.PasswordInput()
         self.__password_label = toga.Label(
             text='Password',
             style=toga.style.Pack(
