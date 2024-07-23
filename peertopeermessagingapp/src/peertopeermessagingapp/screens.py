@@ -92,6 +92,7 @@ class screen():
             none
         """
         self.GUI_manager.main_box.add(self.box)
+        self.update()
 
     def clear_gui(self) -> None:
         """
@@ -407,7 +408,7 @@ class login_screen(screen):
 
     def __init__(self, GUI_manager) -> None:
         """
-        __init__ initilises the login screen
+        __init__ initialises the login screen
 
         Args:
             GUI_manager (peertopeermessagingapp.screens.GUI_manager): the gui manager
@@ -416,7 +417,7 @@ class login_screen(screen):
 
     def init_GUI(self) -> None:
         """
-        init_GUI initilizes the GUI elements of the screen
+        init_GUI initializes the GUI elements of the screen
         """
         self.box.style = toga.style.Pack(
                 direction='row'
@@ -425,6 +426,7 @@ class login_screen(screen):
         self.username_entry_field()
         self.password_entry_field()
         self.buttons()
+        self.set_style()
         self.add_content_to_box()
 
     def add_content_to_box(self) -> None:
@@ -442,38 +444,87 @@ class login_screen(screen):
         self.box.add(self.content_box)
         self.box.add(self.right_pad_box)
 
+    def set_style(self):
+        self.__button_box.style.update(      
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__login_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__create_account_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__password_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__password_field.style.update(
+            flex=0.75,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__password_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__username_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            alignment='center',
+            background_color=self.GUI_manager.theme['middleground'],
+        )
+        self.__username_box.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.left_pad_box.style.update(
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.right_pad_box.style.update(
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.content_box.style.update(
+            direction='column',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+
     def buttons(self) -> None:
         """
         buttons creates the login and create account buttons
         """
-        self.__button_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__button_box = toga.Box()
         self.__login_button = toga.Button(
             text='LOGIN',
             on_press=self.validate_login,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
         self.__create_account_button = toga.Button(
             id='create_account',
             text='CREATE ACCOUNT',
             on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
         super().set_style()
 
@@ -481,33 +532,10 @@ class login_screen(screen):
         """
         password_entry_field creates the password entry field
         """
-        self.__password_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
-        self.__password_field = toga.PasswordInput(
-            style=toga.style.Pack(
-                flex=0.75,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
-        )
+        self.__password_box = toga.Box()
+        self.__password_field = toga.PasswordInput()
         self.__password_label = toga.Label(
             text='Password',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__password_box.add(self.__password_label)
         self.__password_box.add(self.__password_field)
@@ -516,15 +544,7 @@ class login_screen(screen):
         """
         username_entry_field creates the username entry field
         """
-        self.__username_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                alignment='center',
-                background_color=self.GUI_manager.theme['middleground'],
-            )
-        )
+        self.__username_box = toga.Box()
         self.__username_field = toga.TextInput(
             style=toga.style.Pack(
                 flex=0.75,
@@ -534,16 +554,6 @@ class login_screen(screen):
         )
         self.__username_label = toga.Label(
             text='Username',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__username_box.add(self.__username_label)
         self.__username_box.add(self.__username_field)
@@ -553,21 +563,17 @@ class login_screen(screen):
         pad_width_percent = (1-content_width_percent)/2
         self.left_pad_box = toga.Box(
             style=toga.style.Pack(
-                flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
+                flex=pad_width_percent
             )
         )
         self.right_pad_box = toga.Box(
             style=toga.style.Pack(
                 flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
             )
         )
         self.content_box = toga.Box(
             style=toga.style.Pack(
                 flex=content_width_percent,
-                direction='column',
-                background_color=self.GUI_manager.theme['middleground']
             )
         )
 
