@@ -419,9 +419,6 @@ class login_screen(screen):
         """
         init_GUI initializes the GUI elements of the screen
         """
-        self.box.style = toga.style.Pack(
-                direction='row'
-                )
         self.content_padding()
         self.username_entry_field()
         self.password_entry_field()
@@ -445,7 +442,11 @@ class login_screen(screen):
         self.box.add(self.right_pad_box)
 
     def set_style(self):
-        self.__button_box.style.update(      
+        self.box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.__button_box.style.update(
             direction='row',
             padding=10,
             flex=1,
@@ -491,7 +492,7 @@ class login_screen(screen):
             alignment='center',
             background_color=self.GUI_manager.theme['middleground'],
         )
-        self.__username_box.style.update(
+        self.__username_label.style.update(
             flex=0.25,
             padding_right=10,
             text_align='center',
@@ -502,12 +503,15 @@ class login_screen(screen):
             background_color=self.GUI_manager.theme['middleground']
         )
         self.left_pad_box.style.update(
+            flex=self.pad_width_percent,
             background_color=self.GUI_manager.theme['background']
         )
         self.right_pad_box.style.update(
+            flex=self.pad_width_percent,
             background_color=self.GUI_manager.theme['background']
         )
         self.content_box.style.update(
+            flex=self.content_width_percent,
             direction='column',
             background_color=self.GUI_manager.theme['middleground']
         )
@@ -559,23 +563,11 @@ class login_screen(screen):
         self.__username_box.add(self.__username_field)
 
     def content_padding(self) -> None:
-        content_width_percent = 0.33
-        pad_width_percent = (1-content_width_percent)/2
-        self.left_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent
-            )
-        )
-        self.right_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent,
-            )
-        )
-        self.content_box = toga.Box(
-            style=toga.style.Pack(
-                flex=content_width_percent,
-            )
-        )
+        self.content_width_percent = 0.33
+        self.pad_width_percent = (1-self.content_width_percent)/2
+        self.left_pad_box = toga.Box()
+        self.right_pad_box = toga.Box()
+        self.content_box = toga.Box()
 
     def validate_login(self, *args, **kwargs) -> None:
         """
@@ -677,8 +669,6 @@ class settings_screen(screen):
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['foreground']
             ),  # type: ignore
-    
-
     def add_to_box(self):
         # add to __middleground_color_select_box
         self.__middleground_color_select_box.add(self.__middleground_color_select_label)
@@ -781,16 +771,23 @@ class create_account_screen(screen):
         """
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_account_button)
+        # password entry field
+        self.__password_box.add(self.__password_label)
+        self.__password_box.add(self.__password_field)
         # add content to content_box
-        self.content_box.add(self.__username_box)
-        self.content_box.add(self.__password_box)
-        self.content_box.add(self.__button_box)
+        self.__content_box.add(self.__username_box)
+        self.__content_box.add(self.__password_box)
+        self.__content_box.add(self.__button_box)
         # add content and pad boxes
-        self.box.add(self.left_pad_box)
-        self.box.add(self.content_box)
-        self.box.add(self.right_pad_box)
+        self.box.add(self.__left_pad_box)
+        self.box.add(self.__content_box)
+        self.box.add(self.__right_pad_box)
 
     def set_style(self):
+        self.box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+        )
         self.__button_box.style.update(
             direction='row',
             padding=10,
@@ -820,6 +817,50 @@ class create_account_screen(screen):
             color=self.GUI_manager.theme['font_color'],
             background_color=self.GUI_manager.theme['foreground']
         )
+        self.__password_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__username_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            alignment='center',
+            background_color=self.GUI_manager.theme['middleground'],
+        )
+        self.__username_field.style.update(
+            flex=0.75,
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__username_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__left_pad_box.style.update(
+            flex=self.pad_width_percent,
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.__right_pad_box.style.update(
+            flex=self.pad_width_percent,
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.__content_box.style.update(
+            flex=self.content_width_percent,
+            direction='column',
+            background_color=self.GUI_manager.theme['middleground']
+        )
 
     def buttons(self) -> None:
         """
@@ -844,53 +885,19 @@ class create_account_screen(screen):
         self.__password_field = toga.PasswordInput()
         self.__password_label = toga.Label(
             text='Password',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
-        self.__password_box.add(self.__password_label)
-        self.__password_box.add(self.__password_field)
 
     def username_entry_field(self) -> None:
         """
         Creates the username entry field with a box containing a text input field and a label.
         Sets the style of the box, text input, and label based on the GUI theme.
         """
-        self.__username_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                alignment='center',
-                background_color=self.GUI_manager.theme['middleground'],
-            )
-        )
+        self.__username_box = toga.Box()
         self.__username_field = toga.TextInput(
-            style=toga.style.Pack(
-                flex=0.75,
-                background_color=self.GUI_manager.theme['foreground']
-            ),
             on_confirm=self.create_account
         )
         self.__username_label = toga.Label(
             text='Username',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__username_box.add(self.__username_label)
         self.__username_box.add(self.__username_field)
@@ -899,27 +906,11 @@ class create_account_screen(screen):
         """
         content_padding generates the content padding for the box
         """
-        content_width_percent = 0.33
-        pad_width_percent = (1-content_width_percent)/2
-        self.left_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
-            )
-        )
-        self.right_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
-            )
-        )
-        self.content_box = toga.Box(
-            style=toga.style.Pack(
-                flex=content_width_percent,
-                direction='column',
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.content_width_percent = 0.33
+        self.pad_width_percent = (1-self.content_width_percent)/2
+        self.__left_pad_box = toga.Box()
+        self.__right_pad_box = toga.Box()
+        self.__content_box = toga.Box()
 
     def create_account(self, *args, **kwargs) -> None:
         """
@@ -928,7 +919,7 @@ class create_account_screen(screen):
         pass
 
 
-class chat_screen(screen):
+class chat_screen(screen):  # TODO add message display
     """
     the chat screen
     vars:
@@ -951,7 +942,7 @@ class chat_screen(screen):
 
     def __init__(self, GUI_manager) -> None:
         """
-        __init__ initilises the chat screen
+        __init__ initialises the chat screen
 
         Args:
             GUI_manager (peertopeermessagingapp.screens.GUI_manager): the GUI manager
@@ -960,7 +951,7 @@ class chat_screen(screen):
 
     def init_GUI(self) -> None:
         """
-        init_GUI initilizes the GUI elements of the screen
+        init_GUI initialises the GUI elements of the screen
         """
         super().init_GUI()
         self.create_message_bar()
@@ -968,44 +959,48 @@ class chat_screen(screen):
         self.add_to_box()
 
     def add_to_box(self) -> None:
+        # message bar
+        self.__message_bar_box.add(self.__message_entry)
+        self.__message_bar_box.add(self.__send_button)
+        # box
         self.box.add(self.__message_bar_box)
         self.box.add(self.__message_scroll_box)
+
+    def set_style(self):
+        self.__message_bar_box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__message_entry.style.update(
+            flex=1,
+            background_color=self.GUI_manager.theme['foreground'],
+            color=self.GUI_manager.theme['font_color']
+        )
+        self.__send_button.style.update(
+            background_color=self.GUI_manager.theme['foreground'],
+            color=self.GUI_manager.theme['font_color']
+        )
+        self.__message_scroll_box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+        )
 
     def create_message_bar(self) -> None:
         self.__message_bar_box = toga.Box(
             id='message_bar_box',
-            style=toga.style.Pack(
-                direction='row',
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
         self.__message_entry = toga.TextInput(
             id='message_entry',
-            style=toga.style.Pack(
-                flex=1,
-                background_color=self.GUI_manager.theme['foreground'],
-                color=self.GUI_manager.theme['font_color']
-                )
         )
         self.__send_button = toga.Button(
             id='send_button',
             text='Send',
             on_press=self.send_message,
-            style=toga.style.Pack(
-                background_color=self.GUI_manager.theme['foreground'],
-                color=self.GUI_manager.theme['font_color']
-                )
         )
-        self.__message_bar_box.add(self.__message_entry)
-        self.__message_bar_box.add(self.__send_button)
 
     def create_message_scroll(self) -> None:
         self.__message_scroll_box = toga.Box(
             id='message_scroll_box',
-            style=toga.style.Pack(
-                direction='row',
-                background_color=self.GUI_manager.theme['background']
-            )
         )
 
     def send_message(self, *args, **kwargs) -> None:
@@ -1049,9 +1044,6 @@ class create_chat_screen(screen):
         """
         init_GUI initilizes the GUI elements of the screen
         """
-        self.box.style = toga.style.Pack(
-                direction='row'
-                )
         self.content_padding()
         self.name_entry_field()
         self.icon_entry_field()
@@ -1062,6 +1054,13 @@ class create_chat_screen(screen):
         """
         add_content_to_box adds the content of the screen to the box and sub boxes
         """
+        # name
+        self.__name_box.add(self.__name_label)
+        self.__name_box.add(self.__name_field)
+        # icon entry
+        self.__icon_box.add(self.__icon_label)
+        self.__icon_box.add(self.__icon_field)
+        # buttons
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_chat_button)
         # add content to content_box
@@ -1073,136 +1072,131 @@ class create_chat_screen(screen):
         self.box.add(self.content_box)
         self.box.add(self.right_pad_box)
 
+    def set_style(self) -> None:
+        self.box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.__button_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__cancel_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__create_chat_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__icon_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__icon_field.style.update(
+            flex=0.75,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__icon_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__name_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            alignment='center',
+            background_color=self.GUI_manager.theme['middleground'],
+        )
+        self.__name_field.style.update(
+            flex=0.75,
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__name_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.left_pad_box.style.update(
+            flex=self.pad_width_percent,
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.right_pad_box.style.update(
+            flex=self.pad_width_percent,
+            background_color=self.GUI_manager.theme['background']
+        )
+        self.content_box.style.update(
+            flex=self.content_width_percent,
+            direction='column',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+
     def buttons(self) -> None:
         """
         buttons creates the buttons for the create chat screen
         """
-        self.__button_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.__button_box = toga.Box()
         self.__cancel_button = toga.Button(
             id='cancel_create_chat',
             text='HOME',
             on_press=self.GUI_manager.change_screen,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
         self.__create_chat_button = toga.Button(
             text='CREATE CHAT',
             on_press=self.create_chat,
-            style=toga.style.Pack(
-                flex=0.5,
-                padding_right=10,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
         )
 
     def icon_entry_field(self) -> None:
         """
-        icon_entry_field creates the icon entry field and its contianer
+        icon_entry_field creates the icon entry field and its container
         """
-        self.__icon_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
-        self.__icon_field = toga.PasswordInput(
-            style=toga.style.Pack(
-                flex=0.75,
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['foreground']
-            ),
-        )
+        self.__icon_box = toga.Box()
+        self.__icon_field = toga.TextInput()
         self.__icon_label = toga.Label(
             text='Icon',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
-        self.__icon_box.add(self.__icon_label)
-        self.__icon_box.add(self.__icon_field)
 
     def name_entry_field(self) -> None:
         """
         Generates a name entry field in the GUI with a label and input box for the user to enter the chats name.
         """
-        self.__name_box = toga.Box(
-            style=toga.style.Pack(
-                direction='row',
-                padding=10,
-                flex=1,
-                alignment='center',
-                background_color=self.GUI_manager.theme['middleground'],
-            )
-        )
+        self.__name_box = toga.Box()
         self.__name_field = toga.TextInput(
-            style=toga.style.Pack(
-                flex=0.75,
-                background_color=self.GUI_manager.theme['foreground']
-            ),
             on_confirm=self.create_chat
         )
         self.__name_label = toga.Label(
             text='Name',
-            style=toga.style.Pack(
-                flex=0.25,
-                padding_right=10,
-                text_align='center',
-                font_size=20,
-                font_weight='bold',
-                font_family='monospace',
-                color=self.GUI_manager.theme['font_color'],
-                background_color=self.GUI_manager.theme['middleground']
-            )
         )
-        self.__name_box.add(self.__name_label)
-        self.__name_box.add(self.__name_field)
 
     def content_padding(self) -> None:
         """
         Generate a padding around the content box.
         """
-        content_width_percent = 0.33
-        pad_width_percent = (1-content_width_percent)/2
-        self.left_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
-            )
-        )
-        self.right_pad_box = toga.Box(
-            style=toga.style.Pack(
-                flex=pad_width_percent,
-                background_color=self.GUI_manager.theme['background']
-            )
-        )
-        self.content_box = toga.Box(
-            style=toga.style.Pack(
-                flex=content_width_percent,
-                direction='column',
-                background_color=self.GUI_manager.theme['middleground']
-            )
-        )
+        self.content_width_percent = 0.33
+        self.pad_width_percent = (1-self.content_width_percent)/2
+        self.left_pad_box = toga.Box()
+        self.right_pad_box = toga.Box()
+        self.content_box = toga.Box()
 
     def create_chat(self, *args, **kwargs) -> None:
         """
