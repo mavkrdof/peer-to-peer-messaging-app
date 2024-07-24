@@ -373,7 +373,7 @@ class nav_bar(screen):
         """
         update the nav bar to reflect the current screen
         """
-        self.title.text = self.GUI_manager.current_screen.name
+        self.title.text = self.GUI_manager.current_screen.name.replace('_', ' ').capitalize()
         if self.GUI_manager.current_screen.name in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen.name]
         else:
@@ -419,9 +419,11 @@ class login_screen(screen):
         init_GUI initializes the GUI elements of the screen
         """
         self.content_padding()
+        self.login_error_field()
         self.username_entry_field()
         self.password_entry_field()
         self.buttons()
+        # style and add to box
         self.set_style()
         self.add_content_to_box()
 
@@ -434,6 +436,7 @@ class login_screen(screen):
         # add content to content_box
         self.content_box.add(self.__username_box)
         self.content_box.add(self.__password_box)
+        self.content_box.add(self.__login_error_label)
         self.content_box.add(self.__button_box)
         # add content and pad boxes
         self.box.add(self.left_pad_box)
@@ -514,6 +517,16 @@ class login_screen(screen):
             direction='column',
             background_color=self.GUI_manager.theme['middleground']
         )
+        self.__login_error_label.style.update(
+            flex=1,
+            padding_right=10,
+            text_align='center',
+            font_size=10,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
 
     def buttons(self) -> None:
         """
@@ -561,6 +574,12 @@ class login_screen(screen):
         self.__username_box.add(self.__username_label)
         self.__username_box.add(self.__username_field)
 
+    def login_error_field(self):
+        self.__login_error_label = toga.Label(
+            id='login_error_label',
+            text=''
+        )
+
     def content_padding(self) -> None:
         self.content_width_percent = 0.33
         self.pad_width_percent = (1-self.content_width_percent)/2
@@ -575,8 +594,19 @@ class login_screen(screen):
         username = self.__username_field.value
         password = self.__password_field.value
         valid = self.GUI_manager.app.backend.validate_login(username, password)
-        if valid:
-            self.GUI_manager.change_screen('home')
+        match valid:
+            case 1:
+                self.__login_error_label.text = 'Successful login'
+                self.GUI_manager.change_screen('home')
+            case 2:
+                self.__login_error_label.text = 'Invalid Password Formatting \nmust be integer-integer'
+            case 3:
+                self.__login_error_label.text = 'No stored account matches \nusername and password use create account instead'
+            case _:
+                self.__login_error_label.text = 'Unexpected value Returned'
+                logging.error(
+                    f'Expected valid with values \n1, 2 or 3. instead got {valid}'
+                    )
 
     def display(self) -> None:
         """
@@ -665,12 +695,49 @@ class settings_screen(screen):
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['middleground']
             )
-        self.__middleground_color_select.style.update(
+        self.__foreground_color_select.style.update(
                 flex=0.75,
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['foreground']
             ),  # type: ignore
+        self.__middleground_color_select_label.style.update(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__foreground_color_select.style.update(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),  # type: ignore
+        self.__font_color_select_label.style.update(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.__font_color_select.style.update(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),  # type: ignore
+
     def add_to_box(self):
+        # add to __foreground_color_select_box
+        self.__foreground_color_select_box.add(self.__foreground_color_select_label)
+        self.__foreground_color_select_box.add(self.__foreground_color_select)
+        # add to __font_color_select_box
+        self.__font_color_select_box.add(self.__font_color_select_label)
+        self.__font_color_select_box.add(self.__font_color_select)
         # add to __middleground_color_select_box
         self.__middleground_color_select_box.add(self.__middleground_color_select_label)
         self.__middleground_color_select_box.add(self.__middleground_color_select)
@@ -680,6 +747,8 @@ class settings_screen(screen):
         # add to __theme_customise_box
         self.__theme_customise_box.add(self.__middleground_color_select_box)
         self.__theme_customise_box.add(self.__background_color_select_box)
+        self.__theme_customise_box.add(self.__foreground_color_select_box)
+        self.__theme_customise_box.add(self.__font_color_select_box)
         # add to main box
         self.box.add(self.__theme_customise_box)
 
@@ -691,6 +760,8 @@ class settings_screen(screen):
         self.__theme_customise_box = toga.Box()
         self.background_color_select()
         self.middleground_color_select()
+        self.foreground_color_select()
+        self.font_color_color_select()
 
         self.add_to_box()
         self.set_style()
@@ -706,7 +777,7 @@ class settings_screen(screen):
             items=self.valid_colors,
         )
 
-    def middleground_color_select(self):
+    def middleground_color_select(self) -> None:
         self.__middleground_color_select_box = toga.Box()
         self.__middleground_color_select_label = toga.Label(
             text='Middleground Color',
@@ -717,10 +788,31 @@ class settings_screen(screen):
             items=self.valid_colors,
         )
 
-    def change_theme(self, button: toga.Selection):
+    def foreground_color_select(self) -> None:
+        self.__foreground_color_select_box = toga.Box()
+        self.__foreground_color_select_label = toga.Label(
+            text='Foreground Color',
+        )
+        self.__foreground_color_select = toga.Selection(
+            id='foreground',
+            on_change=self.change_theme,
+            items=self.valid_colors,
+        )
+
+    def font_color_color_select(self) -> None:
+        self.__font_color_select_box = toga.Box()
+        self.__font_color_select_label = toga.Label(
+            text='Font Color',
+        )
+        self.__font_color_select = toga.Selection(
+            id='font_color',
+            on_change=self.change_theme,
+            items=self.valid_colors,
+        )
+
+    def change_theme(self, button: toga.Selection) -> None:
         self.GUI_manager.theme[button.id] = button.value.lower()  # type: ignore
         self.GUI_manager.update_screens()
-        print(self.GUI_manager.theme)
 
 
 class create_account_screen(screen):
@@ -760,6 +852,7 @@ class create_account_screen(screen):
         self.box.style = toga.style.Pack(
                 direction='row'
                 )
+        self.already_have_account_field()
         self.content_padding()
         self.username_entry_field()
         self.password_entry_field()
@@ -772,11 +865,15 @@ class create_account_screen(screen):
         """
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_account_button)
+        # already have account
+        self.__already_have_account_box.add(self.__already_have_account_label)
+        self.__already_have_account_box.add(self.__already_have_account_checkbox)
         # password entry field
         self.__password_box.add(self.__password_label)
         self.__password_box.add(self.__password_field)
         # add content to content_box
         self.__content_box.add(self.__username_box)
+        self.__content_box.add(self.__already_have_account_box)
         self.__content_box.add(self.__password_box)
         self.__content_box.add(self.__button_box)
         # add content and pad boxes
@@ -862,6 +959,24 @@ class create_account_screen(screen):
             direction='column',
             background_color=self.GUI_manager.theme['middleground']
         )
+        self.__already_have_account_box.style.update(
+            direction='row',
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__already_have_account_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__already_have_account_checkbox.style.update(
+            flex=0.75,
+            background_color=self.GUI_manager.theme['foreground']
+        )
 
     def buttons(self) -> None:
         """
@@ -878,6 +993,22 @@ class create_account_screen(screen):
             on_press=self.create_account,
         )
 
+    def already_have_account_field(self) -> None:
+        self.__already_have_account_box = toga.Box()
+        self.__already_have_account_checkbox = toga.Selection(
+            items=[False, True],
+            on_change=self.already_have_account
+        )
+        self.__already_have_account_label = toga.Label(
+            text='Already have account'
+        )
+
+    def already_have_account(self, checkBox: toga.Selection) -> None:
+        if checkBox.value:
+            self.__password_label.text = 'Current Password'
+        else:
+            self.__password_label.text = 'Old Password'
+
     def password_entry_field(self) -> None:
         """
         password_entry_field creates the password entry field
@@ -885,7 +1016,7 @@ class create_account_screen(screen):
         self.__password_box = toga.Box()
         self.__password_field = toga.PasswordInput()
         self.__password_label = toga.Label(
-            text='Password',
+            text='Old Password',
         )
 
     def username_entry_field(self) -> None:
@@ -915,7 +1046,7 @@ class create_account_screen(screen):
 
     def create_account(self, *args, **kwargs) -> None:
         """
-        create_account activates all relevent backend functions to create an account
+        create_account activates all relevant backend functions to create an account
         """
         pass
 

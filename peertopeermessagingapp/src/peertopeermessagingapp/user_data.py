@@ -30,7 +30,7 @@ class user_data:
         """
         read_from_file reads the user data from the file
         """
-        with open(file=self.__app.user_data_filepath, mode='r') as user_data_file:
+        with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:
             user_data_dict = json.load(fp=user_data_file)
         if username in user_data_dict:
             if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKD=privateKD, privateKN=privateKN):
