@@ -12,34 +12,37 @@ class user_data:
         public_key: [int, int]
             the public key [N, E]
     """
-    def __init__(self, app, username) -> None:  # TODO: make private variable accessible eg add funcs to access them
+    def __init__(self, app) -> None:  # TODO: make private variable accessible eg add funcs to access them
         """
-        __init__ initilizes the user data
-
+        __init__ initialises the user data
         Args:
             app (peertopeermessagingapp.app.PeertoPeerMessagingApp): the toga application
             username (str): the username of the user
         """
-        self.__username = username
+        self.__username = None
         self.__chats = []
         self.__settings = {}
         self.__app = app
         self.__user_data = {}
         self.private_key = None
 
-    def read_from_file(self) -> None:
+    def read_from_file(self, username, privateKD, privateKN) -> bool:
         """
         read_from_file reads the user data from the file
         """
         with open(file=self.__app.user_data_filepath, mode='r') as user_data_file:
             user_data_dict = json.load(fp=user_data_file)
-        if self.__username in user_data_dict:
-            if self.decrypt_user_data(data=user_data_dict[self.__username]):
+        if username in user_data_dict:
+            if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKD=privateKD, privateKN=privateKN):
                 logging.info('User data successfully decrypted!')
+                self.__username = username
+                return True
             else:
                 self.no_account_data()
+                return False
         else:
             self.no_account_data()
+            return False
 
     def no_account_data(self) -> None:
         """
@@ -49,7 +52,7 @@ class user_data:
         logging.warning('WARNING: no user data file detected')  # DEBUG
         logging.info('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
-    def decrypt_user_data(self, data) -> bool:
+    def decrypt_user_data(self, data, username, privateKN, privateKD) -> bool:
         """
         decrypt_user_data decrypts the user data
 
@@ -61,16 +64,18 @@ class user_data:
         """
         decrypt_checker = RSA.decrypt_padded(
             encrypted=data['decrypt_checker'],
-            private_key_n=self.__user_data['privateKN'],
-            private_key_d=self.__user_data['privateKD']
+            private_key_n=privateKN,
+            private_key_d=privateKD
             )
-        if decrypt_checker == data['username']:
+        if decrypt_checker == username:
             user_data_decrypted = RSA.decrypt_padded(
                 encrypted=data['user_data'],
-                private_key_d=self.__user_data['privateKD'],
-                private_key_n=self.__user_data['privateKN']
+                private_key_d=privateKD,
+                private_key_n=privateKN
                 )
             self.__user_data = json.loads(user_data_decrypted)
+            self.__username = username
+            self.private_key = [privateKD, privateKN]
             return True
         else:
             return False

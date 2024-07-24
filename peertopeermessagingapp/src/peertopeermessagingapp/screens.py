@@ -295,7 +295,6 @@ class nav_bar(screen):
             'create_chat': 'Back to create chat',
             'login': 'Quit',
             'settings': 'Back'
-            # TODO: add more screens
         }
 
     def init_GUI(self) -> None:
@@ -573,7 +572,9 @@ class login_screen(screen):
         """
         validate_login validates the login credentials
         """
-        valid = True  # TODO: connect to back end
+        username = self.__username_field.value
+        password = self.__password_field.value
+        valid = self.GUI_manager.app.backend.validate_login(username, password)
         if valid:
             self.GUI_manager.change_screen('home')
 
