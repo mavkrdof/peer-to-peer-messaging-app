@@ -294,7 +294,7 @@ class nav_bar(screen):
             'chat': 'Home',
             'create_chat': 'Back to create chat',
             'login': 'Quit',
-            'settings': 'Home'
+            'settings': 'Back'
             # TODO: add more screens
         }
 
@@ -375,7 +375,7 @@ class nav_bar(screen):
         update the nav bar to reflect the current screen
         """
         self.title.text = self.GUI_manager.current_screen.name
-        if self.GUI_manager.current_screen in self.back_button_text:
+        if self.GUI_manager.current_screen.name in self.back_button_text:
             back_text = self.back_button_text[self.GUI_manager.current_screen.name]
         else:
             back_text = ''
