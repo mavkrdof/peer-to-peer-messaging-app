@@ -649,7 +649,7 @@ class settings_screen(screen):
 
     def set_style(self):  # TODO FIX
         self.__theme_customise_box.style.update(
-            direction='row',
+            direction='column',
             padding=10,
             flex=1,
             background_color=self.GUI_manager.theme['middleground']
