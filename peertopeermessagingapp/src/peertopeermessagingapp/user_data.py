@@ -24,7 +24,36 @@ class user_data:
         self.__settings = {}
         self.__app = app
         self.__user_data = {}
-        self.private_key = None
+        self.__private_key = None
+        self.__public_key = None
+
+    def get_private_key(self) -> int:
+        if self.__private_key is None:
+            raise ValueError('Private key is undefined')
+        else:
+            return self.__private_key
+
+    def get_public_key(self) -> int:
+        if self.__public_key is None:
+            raise ValueError('Public key is undefined')
+        else:
+            return self.__public_key
+
+    def set_username(self, username) -> None:
+        if isinstance(username, str):
+            self.__username = username
+        else:
+            raise ValueError(f'Expected username type str instead got {type(username)}')
+
+    def set_encryption_keys(self, private_key, public_key) -> None:
+        if isinstance(private_key, int):
+            if isinstance(public_key, int):
+                self.__private_key = private_key
+                self.__public_key = public_key
+            else:
+                raise ValueError(f'Expected public_key type int instead got type {type(public_key)}')
+        else:
+            raise ValueError(f'Expected private_key type int instead got type {type(private_key)}')
 
     def read_from_file(self, username, privateKD, privateKN) -> bool:
         """

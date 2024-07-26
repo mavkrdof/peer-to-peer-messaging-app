@@ -1007,7 +1007,7 @@ class create_account_screen(screen):
         if checkBox.value:
             self.__password_label.text = 'Current Password'
         else:
-            self.__password_label.text = 'Old Password'
+            self.__password_label.text = 'Password Seed'
 
     def password_entry_field(self) -> None:
         """
@@ -1016,7 +1016,7 @@ class create_account_screen(screen):
         self.__password_box = toga.Box()
         self.__password_field = toga.PasswordInput()
         self.__password_label = toga.Label(
-            text='Old Password',
+            text='Password Seed',
         )
 
     def username_entry_field(self) -> None:
@@ -1048,7 +1048,21 @@ class create_account_screen(screen):
         """
         create_account activates all relevant backend functions to create an account
         """
-        pass
+        if self.__already_have_account_checkbox.value:
+            create_old_account_success = self.GUI_manager.app.backend.create_old_account()
+            if create_old_account_success:
+                logging.info('Account successfully Added')
+            else:
+                logging.error('Add account Failure')
+        else:
+            create_new_account_success = self.GUI_manager.app.backend.create_new_account(
+                password_seed=self.__password_field.value,
+                username=self.__username_field.value
+            )
+            if create_new_account_success:
+                logging.info('Account successfully created')
+            else:
+                logging.error('Create account Failure')
 
 
 class chat_screen(screen):  # TODO add message display

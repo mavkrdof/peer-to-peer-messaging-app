@@ -1,5 +1,6 @@
 import logging
 from peertopeermessagingapp.user_data import user_data
+import peertopeermessagingapp.RSA_cryptosystem as RSA
 
 
 class Backend_manager:
@@ -8,6 +9,7 @@ class Backend_manager:
         self.app = app
         self.user_data = user_data(app=self.app)
         self.user_data_filepath = ''
+        self.key_gen_complexity = ''
 
     def validate_login(self, username: str, password: str) -> int:
         extracted_private_keys = self.extract_private_keys(password=password)
@@ -31,3 +33,16 @@ class Backend_manager:
         # invalid pword
         logging.warning('Invalid password format')
         return None
+
+    def create_new_account(self, password_seed, username) -> bool:
+        try:
+            logging.info('Generating private and public keys using RSA encryption')
+            private_key, public_key = RSA.gen_keys(seed=password_seed, complexity=self.key_gen_complexity)
+            logging.info('Successfully generated private and public keys using RSA encryption ')
+            self.user_data.set_username(username=username)
+            self.user_data.set_encryption_keys(private_key=private_key, public_key=public_key)
+            logging.info('Successful created user account')
+        except ValueError as error:
+            logging.error(error)
+            return False
+        return True
