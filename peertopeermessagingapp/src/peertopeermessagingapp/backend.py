@@ -10,6 +10,9 @@ class Backend_manager:
         self.user_data = user_data(app=self.app)
         self.user_data_filepath = ''
         self.key_gen_complexity = ''
+        self.logger = logging.getLogger(name=__name__)
+        logging.basicConfig(filename='runtime_logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
+        self.logger.info('Log file created')
 
     def validate_login(self, username: str, password: str) -> int:
         extracted_private_keys = self.extract_private_keys(password=password)
@@ -31,18 +34,18 @@ class Backend_manager:
                 privateKN = int(privateKN)
                 return privateKD, privateKN
         # invalid pword
-        logging.warning('Invalid password format')
+        self.logger.warning('Invalid password format')
         return None
 
     def create_new_account(self, password_seed, username) -> bool:
         try:
-            logging.info('Generating private and public keys using RSA encryption')
+            self.logger.info('Generating private and public keys using RSA encryption')
             private_key, public_key = RSA.gen_keys(seed=password_seed, complexity=self.key_gen_complexity)
-            logging.info('Successfully generated private and public keys using RSA encryption ')
+            self.logger.info('Successfully generated private and public keys using RSA encryption ')
             self.user_data.set_username(username=username)
             self.user_data.set_encryption_keys(private_key=private_key, public_key=public_key)
-            logging.info('Successful created user account')
+            self.logger.info('Successful created user account')
         except ValueError as error:
-            logging.error(error)
+            self.logger.error(error)
             return False
         return True

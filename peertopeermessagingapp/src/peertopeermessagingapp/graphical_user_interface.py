@@ -54,6 +54,7 @@ class GUI_manager:
             app (peertopeermessagingapp.app.PeertoPeerMessagingApp): the toga application
         """
         self.app = app
+        self.logger = logging.getLogger(name=__name__)
         # static
         self.theme = {
             'font_color': toga.constants.BLACK,
@@ -159,11 +160,11 @@ class GUI_manager:
                 if new_screen.id in screen_dict:
                     new_screen_name = new_screen.id
                 else:
-                    logging.error(
+                    self.logger.error(
                         msg=f'Error: {new_screen} is not a valid screen'
                     )
             else:
-                logging.error(
+                self.logger.error(
                     msg=f"Error: expected type 'str or toga.Button', got {type(new_screen)}"
                 )
 

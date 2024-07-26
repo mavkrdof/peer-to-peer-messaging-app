@@ -45,6 +45,7 @@ class screen():
         self.box = toga.Box(
             id=self.name,
             )
+        self.logger = logging.getLogger(name=f'{__name__}:{self.name}')
 
     def init_GUI(self) -> None:
         """
@@ -99,7 +100,7 @@ class screen():
         clear_gui clears the GUI elements
         """
         self.box.clear()
-        logging.info(msg='GUI cleared')
+        self.logger.info(msg='GUI cleared')
 
 
 class home_screen(screen):
@@ -604,7 +605,7 @@ class login_screen(screen):
                 self.__login_error_label.text = 'No stored account matches \nusername and password use create account instead'
             case _:
                 self.__login_error_label.text = 'Unexpected value Returned'
-                logging.error(
+                self.logger.error(
                     f'Expected valid with values \n1, 2 or 3. instead got {valid}'
                     )
 
@@ -1051,18 +1052,18 @@ class create_account_screen(screen):
         if self.__already_have_account_checkbox.value:
             create_old_account_success = self.GUI_manager.app.backend.create_old_account()
             if create_old_account_success:
-                logging.info('Account successfully Added')
+                self.logger.info('Account successfully Added')
             else:
-                logging.error('Add account Failure')
+                self.logger.error('Add account Failure')
         else:
             create_new_account_success = self.GUI_manager.app.backend.create_new_account(
                 password_seed=self.__password_field.value,
                 username=self.__username_field.value
             )
             if create_new_account_success:
-                logging.info('Account successfully created')
+                self.logger.info('Account successfully created')
             else:
-                logging.error('Create account Failure')
+                self.logger.error('Create account Failure')
 
 
 class chat_screen(screen):  # TODO add message display

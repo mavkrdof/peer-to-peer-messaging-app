@@ -26,6 +26,7 @@ class user_data:
         self.__user_data = {}
         self.__private_key = None
         self.__public_key = None
+        self.logger = logging.getLogger(name=__name__)
 
     def get_private_key(self) -> int:
         if self.__private_key is None:

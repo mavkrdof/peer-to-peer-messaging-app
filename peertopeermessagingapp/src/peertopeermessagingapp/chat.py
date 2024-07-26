@@ -1,3 +1,4 @@
+import logging
 import time
 
 
@@ -24,10 +25,11 @@ class Chat:
         __init__ initialises the chat data object
         """
         self.members = None
-        self.name = None
+        self.name = None  # TODO initialise here
         self.identifier = None
         self.icon_max_len = 4
         self.users: list = []
+        self.logger = logging.getLogger(name='{__name__}:{name}')
 
     def create_chat(self, name: str, icon: str) -> None:
         """

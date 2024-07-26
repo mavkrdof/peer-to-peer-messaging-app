@@ -46,6 +46,7 @@ class message:
         self.sent_time_stamp = None
         self.received_time_stamp = None
         self.message_id = message_id
+        self.logger = logging.getLogger(name='{__name__}:{self.chat}:{self.id}')
 
     def read_in(self) -> None:
         """
@@ -60,7 +61,7 @@ class message:
         """
         data = self.encrypt()
         if data is None:
-            logging.warn(
+            self.logger.warn(
                 msg='Storing invalid Message data likely due to encryption error.'
                 )
         self.chat.message_list.append(data)
@@ -86,7 +87,7 @@ class message:
                 plain_text=message_data_json
                 )
         except ValueError as error:
-            logging.error(msg=error)
+            self.logger.error(msg=error)
             return None
         return encrypted
 
@@ -110,24 +111,24 @@ class message:
             self.plain_text = decrypted['plain_text']
             # TODO: decide if plain_test should default to NONE or '' - must update tests
         else:
-            logging.warning(
+            self.logger.warning(
                 msg=f'INVALID message | missing plain_text attribute | message id = {self.message_id}'
                 )
         if 'sent_time_stamp' in decrypted:
             self.sent_time_stamp = decrypted['sent_time_stamp']
         else:
-            logging.warning(
+            self.logger.warning(
                 msg=f'INVALID message | missing sent_time_stamp attribute | message id = {self.message_id}'
                 )
         if 'received_time_stamp' in decrypted:
             self.received_time_stamp = decrypted['received_time_stamp']
         else:
-            logging.warning(
+            self.logger.warning(
                 msg=f'INVALID message | missing received_time_stamp attribute | message id = {self.message_id}'
                 )
         if 'sender' in decrypted:
             self.sender = decrypted['sender']
         else:
-            logging.warning(
+            self.logger.warning(
                 msg=f'INVALID message | missing sender attribute | message id = {self.message_id}'
                 )
