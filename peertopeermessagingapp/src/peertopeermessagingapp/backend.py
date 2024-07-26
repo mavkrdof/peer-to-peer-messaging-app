@@ -3,6 +3,7 @@ from peertopeermessagingapp.user_data import user_data
 import peertopeermessagingapp.RSA_cryptosystem as RSA
 
 
+# TODO add tests for funcs
 class Backend_manager:
     def __init__(self, app) -> None:
         self.__password_separator = '-'
@@ -11,7 +12,6 @@ class Backend_manager:
         self.user_data_filepath = ''
         self.key_gen_complexity = ''
         self.logger = logging.getLogger(name=__name__)
-        logging.basicConfig(filename='runtime_logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
         self.logger.info('Log file created')
 
     def validate_login(self, username: str, password: str) -> int:

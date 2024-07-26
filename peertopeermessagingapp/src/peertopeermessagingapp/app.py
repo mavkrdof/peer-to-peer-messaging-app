@@ -3,6 +3,7 @@ A messaging app utilizing peer to peer technology,
 aimed at usage in high schools.
 """
 
+import logging
 import toga
 import toga.style
 import toga.style.pack
@@ -19,6 +20,7 @@ class PeertoPeerMessagingApp(toga.App):
         Returns: None
         """
         # initialise Backend
+        logging.basicConfig(filename='runtime_logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
         self.backend = Backend_manager(app=self)
         # initialise GUI
         GUI = GUI_manager(app=self)
