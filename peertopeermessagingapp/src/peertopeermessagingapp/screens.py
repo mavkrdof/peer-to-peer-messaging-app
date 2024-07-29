@@ -854,6 +854,7 @@ class create_account_screen(screen):
                 direction='row'
                 )
         self.already_have_account_field()
+        self.password_output_field()
         self.content_padding()
         self.username_entry_field()
         self.password_entry_field()
@@ -864,6 +865,10 @@ class create_account_screen(screen):
         """
         Adds content to the box by adding various elements to different sub-boxes.
         """
+        # output field
+        self.__output_box.add(self.__output_label)
+        self.__output_box.add(self.__output_field)
+        # button box
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_account_button)
         # already have account
@@ -877,6 +882,7 @@ class create_account_screen(screen):
         self.__content_box.add(self.__already_have_account_box)
         self.__content_box.add(self.__password_box)
         self.__content_box.add(self.__button_box)
+        self.__content_box.add(self.__output_box)
         # add content and pad boxes
         self.box.add(self.__left_pad_box)
         self.box.add(self.__content_box)
@@ -978,6 +984,44 @@ class create_account_screen(screen):
             flex=0.75,
             background_color=self.GUI_manager.theme['foreground']
         )
+        self.__output_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            alignment='center',
+            background_color=self.GUI_manager.theme['middleground'],
+        )
+        self.__output_label.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.__username_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            alignment='center',
+            background_color=self.GUI_manager.theme['middleground'],
+        )
+        self.__username_field.style.update(
+            flex=0.75,
+            background_color=self.GUI_manager.theme['foreground']
+        )
+        self.__output_field.style.update(
+            flex=0.25,
+            padding_right=10,
+            text_align='center',
+            font_size=20,
+            font_weight='bold',
+            font_family='monospace',
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
 
     def buttons(self) -> None:
         """
@@ -986,11 +1030,11 @@ class create_account_screen(screen):
         self.__button_box = toga.Box()
         self.__cancel_button = toga.Button(
             id='login',
-            text='LOGIN',
+            text='Cancel',
             on_press=self.GUI_manager.change_screen,
         )
         self.__create_account_button = toga.Button(
-            text='CREATE ACCOUNT',
+            text='Create Account',
             on_press=self.create_account,
         )
 
@@ -1035,6 +1079,18 @@ class create_account_screen(screen):
         self.__username_box.add(self.__username_label)
         self.__username_box.add(self.__username_field)
 
+    def password_output_field(self) -> None:
+        """
+        password_entry_field creates the password entry field
+        """
+        self.__output_box = toga.Box()
+        self.__output_field = toga.Label(
+            text=''
+        )
+        self.__output_label = toga.Label(
+            text='Your Password is:',
+        )
+
     def content_padding(self) -> None:
         """
         content_padding generates the content padding for the box
@@ -1058,19 +1114,20 @@ class create_account_screen(screen):
                 self.logger.error('Add account Failure')
         else:
             logging.debug('creating new account')
+            self.__output_field.text = 'Generating...'
             try:
                 password = int(self.__password_field.value)
                 create_new_account_success = self.GUI_manager.app.backend.create_new_account(
                     password_seed=password,
                     username=self.__username_field.value
-                )
+                )  # TODO make async
             except ValueError:
-                create_new_account_success = False
-            if create_new_account_success:
-                self.logger.info('Account successfully created')
-            else:
+                create_new_account_success = None
+            if create_new_account_success is None:
                 self.logger.error('Create account Failure')
-
+            else:
+                self.logger.info('Account successfully created')
+                self.__output_field.text = f'{create_new_account_success[0]}-{create_new_account_success[1]}'
 
 class chat_screen(screen):  # TODO add message display
     """
