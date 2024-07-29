@@ -130,7 +130,7 @@ def create_key(p, q) -> tuple[list[int], list[int]]:
                 # calculate carmichael number for n (k)
                 logging.info('calculating carmichael...')
                 carmichael_start_time = time.time()
-                k = math_stuff.carmichael(n=n)  # TODO optimise
+                k = math_stuff.carmichael(n=n)  # TODO optimise takes 90 percent of time
                 logging.info(f'successfully calculated carmichael in {time.time() - carmichael_start_time}s')
 
                 # calculate number co_prime to k (e)

@@ -4,6 +4,7 @@ a module with a bunch of math stuff used by RSA cryptosystem
 
 
 import logging
+import time
 
 
 def carmichael(n) -> int:
@@ -18,10 +19,18 @@ def carmichael(n) -> int:
         the values k
     """
     if isinstance(n, int):
-        co_primes = find_co_prime(n)
+        logging.info(f"{__name__}:carmichael: calculating carmichael`s totient function...")
+        logging.info('Finding co-prime of n')
+        co_prime_start_time = time.time()
+        co_primes = find_co_prime(n)  # TODO Optimise takes 90 percent of time
+        logging.info(f'found co-prime for n in {time.time() - co_prime_start_time}')
+        logging.info('calculating k...')
+        k_start_time = time.time()
         k = 1
+        # checks each co-prime to see if it is a valid solution
         while not all(x**k % n == 1 for x in co_primes):
             k += 1
+        logging.info(f'found k after {time.time() - k_start_time}')
         return k
     else:
         raise ValueError(
@@ -71,7 +80,7 @@ def find_nearest_prime(number, search_direction=1) -> int:
 
 def find_co_prime(a) -> list[int]:
     """
-    finds co_primes of a - values that their only greatest common divisor is 1 ignores one cause one is coPrime to all
+    finds co_primes of a - a values that their only greatest common divisor is 1 ignores one cause one is coPrime to all
     args:
         a: int
             values a
@@ -79,10 +88,17 @@ def find_co_prime(a) -> list[int]:
         all co_primes of a
     """
     if isinstance(a, int):
+        logging.info('finding co-prime of a...')
+        co_prime_start_time = time.time()
         co_primes = []
         for x in range(2, a):
+            logging.info('checking if x is co_prime to a...')
             if is_co_prime(a=x, b=a):
                 co_primes.append(x)
+                logging.info('x is co-prime to a')
+            else:
+                logging.info('x is not co-prime to a')
+        logging.info(f'found all co-primes in {time.time() - co_prime_start_time}')
         return co_primes
     else:
         raise ValueError(
@@ -154,9 +170,13 @@ def is_co_prime(a, b) -> bool:
     """
     if isinstance(a, int):
         if isinstance(b, int):
+            logging.debug('checking if a is co-prime to b...')
+            check_co_prime_start_time = time.time()
             if greatest_common_divisor(a, b) == 1:
+                logging.debug(f'found a is co-prime in {time.time() - check_co_prime_start_time}')
                 return True
             else:
+                logging.debug(f'found a is not co-prime in {time.time() - check_co_prime_start_time}')
                 return False
         else:
             raise ValueError(
