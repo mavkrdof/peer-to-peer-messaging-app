@@ -37,7 +37,7 @@ class Backend_manager:
         self.logger.warning('Invalid password format')
         return None
 
-    def create_new_account(self, password_seed, username) -> bool:
+    def create_new_account(self, password_seed, username) -> None | list[int]:
         try:
             self.logger.info('Generating private and public keys using RSA encryption')
             private_key, public_key = RSA.gen_keys(seed=password_seed, complexity=self.key_gen_complexity)
@@ -47,5 +47,5 @@ class Backend_manager:
             self.logger.info('Successful created user account')
         except ValueError as error:
             self.logger.error(error)
-            return False
-        return True
+            return None
+        return private_key
