@@ -5,6 +5,8 @@ import time  # NOT required if NOT using prime from cache
 import peertopeermessagingapp.math_stuff as math_stuff
 """
 a module implementing RSA encryption
+Inspiration: https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Operation
+Author: Connor Cuffe
 """
 
 
@@ -119,25 +121,40 @@ def create_key(p, q) -> tuple[list[int], list[int]]:
     if isinstance(p, int):
         if isinstance(q, int):
             logging.info('starting calculate keys...')
+
+            # calculate n
             n = p * q
-            if n > 9:
+            if n > 9:  # checks if n valid
                 logging.info('n successfully calculated')
+
+                # calculate carmichael number for n (k)
                 logging.info('calculating carmichael...')
                 carmichael_start_time = time.time()
-                k = math_stuff.carmichael(n=n)
+                k = math_stuff.carmichael(n=n)  # TODO optimise
                 logging.info(f'successfully calculated carmichael in {time.time() - carmichael_start_time}s')
-                logging.info('calculating co-prime list...')
-                co_prime_start_time = time.time()
-                co_prime_list = math_stuff.find_co_prime(a=k)
-                logging.info(f'successful calculated co-prime list in {time.time() - co_prime_start_time}s')
+
+                # calculate number co_prime to k (e)
                 logging.info('finding prime co_prime (e)...')
                 e_start_time = time.time()
-                e = None
-                for count, co_prime in enumerate(co_prime_list):  # TODO check if needs to be biggest prime co-prime
-                    logging.info(f'finding e {(count / len(co_prime_list)) * 100}%')
-                    if math_stuff.is_prime(n=co_prime):
-                        e = co_prime
+                # this if statement if makes calculating e hundreds of times faster
+                # used to take 9 secs for key < 20 now takes 0 seconds
+                if math_stuff.is_co_prime(65537, k):
+                    e = 65537
+                else:
+                    logging.info('calculating co-prime list...')
+                    co_prime_start_time = time.time()
+                    co_prime_list = math_stuff.find_co_prime(a=k)
+                    logging.info(f'successful calculated co-prime list in {time.time() - co_prime_start_time}s')
+                    e = None
+                    co_prime_list.reverse()  # reverses co-prime list therefore will find largest co-prime first
+                    for count, co_prime in enumerate(co_prime_list):
+                        logging.info(f'finding e {(count / len(co_prime_list)) * 100}%')
+                        if math_stuff.is_prime(n=co_prime):
+                            e = co_prime
+                            break
                 logging.info(f'found e in {time.time() - e_start_time}s')
+
+                # calculate modular multiplicative inverse (d)
                 logging.info('finding modular multiplicative inverse (d)...')
                 d_start_time = time.time()
                 d = math_stuff.find_modular_multiplicative_inverse(
@@ -145,17 +162,23 @@ def create_key(p, q) -> tuple[list[int], list[int]]:
                     m=k
                     )
                 logging.info(f'successfully found d in {time.time() - d_start_time}')
+
+                # format and return keys
                 public_key = [n, e]
                 private_key = [n, d]
                 logging.info(f'returning asymmetric encryption keys after {time.time() - create_key_start_time}')
                 return public_key, private_key
+            else:
+                raise ValueError(
+                    f'{__name__}:create_key: n must be greater than 9 instead got {n}'
+                )
         else:
             raise ValueError(
-                "expected q type int instead got type {type(q)}"
+                "{__name__}:create_key: expected q type int instead got type {type(q)}"
                 )
     else:
         raise ValueError(
-            "expected p type int instead got type {type(p)}"
+            "{__name__}:create_key: expected p type int instead got type {type(p)}"
             )
 
 
