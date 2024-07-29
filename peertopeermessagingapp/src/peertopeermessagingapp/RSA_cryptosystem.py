@@ -1,31 +1,42 @@
+import logging
 import random  # NOT required if NOT using prime from cache
-import csv  # NOT required if NOT using prime from cache
+import csv
+import time  # NOT required if NOT using prime from cache
 import peertopeermessagingapp.math_stuff as math_stuff
 """
 a module implementing RSA encryption
 """
 
 
-def generate_2_prime_numbers(generator_seed, complexity=2) -> tuple[int, int]:
+def generate_2_prime_numbers(generator_seed, complexity: int | float = 2) -> tuple[int, int]:  # TODO optimise
     """
     a simple algorithm too generate 2 prime numbers
     args:
         generatorSeed: int
             a large integer used to generate the prime numbers - low performance with large seed
-        complexity: int
+        complexity: int | float
             the complexity of the prime numbers - low performance with high complexity. default 2
     returns:
         p, q: int, int
             prime nums
     """
     if isinstance(generator_seed, int):
-        if isinstance(complexity, int):
+        if isinstance(complexity, (int, float)):
+            logging.info('finding prime number p...')
+            p_start_time = time.time()
             p = math_stuff.find_nearest_prime(
-                number=generator_seed ** round(complexity/2), search_direction=1
+                number=round(generator_seed ** round(complexity/2)), search_direction=1
                 )
+            p_end_time = time.time() - p_start_time
+            logging.info(f'found prime number p after {p_end_time} Seconds')
+            logging.info('finding prime number q...')
+            q_start_time = time.time()
             q = math_stuff.find_nearest_prime(
-                number=generator_seed ** complexity, search_direction=1
+                number=round(generator_seed ** complexity), search_direction=1
                 )
+            q_end_time = time.time() - q_start_time
+            logging.info(f'found prime number q after {q_end_time} Seconds')
+            logging.info('found prime number successfully')
             return p, q
         else:
             raise ValueError(f"expected complexity type int instead got {type(complexity)}")
@@ -104,37 +115,40 @@ def create_key(p, q) -> tuple[list[int], list[int]]:
             public_key: list[int, int]
             private_key: list[int, int]
     """
+    create_key_start_time = time.time()
     if isinstance(p, int):
         if isinstance(q, int):
-            if math_stuff.is_prime(p):
-                if math_stuff.is_prime(q):
-                    n = p * q
-                    if n > 9:
-                        k = math_stuff.carmichael(n=n)
-                        co_prime_list = math_stuff.find_co_prime(a=k)
-                        e = None
-                        for co_prime in co_prime_list:
-                            if math_stuff.is_prime(n=co_prime):
-                                e = co_prime
-                        d = math_stuff.find_modular_multiplicative_inverse(
-                            a=e,
-                            m=k
-                            )
-                        public_key = [n, e]
-                        private_key = [n, d]
-                        return public_key, private_key
-                    else:
-                        raise ValueError(
-                            "n must be greater than 9 to accurately encrypt data"
-                            )
-                else:
-                    raise ValueError(
-                        "expected q to be prime instead got not prime"
-                        )
-            else:
-                raise ValueError(
-                    "expected p to be prime instead got not prime"
+            logging.info('starting calculate keys...')
+            n = p * q
+            if n > 9:
+                logging.info('n successfully calculated')
+                logging.info('calculating carmichael...')
+                carmichael_start_time = time.time()
+                k = math_stuff.carmichael(n=n)
+                logging.info(f'successfully calculated carmichael in {time.time() - carmichael_start_time}s')
+                logging.info('calculating co-prime list...')
+                co_prime_start_time = time.time()
+                co_prime_list = math_stuff.find_co_prime(a=k)
+                logging.info(f'successful calculated co-prime list in {time.time() - co_prime_start_time}s')
+                logging.info('finding prime co_prime (e)...')
+                e_start_time = time.time()
+                e = None
+                for count, co_prime in enumerate(co_prime_list):  # TODO check if needs to be biggest prime co-prime
+                    logging.info(f'finding e {(count / len(co_prime_list)) * 100}%')
+                    if math_stuff.is_prime(n=co_prime):
+                        e = co_prime
+                logging.info(f'found e in {time.time() - e_start_time}s')
+                logging.info('finding modular multiplicative inverse (d)...')
+                d_start_time = time.time()
+                d = math_stuff.find_modular_multiplicative_inverse(
+                    a=e,
+                    m=k
                     )
+                logging.info(f'successfully found d in {time.time() - d_start_time}')
+                public_key = [n, e]
+                private_key = [n, d]
+                logging.info(f'returning asymmetric encryption keys after {time.time() - create_key_start_time}')
+                return public_key, private_key
         else:
             raise ValueError(
                 "expected q type int instead got type {type(q)}"
@@ -444,30 +458,36 @@ def gen_keys(seed, complexity) -> tuple[list[int], list[int]]:
         the private and public keys
     """
     if isinstance(seed, int):
-        if isinstance(complexity, int):
+        if isinstance(complexity, (float, int)):
             if seed > 9:
                 if complexity >= 1:
+                    logging.info('generating keys...')
+                    logging.info('generating prime numbers...')
                     p, q = generate_2_prime_numbers(
                         generator_seed=seed, complexity=complexity
                         )  # only needs to run once at creation of account
+                    logging.info('prime numbers successfully generated')
                     # larger num = better but longer initial calc time
+                    logging.info('calculating keys from prime numbers...')
                     public_key, private_key = create_key(p, q)  # only needs to run once at creation of account
+                    logging.info('keys successfully calculated')
+                    logging.info('gen keys finished successfully')
                     return private_key, public_key
                 else:
                     raise ValueError(
-                        f'expected complexity greater than or = to 1 instead got {complexity}'
+                        f'{__name__}:gen_keys: expected complexity greater than or = to 1 instead got {complexity}'
                     )
             else:
                 raise ValueError(
-                    f'expected seed greater than 9 instead got {seed}'
+                    f'{__name__}:gen_keys: expected seed greater than 9 instead got {seed}'
                 )
         else:
             raise ValueError(
-                f"expected complexity type int instead got type {type(complexity)}"
+                f"{__name__}:gen_keys: expected complexity type int instead got type {type(complexity)}"
                 )
     else:
         raise ValueError(
-            f"expected seed type int instead got type {type(seed)}"
+            f"{__name__}:gen_keys: expected seed type int instead got type {type(seed)}"
             )
 
 

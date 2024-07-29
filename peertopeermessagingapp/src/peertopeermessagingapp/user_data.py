@@ -47,14 +47,18 @@ class user_data:
             raise ValueError(f'Expected username type str instead got {type(username)}')
 
     def set_encryption_keys(self, private_key, public_key) -> None:
-        if isinstance(private_key, int):
-            if isinstance(public_key, int):
+        if all(isinstance(item, int) for item in private_key):
+            if all(isinstance(item, int) for item in public_key):
                 self.__private_key = private_key
                 self.__public_key = public_key
             else:
-                raise ValueError(f'Expected public_key type int instead got type {type(public_key)}')
+                raise ValueError(
+                    f'{__name__}:set_encryption_keys: Expected public_key type int instead got type {type(public_key)}'
+                    )
         else:
-            raise ValueError(f'Expected private_key type int instead got type {type(private_key)}')
+            raise ValueError(
+                f'{__name__}:set_encryption_keys: Expected private_key type int instead got type {type(private_key)}'
+                )
 
     def read_from_file(self, username, privateKD, privateKN) -> bool:
         """

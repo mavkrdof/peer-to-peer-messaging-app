@@ -3,6 +3,9 @@ a module with a bunch of math stuff used by RSA cryptosystem
 """
 
 
+import logging
+
+
 def carmichael(n) -> int:
     """
     finds the number k.
@@ -39,12 +42,22 @@ def find_nearest_prime(number, search_direction=1) -> int:
     """
     if isinstance(number, int):
         if search_direction == 1 or -1:
+            logging.debug('finding nearest prime...')
             if number % 2 == 0:
                 number += 1
             else:
                 number += 2
-            while not is_prime(number):
+            i = 0
+            found_prime = False
+            while not found_prime:
+                logging.debug(f'check if next number prime iteration {i}')
                 number += 2 * search_direction
+                if is_prime(number):
+                    logging.debug('found nearest prime')
+                    found_prime = True
+                    break
+                i += 1
+            logging.debug('returning nearest prime')
             return number
         else:
             raise ValueError(
@@ -115,9 +128,13 @@ def is_prime(n) -> bool:
         if prime
     """
     if isinstance(n, int):
+        logging.debug('start checking if num prime...')
         for i in range(2, n):
+            logging.debug(f'checking if {n} prime {(i / n) * 100}%')
             if (n % i) == 0:
+                logging.debug('number not prime')
                 return False
+        logging.debug('{n} is prime')
         return True
     raise ValueError(
         f"expected n type int instead got type {type(n)}"

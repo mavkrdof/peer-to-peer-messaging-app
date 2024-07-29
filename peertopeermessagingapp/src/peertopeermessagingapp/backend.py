@@ -10,7 +10,7 @@ class Backend_manager:
         self.app = app
         self.user_data = user_data(app=self.app)
         self.user_data_filepath = ''
-        self.key_gen_complexity = ''
+        self.key_gen_complexity = 1.1
         self.logger = logging.getLogger(name=__name__)
         self.logger.info('Log file created')
 

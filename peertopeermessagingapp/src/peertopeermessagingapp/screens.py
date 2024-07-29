@@ -1049,6 +1049,7 @@ class create_account_screen(screen):
         """
         create_account activates all relevant backend functions to create an account
         """
+        logging.debug('create account button pressed')
         if self.__already_have_account_checkbox.value:
             create_old_account_success = self.GUI_manager.app.backend.create_old_account()
             if create_old_account_success:
@@ -1056,10 +1057,15 @@ class create_account_screen(screen):
             else:
                 self.logger.error('Add account Failure')
         else:
-            create_new_account_success = self.GUI_manager.app.backend.create_new_account(
-                password_seed=self.__password_field.value,
-                username=self.__username_field.value
-            )
+            logging.debug('creating new account')
+            try:
+                password = int(self.__password_field.value)
+                create_new_account_success = self.GUI_manager.app.backend.create_new_account(
+                    password_seed=password,
+                    username=self.__username_field.value
+                )
+            except ValueError:
+                create_new_account_success = False
             if create_new_account_success:
                 self.logger.info('Account successfully created')
             else:

@@ -20,7 +20,8 @@ class PeertoPeerMessagingApp(toga.App):
         Returns: None
         """
         # initialise Backend
-        logging.basicConfig(filename='runtime_logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
+        # logging.basicConfig(filename='runtime_logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
+        logging.basicConfig(level=logging.INFO)
         self.backend = Backend_manager(app=self)
         # initialise GUI
         GUI = GUI_manager(app=self)
