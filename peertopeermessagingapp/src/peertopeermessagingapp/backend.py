@@ -21,15 +21,20 @@ class Backend_manager:
         self.logger.info('Log file created')
 
     def validate_login(self, username: str, password: str) -> int:
+        self.logger.debug('extracting private keys from password...')
         extracted_private_keys = self.extract_private_keys(password=password)
         if extracted_private_keys is None:
+            self.logger.info('Invalid login: Invalid password format')
             return 2  # Invalid Password format
         else:
+            self.logger.debug('Valid password format')
             privateKD, privateKN = extracted_private_keys
             # checks if user data for the username and pword are in storage if so reads it in else returns false
             if self.user_data.read_from_file(username=username, privateKD=privateKD, privateKN=privateKN):
+                self.logger.debug('Valid Login')
                 return 1  # Valid login
             else:
+                self.logger.debug('Invalid login: No account with that password and username')
                 return 3  # No account with that password and username
 
     def extract_private_keys(self, password: str) -> tuple[int, int] | None:

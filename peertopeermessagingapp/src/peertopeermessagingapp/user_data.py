@@ -65,17 +65,29 @@ class user_data:
         """
         read_from_file reads the user data from the file
         """
-        with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:
-            user_data_dict = json.load(fp=user_data_file)
-        if username in user_data_dict:
-            if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKD=privateKD, privateKN=privateKN):
-                logging.info('User data successfully decrypted!')
-                self.__username = username
-                return True
+        if os.path.exists(self.__app.backend.user_data_filepath):
+            self.logger.debug('reading in user data file...')
+            with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:
+                user_data_dict = json.load(fp=user_data_file)
+            self.logger.debug('successfully read in user data file')
+            self.logger.debug('checking if user data file contains username...')
+            if username in user_data_dict:
+                self.logger.debug('user data dict contains username')
+                self.logger.debug('validating password...')
+                if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKD=privateKD, privateKN=privateKN):
+                    logging.info('User data successfully decrypted!')
+                    self.__username = username
+                    return True
+                else:
+                    self.logger.warning('no matching user data in file')
+                    self.no_account_data()
+                    return False
             else:
-                self.no_account_data()
-                return False
+                    self.logger.warning('no matching user data in file')
+                    self.no_account_data()
+                    return False
         else:
+            self.logger.warning('no user data file detected')
             self.no_account_data()
             return False
 
@@ -84,8 +96,7 @@ class user_data:
         no_account_data runs if there is no user data file
         """
         # uses the default user data as no account info found
-        logging.warning('WARNING: no user data file detected')  # DEBUG
-        logging.info('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
+        self.logger.info('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
     def decrypt_user_data(self, data, username, privateKN, privateKD) -> bool:
         """
@@ -97,23 +108,34 @@ class user_data:
         Returns:
             Boolean: whether or not the decryption was successful
         """
+        self.logger.debug('decrypting decrypt checker...')
         decrypt_checker = RSA.decrypt_padded(
             encrypted=data['decrypt_checker'],
             private_key_n=privateKN,
             private_key_d=privateKD
             )
+        self.logger.debug('successfully decrypted decrypt checker')
+        self.logger.debug(f'validating decrypt checker \'{decrypt_checker}\'...')
         if decrypt_checker == username:
+            self.logger.debug('decrypt checker valid')
+            self.logger.debug('decrypting user data...')
             user_data_decrypted = RSA.decrypt_padded(
                 encrypted=data['data'],
                 private_key_d=privateKD,
                 private_key_n=privateKN
                 )
+            self.logger.debug('Successfully decrypted user data')
+            self.logger.debug('formatting json data as dictionary...')
             self.__user_data = json.loads(user_data_decrypted)
+            self.logger.debug('successfully formatted json')
+            self.logger.debug('setting vars...')
             self.__username = username
             self.private_key = [privateKD, privateKN]
             self.__public_key = [self.__user_data['public_key_e', 'public_key_n']]
+            self.logger.debug('successfully set vars')
             return True
         else:
+            self.logger.debug('Decrypt checker invalid')
             return False
 
     def encrypt_user_data(self) -> dict:
