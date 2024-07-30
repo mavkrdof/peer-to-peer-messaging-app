@@ -113,6 +113,7 @@ class user_data:
         Returns:
             Boolean: whether or not the decryption was successful
         """
+        # check if login is valid
         self.logger.debug('decrypting decrypt checker...')
         decrypt_checker = RSA.decrypt_padded(
             encrypted=data['decrypt_checker'],
@@ -123,12 +124,14 @@ class user_data:
         self.logger.debug(f'validating decrypt checker \'{decrypt_checker}\'...')
         if decrypt_checker == username:
             self.logger.debug('decrypt checker valid')
+            # decrypt user data
             self.logger.debug('decrypting user data...')
             user_data_decrypted = RSA.decrypt_padded(
                 encrypted=data['data'],
                 private_key_d=privateKD,
                 private_key_n=privateKN
                 )
+            # format as dictionary and store in memory
             self.logger.debug('Successfully decrypted user data')
             self.logger.debug('formatting json data as dictionary...')
             user_data_decrypted = user_data_decrypted[:-1] + '}'  # TODO This is a quick patch to fix a decryption error should find a better solution
