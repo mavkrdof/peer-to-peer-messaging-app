@@ -1129,6 +1129,7 @@ class create_account_screen(screen):
                 self.logger.info('Account successfully created')
                 self.__output_field.text = f'{create_new_account_success[0]}-{create_new_account_success[1]}'
 
+
 class chat_screen(screen):  # TODO add message display
     """
     the chat screen

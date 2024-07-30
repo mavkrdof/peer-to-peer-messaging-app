@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import peertopeermessagingapp.RSA_cryptosystem as RSA
 import peertopeermessagingapp.chat as chat
 
@@ -24,17 +25,17 @@ class user_data:
         self.__settings = {}
         self.__app = app
         self.__user_data = {}
-        self.__private_key = None
-        self.__public_key = None
+        self.__private_key: list[int] = []
+        self.__public_key: list[int] = []
         self.logger = logging.getLogger(name=__name__)
 
-    def get_private_key(self) -> int:
+    def get_private_key(self) -> list[int]:
         if self.__private_key is None:
             raise ValueError('Private key is undefined')
         else:
             return self.__private_key
 
-    def get_public_key(self) -> int:
+    def get_public_key(self) -> list[int]:
         if self.__public_key is None:
             raise ValueError('Public key is undefined')
         else:
@@ -103,13 +104,14 @@ class user_data:
             )
         if decrypt_checker == username:
             user_data_decrypted = RSA.decrypt_padded(
-                encrypted=data['user_data'],
+                encrypted=data['data'],
                 private_key_d=privateKD,
                 private_key_n=privateKN
                 )
             self.__user_data = json.loads(user_data_decrypted)
             self.__username = username
             self.private_key = [privateKD, privateKN]
+            self.__public_key = [self.__user_data['public_key_e', 'public_key_n']]
             return True
         else:
             return False
@@ -124,17 +126,21 @@ class user_data:
         """
         encrypted_data = {
             'username': self.__username,
-            'decrypt_checker': '',
+            'decrypt_checker': RSA.encrypt_chunked_padded(
+                plain_text=self.__username,
+                public_key_e=self.__public_key[0],
+                public_key_n=self.__public_key[1]
+                ),
             'data': ''
         }
         encrypted_data['data'] = RSA.encrypt_chunked_padded(
             plain_text=json.dumps(
-                obj=self.__user_data,
+                obj=self.__user_data,  # TODO figure out how to store data
                 sort_keys=True,
                 indent=4
                 ),
-            public_key_e=self.__user_data['publicKE'],
-            public_key_n=self.__user_data['publicKN']
+            public_key_e=self.__public_key[0],
+            public_key_n=self.__public_key[1]
             )
         return encrypted_data
 
@@ -142,15 +148,38 @@ class user_data:
         """
         save_to_file saves encrypted user data to file
         """
-        with open(file=self.__app.user_data_filepath, mode='r') as user_data_file:
-            user_data_dict = json.load(fp=user_data_file)
-        user_data_dict[self.__username] = self.encrypt_user_data()
+        self.logger.debug('saving user data to file...')
+        if os.path.exists(self.__app.backend.user_data_filepath):  # checks if file exists
+            self.logger.debug('found existing user data file reading in...')
+            with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:  # reads in the user_data file
+                user_data_raw: str = ''.join(user_data_file.readlines())
+                if user_data_raw == '':
+                    user_data_dict = {}
+                else:
+                    user_data_dict = json.loads(user_data_raw)
+            self.logger.debug('successfully read in user data file')
+        else:
+            self.logger.debug('no preexisting user data file found')
+            user_data_dict = {}
+        self.logger.debug('encrypting user data...')
+        user_data_dict[self.__username] = self.encrypt_user_data()  # appends current user data to stored user data
+        self.logger.debug('successfully encrypted user data')
+        self.logger.debug('formatting user data as json...')
         user_data_json = json.dumps(
             obj=user_data_dict,
             sort_keys=True, indent=4
-            )
-        with open(file=self.__app.user_data_filepath, mode='w') as user_data_file:
-            user_data_file.write(user_data_json)
+            )  # converts dictionary to json
+        self.logger.debug('successfully formatted user data as json')
+        self.logger.debug('writing user data to file...')
+        if os.path.exists(self.__app.backend.user_data_filepath):
+            mode = 'w'
+            self.logger.debug('user data file found... writing to it')
+        else:
+            mode = 'x'
+            self.logger.debug('No user data file... creating one')
+        with open(file=self.__app.backend.user_data_filepath, mode=mode) as user_data_file:
+            user_data_file.write(user_data_json)  # writes the new json to the now empty user_data file
+        self.logger.debug('Successfully wrote user data to file')
 
     def add_chat(self, name, icon) -> None:
         """
@@ -161,7 +190,7 @@ class user_data:
             icon (str): the icon of the chat
         """
         new_chat = chat.Chat()
-        new_chat.create_chat(name=name, icon=icon)
+        new_chat.create_chat(name=name, icon=icon)  # TODO move create_chat into init
         self.__chats.append(chat)
 
     def remove_chat(self, chat) -> None:

@@ -1,6 +1,7 @@
 import logging
 from peertopeermessagingapp.user_data import user_data
 import peertopeermessagingapp.RSA_cryptosystem as RSA
+import os
 
 
 # TODO add tests for funcs
@@ -9,7 +10,12 @@ class Backend_manager:
         self.__password_separator = '-'
         self.app = app
         self.user_data = user_data(app=self.app)
-        self.user_data_filepath = ''
+        abs_path: str = os.path.split(os.path.abspath(__file__))[0]
+        storage_path_extension = 'storage'
+        user_data_path_extension = os.path.join(storage_path_extension, 'user_data.json')
+        log_filepath_extension = os.path.join(storage_path_extension, 'runtime_logs.log')
+        self.log_filepath = os.path.join(abs_path, log_filepath_extension)
+        self.user_data_filepath = os.path.join(abs_path, user_data_path_extension)
         self.key_gen_complexity = 1.1
         self.logger = logging.getLogger(name=__name__)
         self.logger.info('Log file created')
@@ -48,4 +54,10 @@ class Backend_manager:
         except ValueError as error:
             self.logger.error(error)
             return None
+        self.logger.info('Saving User Data...')
+        self.save_user_data()
+        self.logger.info('Successfully saved user data')
         return private_key
+
+    def save_user_data(self) -> None:
+        self.user_data.save_to_file()
