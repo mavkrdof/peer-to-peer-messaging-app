@@ -28,9 +28,9 @@ class Backend_manager:
             return 2  # Invalid Password format
         else:
             self.logger.debug('Valid password format')
-            privateKD, privateKN = extracted_private_keys
+            privateKN, privateKD = extracted_private_keys
             # checks if user data for the username and pword are in storage if so reads it in else returns false
-            if self.user_data.read_from_file(username=username, privateKD=privateKD, privateKN=privateKN):
+            if self.user_data.read_from_file(username=username, privateKN=privateKN, privateKD=privateKD):
                 self.logger.debug('Valid Login')
                 return 1  # Valid login
             else:
@@ -39,11 +39,11 @@ class Backend_manager:
 
     def extract_private_keys(self, password: str) -> tuple[int, int] | None:
         if self.__password_separator in password:
-            privateKD, privateKN = password.split(self.__password_separator)
+            privateKN, privateKD = password.split(self.__password_separator)
             if privateKD.isdigit() and privateKN.isdigit():
                 privateKD = int(privateKD)
                 privateKN = int(privateKN)
-                return privateKD, privateKN
+                return privateKN, privateKD
         # invalid pword
         self.logger.warning('Invalid password format')
         return None

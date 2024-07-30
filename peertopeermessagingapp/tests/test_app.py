@@ -3,6 +3,7 @@ import pytest
 from src.peertopeermessagingapp.RSA_cryptosystem import encrypt_chunked_padded, decrypt_padded, gen_keys
 from src.peertopeermessagingapp.message import message
 import json
+from peertopeermessagingapp.user_data import user_data
 
 
 class Test_Encrypt_Chunked_Padded:
@@ -251,3 +252,104 @@ class Test_message_decrypt:
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
         assert f'INVALID message | missing plain_text attribute | message id = {msg.message_id}' in caplog.text
+
+
+class Test_user_data_store_load:
+
+    def test_encrypt_user_data(self):
+        user = user_data(None)  # None is placeholder as unused
+        user.set_username('test1')
+        user.set_encryption_keys([323, 17], [323, 65537])
+        user.set_user_data({'public_key_n': 323, 'public_key_e': 65537})
+        encrypted_user_data = user.encrypt_user_data()
+        valid_decrypt_checker = [
+                    45,
+                    45,
+                    101,
+                    78,
+                    45,
+                    185,
+                    45,
+                    298,
+                    83
+                ]
+        assert encrypted_user_data['decrypt_checker'] == valid_decrypt_checker
+
+    def test_load(self):
+        user = user_data(None)  # None is placeholder as unused
+        username = 'test1'
+        data = {
+            'decrypt_checker': [45, 45, 101, 78, 45, 185, 45, 298, 83],
+            'data': [
+                45,
+                45,
+                176,
+                241,
+                279,
+                46,
+                45,
+                155,
+                13,
+                78,
+                251,
+                175,
+                264,
+                243,
+                95,
+                78,
+                224,
+                1,
+                46,
+                78,
+                95,
+                45,
+                0,
+                204,
+                175,
+                233,
+                117,
+                175,
+                78,
+                84,
+                175,
+                78,
+                282,
+                241,
+                20,
+                204,
+                45,
+                276,
+                85,
+                264,
+                251,
+                297,
+                78,
+                84,
+                252,
+                264,
+                136,
+                296,
+                78,
+                45,
+                276,
+                264,
+                136,
+                1,
+                241,
+                295,
+                58,
+                241,
+                20,
+                139,
+                175,
+                64,
+                223,
+                175,
+                78,
+                123,
+                46,
+                175
+                ]
+            }
+        decrypted_user_data = user.decrypt_user_data(data, username, privateKN=323, privateKD=17)
+        assert decrypted_user_data

@@ -26,8 +26,11 @@ class user_data:
         self.__app = app
         self.__user_data = {}
         self.__private_key: list[int] = []
-        self.__public_key: list[int] = []
+        self.__public_key: list[int] = []  # TODO
         self.logger = logging.getLogger(name=__name__)
+
+    def set_user_data(self, user_data) -> None:  # TODO make less bad
+        self.__user_data = user_data
 
     def get_private_key(self) -> list[int]:
         if self.__private_key is None:
@@ -50,8 +53,10 @@ class user_data:
     def set_encryption_keys(self, private_key, public_key) -> None:
         if all(isinstance(item, int) for item in private_key):
             if all(isinstance(item, int) for item in public_key):
-                self.__private_key = private_key
-                self.__public_key = public_key
+                self.__private_key = private_key  # N, D
+                self.__public_key = public_key  # N, E
+                self.__user_data['public_key_n'] = public_key[0]
+                self.__user_data['public_key_e'] = public_key[1]
             else:
                 raise ValueError(
                     f'{__name__}:set_encryption_keys: Expected public_key type int instead got type {type(public_key)}'
@@ -61,7 +66,7 @@ class user_data:
                 f'{__name__}:set_encryption_keys: Expected private_key type int instead got type {type(private_key)}'
                 )
 
-    def read_from_file(self, username, privateKD, privateKN) -> bool:
+    def read_from_file(self, username, privateKN, privateKD) -> bool:
         """
         read_from_file reads the user data from the file
         """
@@ -74,7 +79,7 @@ class user_data:
             if username in user_data_dict:
                 self.logger.debug('user data dict contains username')
                 self.logger.debug('validating password...')
-                if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKD=privateKD, privateKN=privateKN):
+                if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKN=privateKN, privateKD=privateKD):
                     logging.info('User data successfully decrypted!')
                     self.__username = username
                     return True
@@ -98,12 +103,12 @@ class user_data:
         # uses the default user data as no account info found
         self.logger.info('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
-    def decrypt_user_data(self, data, username, privateKN, privateKD) -> bool:
+    def decrypt_user_data(self, data: dict, username: str, privateKD: int, privateKN: int) -> bool:  # TODO refactor into differnt funcs
         """
         decrypt_user_data decrypts the user data
 
         Args:
-            data (list[int]): the encrypted user data in the form of a list of integers
+            data (dict): the encrypted user data in the form of a list of integers
 
         Returns:
             Boolean: whether or not the decryption was successful
@@ -126,16 +131,16 @@ class user_data:
                 )
             self.logger.debug('Successfully decrypted user data')
             self.logger.debug('formatting json data as dictionary...')
+            print(user_data_decrypted)
             self.__user_data = json.loads(user_data_decrypted)
             self.logger.debug('successfully formatted json')
             self.logger.debug('setting vars...')
             self.__username = username
-            self.private_key = [privateKD, privateKN]
-            self.__public_key = [self.__user_data['public_key_e', 'public_key_n']]
+            self.set_encryption_keys([privateKN, privateKD], self.__user_data['public_key_e', 'public_key_n'])
             self.logger.debug('successfully set vars')
             return True
         else:
-            self.logger.debug('Decrypt checker invalid')
+            self.logger.warning('Decrypt checker invalid')
             return False
 
     def encrypt_user_data(self) -> dict:
@@ -149,20 +154,17 @@ class user_data:
         encrypted_data = {
             'username': self.__username,
             'decrypt_checker': RSA.encrypt_chunked_padded(
-                plain_text=self.__username,
-                public_key_e=self.__public_key[0],
-                public_key_n=self.__public_key[1]
-                ),
-            'data': ''
+                plain_text=self.__username,  # TODO make dict to make clearer
+                public_key_n=self.__public_key[0],
+                public_key_e=self.__public_key[1],
+                )
         }
         encrypted_data['data'] = RSA.encrypt_chunked_padded(
             plain_text=json.dumps(
                 obj=self.__user_data,  # TODO figure out how to store data
-                sort_keys=True,
-                indent=4
                 ),
-            public_key_e=self.__public_key[0],
-            public_key_n=self.__public_key[1]
+            public_key_n=self.__public_key[0],
+            public_key_e=self.__public_key[1],
             )
         return encrypted_data
 
