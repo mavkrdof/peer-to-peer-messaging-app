@@ -100,9 +100,9 @@ class user_data:
                     self.no_account_data()
                     return False
             else:
-                    self.logger.warning('no matching user data in file')
-                    self.no_account_data()
-                    return False
+                self.logger.warning('no matching user data in file')
+                self.no_account_data()
+                return False
         else:
             self.logger.warning('no user data file detected')
             self.no_account_data()

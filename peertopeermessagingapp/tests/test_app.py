@@ -256,8 +256,12 @@ class Test_message_decrypt:
 
 class Test_user_data_store_load:
 
-    def test_encrypt_user_data(self):
-        user = user_data(None)  # None is placeholder as unused
+    def test_encrypt_user_data(self, mocker):
+        app = mocker.Mock()
+        app.GUI = mocker.Mock()
+        app.GUI.theme = {'thing': 'test'}
+        print('d')
+        user = user_data(app)  # None is placeholder as unused
         user.set_username('test1')
         user.set_encryption_keys([323, 17], [323, 65537])
         user.set_user_data({'public_key_n': 323, 'public_key_e': 65537})
