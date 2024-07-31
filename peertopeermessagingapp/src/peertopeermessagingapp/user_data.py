@@ -32,17 +32,29 @@ class user_data:
     def set_user_data(self, user_data) -> None:  # TODO make less bad
         self.__user_data = user_data
 
-    def get_private_key(self) -> list[int]:
-        if self.__private_key is None:
+    def get_private_key(self, key) -> int:
+        if self.__private_key is []:
             raise ValueError('Private key is undefined')
         else:
-            return self.__private_key
+            match key:
+                case 'n':
+                    return self.__private_key[0]
+                case 'd':
+                    return self.__private_key[1]
+                case _:
+                    raise ValueError(f'Invalid key expected n or d instead got {key}')
 
-    def get_public_key(self) -> list[int]:
-        if self.__public_key is None:
+    def get_public_key(self, key) -> int:
+        if self.__public_key is []:
             raise ValueError('Public key is undefined')
         else:
-            return self.__public_key
+            match key:
+                case 'n':
+                    return self.__public_key[0]
+                case 'e':
+                    return self.__public_key[1]
+                case _:
+                    raise ValueError(f'Invalid key expected n or e instead got {key}')
 
     def set_username(self, username) -> None:
         if isinstance(username, str):
@@ -171,14 +183,28 @@ class user_data:
                 public_key_e=self.__public_key[1],
                 )
         }
+
+        data_to_save = self.collect_data_to_save()
+
         encrypted_data['data'] = RSA.encrypt_chunked_padded(
             plain_text=json.dumps(
-                obj=self.__user_data,  # TODO figure out how to store data
+                obj=data_to_save,  # TODO figure out how to store data
                 ),
             public_key_n=self.__public_key[0],
             public_key_e=self.__public_key[1],
             )
         return encrypted_data
+
+    def collect_data_to_save(self) -> dict:
+        data_to_save = {
+            'private_key_n': self.get_private_key(key='n'),
+            'private_key_d': self.get_private_key(key='d'),
+            'public_key_n': self.get_public_key(key='n'),
+            'public_key_e': self.get_public_key(key='e'),
+            'theme': self.__app.GUI.theme,
+            'chats': self.__chats
+        }
+        return data_to_save
 
     def save_to_file(self) -> None:
         """

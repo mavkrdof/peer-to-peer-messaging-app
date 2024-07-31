@@ -24,10 +24,10 @@ class PeertoPeerMessagingApp(toga.App):
         self.backend = Backend_manager(app=self)
         logging.basicConfig(filename=self.backend.log_filepath, encoding='utf-8', level=logging.DEBUG, filemode='w')
         # initialise GUI
-        GUI = GUI_manager(app=self)
+        self.GUI = GUI_manager(app=self)
         self.main_window = toga.MainWindow(title=self.formal_name)
-        self.main_window.content = GUI.main_box
-        GUI.start()
+        self.main_window.content = self.GUI.main_box
+        self.GUI.start()
         self.main_window.show()
 
     def exit(self) -> None:
