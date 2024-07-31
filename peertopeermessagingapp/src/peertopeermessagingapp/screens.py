@@ -144,7 +144,7 @@ class home_screen(screen):
 
     def init_GUI(self) -> None:
         """
-        init_GUI initilizes the GUI elements of the screen
+        init_GUI initialises the GUI elements of the screen
         """
         self.create_title_box()
         # chat select
@@ -152,6 +152,8 @@ class home_screen(screen):
             vertical=True,
             horizontal=False,
         )
+        self.set_style()
+        self.add_to_box()
 
     def set_style(self) -> None:
         self.chat_list_scroll.style.update(
@@ -1417,6 +1419,6 @@ class create_chat_screen(screen):
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
-        name = self.name_entry_field.text()
-        icon = self.icon_entry_field.text()
+        name = self.__name_field.value
+        icon = self.__icon_field.value
         self.GUI_manager.app.backend.user_data.add_chat(name, icon)
