@@ -1,9 +1,8 @@
 import pytest
-# from src.peertopeermessagingapp.user_data import user_data as user_data
+from src.peertopeermessagingapp.user_data import user_data
 from src.peertopeermessagingapp.RSA_cryptosystem import encrypt_chunked_padded, decrypt_padded, gen_keys
 from src.peertopeermessagingapp.message import message
 import json
-from peertopeermessagingapp.user_data import user_data
 
 
 class Test_Encrypt_Chunked_Padded:
@@ -215,7 +214,7 @@ class Test_message_decrypt:
         mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id=1)
+        msg = message(chat=mock_user, message_id='1')
         msg.decrypt(message_data=[111, 222, 333])  # Random data
 
         # Assertions
@@ -241,7 +240,7 @@ class Test_message_decrypt:
         # TODO: take note of the fact that mocker calls must not be too the
         # TODO cont: actual module but to the module calling that module
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id=1)
+        msg = message(chat=mock_user, message_id='1')
         msg.decrypt(message_data=[111, 222, 333])
 
         caplog.at_level(logging.WARNING)
