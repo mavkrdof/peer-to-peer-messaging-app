@@ -31,6 +31,7 @@ class PeertoPeerMessagingApp(toga.App):
         self.main_window.show()
 
     def exit(self) -> None:
+        self.backend.user_data.save_to_file()
         super().exit()
 
 
