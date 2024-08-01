@@ -201,7 +201,7 @@ class user_data:
     def collect_data_to_save(self) -> dict:
         chat_dict = {}
         for chat_object_name, chat_object in self.get_chat_list().items():
-            chat_object[chat_object_name] = chat_object.convert_to_dict()
+            chat_dict[chat_object_name] = chat_object.convert_to_dict()
         data_to_save = {
             'private_key_n': self.get_private_key(key='n'),
             'private_key_d': self.get_private_key(key='d'),
