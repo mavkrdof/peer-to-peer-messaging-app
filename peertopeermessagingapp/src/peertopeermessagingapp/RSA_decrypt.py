@@ -23,6 +23,7 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                 if False not in [False for i in encrypted if not isinstance(i, int)]:
                     logging.debug(f'{__name__}:decrypt_padded: args valid')
                     logging.debug(f'{__name__}:decrypt_padded: decrypting data...')
+
                     logging.debug(f'{__name__}:decrypt_padded: decrypting into base 10...')
                     decrypted_base10 = []
                     for e_chunk in encrypted:
@@ -38,6 +39,7 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                             )
                         logging.debug(f'{__name__}:decrypt_padded: successfully decrypted item')
                     logging.debug(f'{__name__}:decrypt_padded: successfully decrypted data into base 10')
+
                     logging.debug(f'{__name__}:decrypt_padded: cleaning base 10 decrypted data...')
                     clean_decrypted_base_10 = ""
                     length = len(str(private_key_n)) - 1
@@ -46,7 +48,8 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                             chunk = "0" + chunk
                         clean_decrypted_base_10 += chunk
                     logging.debug(f'{__name__}:decrypt_padded: Successfully cleaned base 10 decrypted data')
-                    logging.debug(f'{__name__}:decrypt_padded: Splitting clean base 10 decrypted data')
+
+                    logging.debug(f'{__name__}:decrypt_padded: Splitting clean base 10 decrypted data...')
                     decrypted_split_base_10 = []
                     splitLen = 3  # as the length of asci codes
                     for i in range(int(len(clean_decrypted_base_10) / splitLen)):
@@ -56,9 +59,11 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                                 )
                             )
                     logging.debug(f'{__name__}:decrypt_padded: successfully split clean base 10 decrypted data into sets of {splitLen}')
+
                     logging.debug(f'{__name__}:decrypt_padded: converting base 10 to str...')
                     decrypted = base_10_to_string(base10_list=decrypted_split_base_10[1:])
                     logging.debug(f'{__name__}:decrypt_padded: successfully converted base 10 to str')
+
                     logging.debug(f'{__name__}:decrypt_padded: successfully decrypted data')
                     return decrypted
                 else:
