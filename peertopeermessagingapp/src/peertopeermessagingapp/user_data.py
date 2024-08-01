@@ -1,7 +1,8 @@
 import json
 import logging
 import os
-import peertopeermessagingapp.RSA_cryptosystem as RSA
+import peertopeermessagingapp.RSA_encrypt as RSA_encrypt
+import peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 import peertopeermessagingapp.chat as chat
 
 
@@ -130,7 +131,7 @@ class user_data:
         """
         # check if login is valid
         self.logger.debug('decrypting decrypt checker...')
-        decrypt_checker = RSA.decrypt_padded(
+        decrypt_checker = RSA_decrypt.decrypt_padded(
             encrypted=data['decrypt_checker'],
             private_key_n=privateKN,
             private_key_d=privateKD
@@ -141,7 +142,7 @@ class user_data:
             self.logger.debug('decrypt checker valid')
             # decrypt user data
             self.logger.debug('decrypting user data...')
-            user_data_decrypted = RSA.decrypt_padded(
+            user_data_decrypted = RSA_decrypt.decrypt_padded(
                 encrypted=data['data'],
                 private_key_d=privateKD,
                 private_key_n=privateKN
@@ -180,7 +181,7 @@ class user_data:
         """
         encrypted_data = {
             'username': self.__username,
-            'decrypt_checker': RSA.encrypt_chunked_padded(
+            'decrypt_checker': RSA_encrypt.encrypt_chunked_padded(
                 plain_text=self.__username,  # TODO make dict to make clearer
                 public_key_n=self.__public_key[0],
                 public_key_e=self.__public_key[1],
@@ -189,7 +190,7 @@ class user_data:
 
         data_to_save = self.collect_data_to_save()
 
-        encrypted_data['data'] = RSA.encrypt_chunked_padded(
+        encrypted_data['data'] = RSA_encrypt.encrypt_chunked_padded(
             plain_text=json.dumps(
                 obj=data_to_save,  # TODO figure out how to store data
                 ),

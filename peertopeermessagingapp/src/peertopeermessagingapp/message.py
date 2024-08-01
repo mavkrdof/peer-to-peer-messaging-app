@@ -1,7 +1,8 @@
 """
 this module holds the message class
 """
-import peertopeermessagingapp.RSA_cryptosystem as RSA
+import peertopeermessagingapp.RSA_decrypt as RSA_decrypt
+import peertopeermessagingapp.RSA_encrypt as RSA_encrypt
 import json
 import logging
 
@@ -81,7 +82,7 @@ class message:
         }
         message_data_json = json.dumps(obj=message_data)
         try:
-            encrypted = RSA.encrypt_chunked_padded(
+            encrypted = RSA_encrypt.encrypt_chunked_padded(
                 public_key_n=self.chat.public_key[0],
                 public_key_e=self.chat.public_key[1],
                 plain_text=message_data_json
@@ -98,7 +99,7 @@ class message:
         Args:
             message_data (list[int]): the data to decrypt as a list of integers
         """
-        decrypted_raw: str = RSA.decrypt_padded(
+        decrypted_raw: str = RSA_decrypt.decrypt_padded(
             encrypted=message_data,
             private_key_d=self.chat.private_key[1],
             private_key_n=self.chat.private_key[0]
