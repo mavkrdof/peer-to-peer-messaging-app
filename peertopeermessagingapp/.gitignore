@@ -60,3 +60,10 @@ var/
 
 # Briefcase log files
 logs/
+logs/
+.vscode/*
+.vscode/settings.json
+.vscode/settings.json
+Raw/doc/~$aluation Criteria.docx
+peertopeermessagingapp/src/peertopeermessagingapp/storage/user_data.json
+*.json
