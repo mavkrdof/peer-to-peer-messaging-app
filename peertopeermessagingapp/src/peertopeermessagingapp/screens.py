@@ -138,9 +138,6 @@ class home_screen(screen):
             none
         """
         super().__init__(GUI_manager=GUI_manager, name='home_screen')
-        self.chat_scroll_segment_count = 0
-        self.chat_load_per_segment_limit = 5
-        self.max_chat_list_segments = 5
 
     def init_GUI(self) -> None:
         """
@@ -172,16 +169,6 @@ class home_screen(screen):
             color=self.GUI_manager.theme['font_color'],
             background_color=self.GUI_manager.theme['foreground']
         )
-        for segment in self.chat_list_scroll.children:
-            segment.style.update()
-            for message in segment.children:
-                message.style.update(
-                    flex=1,
-                    direction='row',
-                    padding_left=10,
-                    background_color=self.GUI_manager.theme['middleground'],
-                    color=self.GUI_manager.theme['font_color']
-                )
         super().set_style()
 
     def add_to_box(self) -> None:
@@ -210,54 +197,7 @@ class home_screen(screen):
         returns:
             none
         """
-        if self.chat_scroll_segment_count >= self.max_chat_list_segments:
-            pass  # TODO: implement max segments
-
-        segment = self.create_chat_list_segment(
-                start_index=self.chat_scroll_segment_count * self.chat_load_per_segment_limit,
-                chats=chat_list,
-                )
-        if segment is None:
-            return None
-        else:
-            self.chat_scroll_segment_count += 1
-            self.chat_list_scroll.add(segment)
-
-    def create_chat_list_segment(self, chats, start_index) -> toga.Box | None:
-        """
-        creates a segment for the chat list
-        args:
-            chats: [Chat]
-                the chats to be displayed
-            start_index: int
-                the index of the first chat to be displayed
-        returns:
-            box (toga.Box): a box containing all elements of this segment
-         """
-        # value checking
-        final_index = start_index + self.chat_load_per_segment_limit
-        if start_index or final_index > len(chats):
-            return None
-        else:
-            # create segment
-            segment = toga.Box()
-            # fill segment
-            for chat in chats[start_index: final_index]:
-                chat_button = toga.Button(
-                    id=chat.id,
-                    text=chat.name,
-                    on_press=self.GUI_manager.chat_screen.display,
-                    style=toga.style.Pack(
-                        flex=1,
-                        direction='row',
-                        padding_left=10,
-                        background_color=self.GUI_manager.theme['middleground'],
-                        color=self.GUI_manager.theme['font_color']
-                    )
-                )  # TODO: maybe make into toga.box to make more good looking
-            # add content to chat box
-            segment.add(chat_button)
-            return segment
+        pass
 
 
 class nav_bar(screen):
