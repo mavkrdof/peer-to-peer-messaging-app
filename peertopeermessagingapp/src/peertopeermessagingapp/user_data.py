@@ -199,13 +199,16 @@ class user_data:
         return encrypted_data
 
     def collect_data_to_save(self) -> dict:
+        chat_dict = {}
+        for chat_object_name, chat_object in self.get_chat_list().items():
+            chat_object[chat_object_name] = chat_object.convert_to_dict()
         data_to_save = {
             'private_key_n': self.get_private_key(key='n'),
             'private_key_d': self.get_private_key(key='d'),
             'public_key_n': self.get_public_key(key='n'),
             'public_key_e': self.get_public_key(key='e'),
             'theme': self.__app.GUI.theme,
-            'chats': self.__chats
+            'chats': chat_dict
         }
         return data_to_save
 

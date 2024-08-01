@@ -31,6 +31,15 @@ class Chat:
         self.users: list = []
         self.logger = logging.getLogger(name='{__name__}:{name}')
 
+    def convert_to_dict(self) -> dict:
+        chat_dict = {
+            'members': self.members,
+            'name': self.name,
+            'icon_max_len': self.icon_max_len,
+            'users': self.users,
+        }
+        return chat_dict
+
     def create_chat(self, name: str, icon: str) -> None:
         """
         create_chat creates a new chat
