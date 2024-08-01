@@ -55,6 +55,7 @@ class GUI_manager:
         """
         self.app = app
         self.logger = logging.getLogger(name=__name__)
+        self.current_chat = ''
         # static
         self.theme = {
             'font_color': toga.constants.BLACK,

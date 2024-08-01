@@ -138,21 +138,30 @@ class home_screen(screen):
             none
         """
         super().__init__(GUI_manager=GUI_manager, name='home_screen')
+        self.chat_buttons = []
 
     def init_GUI(self) -> None:
         """
         init_GUI initialises the GUI elements of the screen
         """
         self.create_title_box()
+        self.populate_chat_list()
         # chat select
+        self.chat_box = toga.Box()
         self.chat_list_scroll = toga.ScrollContainer(
             vertical=True,
             horizontal=False,
+            content=self.chat_box
         )
         self.set_style()
         self.add_to_box()
 
     def set_style(self) -> None:
+        self.chat_box.style.update(
+            flex=1,
+            direction='column',
+            background_color=self.GUI_manager.theme['background']
+        )
         self.chat_list_scroll.style.update(
             flex=1,
             direction='column',
@@ -169,6 +178,13 @@ class home_screen(screen):
             color=self.GUI_manager.theme['font_color'],
             background_color=self.GUI_manager.theme['foreground']
         )
+        for button in self.chat_buttons:
+            button.style.update(
+                flex=0.5,
+                padding_right=10,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            )
         super().set_style()
 
     def add_to_box(self) -> None:
@@ -189,7 +205,7 @@ class home_screen(screen):
             on_press=self.GUI_manager.change_screen,
         )
 
-    def populate_chat_list(self, chat_list: list) -> None:
+    def populate_chat_list(self) -> None:
         """
         populates the chat list with chats
         args:
@@ -197,7 +213,25 @@ class home_screen(screen):
         returns:
             none
         """
-        pass
+        chat_list: dict = self.GUI_manager.app.backend.user_data.get_chat_list()
+        for key, chat in chat_list.items():
+            chat_button = toga.Button(
+                id=f'chat:{key}',
+                text=f'{chat.icon}       {chat.name}',
+                on_press=self.display_chat
+            )
+            self.chat_buttons.append(chat_button)
+            self.chat_box.add(chat_button)
+
+    def display_chat(self, button) -> None:
+        self.GUI_manager.change_screen('chat')
+        current_chat = button.id[5:]
+        self.GUI_manager.current_chat = current_chat
+
+    def update(self) -> None:
+        self.chat_box.clear()
+        self.populate_chat_list()
+        super().update()
 
 
 class nav_bar(screen):

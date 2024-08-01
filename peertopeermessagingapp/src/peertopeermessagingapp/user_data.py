@@ -21,13 +21,16 @@ class user_data:
             username (str): the username of the user
         """
         self.__username = None
-        self.__chats = []
+        self.__chats = {}
         self.__settings = {}
         self.__app = app
         self.__user_data = {}
         self.__private_key: list[int] = []
         self.__public_key: list[int] = []  # TODO
         self.logger = logging.getLogger(name=__name__)
+
+    def get_chat_list(self) -> dict:
+        return self.__chats
 
     def set_user_data(self, user_data) -> None:  # TODO make less bad
         self.__user_data = user_data
@@ -251,9 +254,12 @@ class user_data:
             name (str): the name of the chat
             icon (str): the icon of the chat
         """
-        new_chat = chat.Chat()
-        new_chat.create_chat(name=name, icon=icon)  # TODO move create_chat into init
-        self.__chats.append(chat)
+        if self.__chats.__contains__(name):
+            self.logger.warning(f'chat {name} already exists')
+        else:
+            new_chat = chat.Chat()
+            new_chat.create_chat(name=name, icon=icon)  # TODO move create_chat into init
+            self.__chats[name] = (new_chat)
 
     def remove_chat(self, chat) -> None:
         """
@@ -262,7 +268,10 @@ class user_data:
         Args:
             chat (_type_): _description_
         """
-        self.__chats.remove(chat)
+        if self.__chats.__contains__(chat):
+            self.__chats.pop(chat)
+        else:
+            self.logger.warning(f'No chat called {chat} found')
 
     def get_chats(self) -> None:
         """
