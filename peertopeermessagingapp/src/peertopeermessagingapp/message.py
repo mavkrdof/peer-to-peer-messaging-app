@@ -33,7 +33,7 @@ class message:
             decrypts message
     """
 
-    def __init__(self, chat, message_id: str) -> None:
+    def __init__(self, chat, message_id: str, content: str) -> None:
         """
         __init__ initializes the message data object
 
@@ -41,17 +41,17 @@ class message:
             chat (peertopeermessagingapp.chat.Chat): the chat that the message is from
             message_id (str): the id of the message
         """
-        self.plain_text = None
+        self.content = content
         self.chat = chat
         self.sender = None
         self.sent_time_stamp = None
         self.received_time_stamp = None
         self.message_id = message_id
         self.logger = logging.getLogger(name='{__name__}:{self.chat}:{self.id}')
-    
+
     def convert_to_dict(self) -> dict:
         message_dict = {
-            'test': self.plain_text,
+            'test': self.content,
             'chat': self.chat.id,
             'sender': self.sender,
             'sent_time_stamp': self.sent_time_stamp,
@@ -86,7 +86,7 @@ class message:
             list[int] | None: the encrypted message
         """
         message_data = {
-            'plain_text': self.plain_text,
+            'plain_text': self.content,
             'sender': self.sender,
             'sent_time_stamp': self.sent_time_stamp,
             'received_time_stamp': self.received_time_stamp
@@ -120,7 +120,7 @@ class message:
 
         # check for valid message and assign data
         if 'plain_text' in decrypted:
-            self.plain_text = decrypted['plain_text']
+            self.content = decrypted['plain_text']
             # TODO: decide if plain_test should default to NONE or '' - must update tests
         else:
             self.logger.warning(

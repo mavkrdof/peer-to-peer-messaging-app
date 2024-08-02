@@ -1192,9 +1192,11 @@ class chat_screen(screen):  # TODO add message display
 
     def send_message(self, *args, **kwargs) -> None:
         """
-        send_message activates relevent backend functions to send a message
+        send_message activates relevant backend functions to send a message
         """
-        pass
+        message = self.__message_entry.value
+        chat = self.GUI_manager.current_chat
+        self.GUI_manager.app.backend.send_message(message, chat)
 
 
 class create_chat_screen(screen):

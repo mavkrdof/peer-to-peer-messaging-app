@@ -1,7 +1,9 @@
 import logging
+import time
 from peertopeermessagingapp.user_data import user_data
-import peertopeermessagingapp.RSA_cryptosystem as RSA
 import os
+import peertopeermessagingapp.RSA_gen_keys as RSA_gen_keys
+from peertopeermessagingapp.message import message
 
 
 # TODO add tests for funcs
@@ -19,6 +21,11 @@ class Backend_manager:
         self.key_gen_complexity = 1.1
         self.logger = logging.getLogger(name=__name__)
         self.logger.info('Log file created')
+
+    def send_message(self, message_text: str, chat: str) -> None:
+        msg_id = f'{time.time_ns}'
+        msg = message(chat=chat, message_id=msg_id, content=message_text)
+        self.user_data.send_message(message=msg, chat=chat)
 
     def validate_login(self, username: str, password: str) -> int:
         self.logger.debug('extracting private keys from password...')
@@ -51,7 +58,7 @@ class Backend_manager:
     def create_new_account(self, password_seed, username) -> None | list[int]:
         try:
             self.logger.info('Generating private and public keys using RSA encryption')
-            private_key, public_key = RSA.gen_keys(seed=password_seed, complexity=self.key_gen_complexity)
+            private_key, public_key = RSA_gen_keys.gen_keys(seed=password_seed, complexity=self.key_gen_complexity)
             self.logger.info('Successfully generated private and public keys using RSA encryption ')
             self.user_data.set_username(username=username)
             self.user_data.set_encryption_keys(private_key=private_key, public_key=public_key)

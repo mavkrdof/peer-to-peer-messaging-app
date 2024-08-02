@@ -50,7 +50,7 @@ class Chat:
         }
         return chat_dict
 
-    def send_message(self, message: message) -> None:
+    def send_message(self, message: message) -> None:  # TODO trigger syncing of message data not just storing message
         self.__messages.append(message)
 
     def create_chat(self, name: str, icon: str) -> None:

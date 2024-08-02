@@ -132,7 +132,7 @@ class Test_message_encrypt:
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)
         msg = message(chat=mock_user, message_id="1")
-        msg.plain_text = "Hello, World!"
+        msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
         msg.received_time_stamp = 1622547900
@@ -157,7 +157,7 @@ class Test_message_encrypt:
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)  # TODO
         msg = message(chat=mock_user, message_id="2")
-        msg.plain_text = ""
+        msg.content = ""
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
         msg.received_time_stamp = 1622547900
@@ -184,7 +184,7 @@ class Test_message_encrypt:
         mock_user.public_key = ('force error', 67890)
         # an encryption key as type string will cause an encryption failure
         msg = message(chat=mock_user, message_id="1")
-        msg.plain_text = "Hello, World!"
+        msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
         msg.received_time_stamp = 1622547900
@@ -218,7 +218,7 @@ class Test_message_decrypt:
         msg.decrypt(message_data=[111, 222, 333])  # Random data
 
         # Assertions
-        assert msg.plain_text == 'Hello, World!'
+        assert msg.content == 'Hello, World!'
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
@@ -246,7 +246,7 @@ class Test_message_decrypt:
         caplog.at_level(logging.WARNING)
 
         # Assertions
-        assert msg.plain_text is None
+        assert msg.content is None
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
