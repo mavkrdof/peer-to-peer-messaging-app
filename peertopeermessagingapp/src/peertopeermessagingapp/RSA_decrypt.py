@@ -58,7 +58,12 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                                 clean_decrypted_base_10[splitLen*i:splitLen*i+splitLen]
                                 )
                             )
-                    logging.debug(f'{__name__}:decrypt_padded: successfully split clean base 10 decrypted data into sets of {splitLen}')
+                    logging.debug(
+                        f"""
+                            {__name__}:decrypt_padded:
+                            successfully split clean base10 decrypted data into sets of {splitLen}
+                            """
+                        )
 
                     logging.debug(f'{__name__}:decrypt_padded: converting base 10 to str...')
                     decrypted = base_10_to_string(base10_list=decrypted_split_base_10[1:])

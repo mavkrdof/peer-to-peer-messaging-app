@@ -102,7 +102,13 @@ class user_data:
             if username in user_data_dict:
                 self.logger.debug('user data dict contains username')
                 self.logger.debug('validating password...')
-                if self.decrypt_user_data(data=user_data_dict[username], username=username, privateKN=privateKN, privateKD=privateKD):
+                is_decryption_valid = self.decrypt_user_data(
+                    data=user_data_dict[username],
+                    username=username,
+                    privateKN=privateKN,
+                    privateKD=privateKD
+                    )
+                if is_decryption_valid:
                     logging.info('User data successfully decrypted!')
                     self.__username = username
                     return True
@@ -126,7 +132,8 @@ class user_data:
         # uses the default user data as no account info found
         self.logger.info('If this is NOT a NEW ACCOUNT make sure you have transferred data correctly!')
 
-    def decrypt_user_data(self, data: dict, username: str, privateKD: int, privateKN: int) -> bool:  # TODO refactor into differnt funcs
+    # TODO refactor into different funcs
+    def decrypt_user_data(self, data: dict, username: str, privateKD: int, privateKN: int) -> bool:
         """
         decrypt_user_data decrypts the user data
 
@@ -227,7 +234,8 @@ class user_data:
         self.logger.debug('saving user data to file...')
         if os.path.exists(self.__app.backend.user_data_filepath):  # checks if file exists
             self.logger.debug('found existing user data file reading in...')
-            with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:  # reads in the user_data file
+            # reads in the user_data file
+            with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:
                 user_data_raw: str = ''.join(user_data_file.readlines())
                 if user_data_raw == '':
                     user_data_dict = {}
