@@ -48,13 +48,24 @@ class message:
         self.received_time_stamp = None
         self.message_id = message_id
         self.logger = logging.getLogger(name='{__name__}:{self.chat}:{self.id}')
+    
+    def convert_to_dict(self) -> dict:
+        message_dict = {
+            'test': self.plain_text,
+            'chat': self.chat.id,
+            'sender': self.sender,
+            'sent_time_stamp': self.sent_time_stamp,
+            'received_time_stamp': self.received_time_stamp,
+            'id': self.message_id
+        }
+        return message_dict
 
     def read_in(self) -> None:
         """
         read_in reads in the message from storage
         """
         message_raw = self.chat.message_list[self.message_id]
-        self.decrypt(message_data=message_raw)
+        self.decrypt(message_data=message_raw)  # todo might not have to decrypt
 
     def store(self) -> None:
         """

@@ -1,5 +1,6 @@
 import logging
 import time
+from peertopeermessagingapp.message import message
 
 
 class Chat:
@@ -30,15 +31,27 @@ class Chat:
         self.icon_max_len = 4
         self.users: list = []
         self.logger = logging.getLogger(name='{__name__}:{name}')
+        self.__messages: list[message] = []
+
+    def convert_message_to_json_compatible(self) -> list[dict]:
+        json_compatible = []
+        for msg in self.__messages:
+            json_compatible.append(msg.convert_to_dict())
+        return json_compatible
 
     def convert_to_dict(self) -> dict:
+        json_compatible_message_list: list[dict] = self.convert_message_to_json_compatible()
         chat_dict = {
             'members': self.members,
             'name': self.name,
             'icon_max_len': self.icon_max_len,
             'users': self.users,
+            'message': json_compatible_message_list
         }
         return chat_dict
+
+    def send_message(self, message: message) -> None:
+        self.__messages.append(message)
 
     def create_chat(self, name: str, icon: str) -> None:
         """
