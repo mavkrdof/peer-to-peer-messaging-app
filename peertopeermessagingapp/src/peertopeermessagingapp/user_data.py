@@ -4,6 +4,7 @@ import os
 import peertopeermessagingapp.RSA_encrypt as RSA_encrypt
 import peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 import peertopeermessagingapp.chat as chat
+from peertopeermessagingapp.message import message
 
 
 class user_data:
@@ -81,6 +82,12 @@ class user_data:
             raise ValueError(
                 f'{__name__}:set_encryption_keys: Expected private_key type int instead got type {type(private_key)}'
                 )
+
+    def send_message(self, message: message, chat: str):
+        if self.__chats.__contains__(chat):
+            self.__chats[chat].send_message()
+        else:
+            logging.warning(f'no chat named {chat} found.')
 
     def read_from_file(self, username, privateKN, privateKD) -> bool:
         """
