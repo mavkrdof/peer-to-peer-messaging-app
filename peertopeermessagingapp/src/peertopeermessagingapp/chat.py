@@ -51,7 +51,11 @@ class Chat:
         return chat_dict
 
     def send_message(self, message: message) -> None:  # TODO trigger syncing of message data not just storing message
+        self.logger.debug('Storing message...')
         self.__messages.append(message)
+        self.logger.debug('Successfully stored message')
+        self.logger.info('Sending message...')
+        # self.logger.info('Successfully sent message')
 
     def create_chat(self, name: str, icon: str) -> None:
         """
