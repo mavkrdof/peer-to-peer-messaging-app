@@ -1,5 +1,5 @@
 # # TODO fix decryption/encryption errors
-import math_stuff
+import peertopeermessagingapp.math_stuff as math_stuff
 
 
 def encrypt_chunked_padded(public_key_n=None, public_key_e=None, plain_text=None) -> list[int]:
