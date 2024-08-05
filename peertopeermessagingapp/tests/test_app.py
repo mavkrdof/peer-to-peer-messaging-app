@@ -246,7 +246,7 @@ class Test_message_decrypt:
         caplog.at_level(logging.WARNING)
 
         # Assertions
-        assert msg.content is ''
+        assert msg.content == ''
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
