@@ -1,4 +1,6 @@
-# # TODO fix decryption/encryption errors
+# # TODO fix decryption/encryption errors only affects the final character
+# # TODO might also aonly affect strings with an even length?
+# # TODO - could add a burner character to the end of the string
 import peertopeermessagingapp.math_stuff as math_stuff
 
 

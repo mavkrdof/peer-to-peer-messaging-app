@@ -26,12 +26,15 @@ class Chat:
         __init__ initialises the chat data object
         """
         self.members = None
-        self.name = None  # TODO initialise here
+        self.name = 'chat'  # TODO initialise here
         self.identifier = None
         self.icon_max_len = 4
         self.users: list = []
         self.logger = logging.getLogger(name='{__name__}:{name}')
         self.__messages: list[message] = []
+
+    def get_messages(self) -> list[message]:
+        return self.__messages
 
     def convert_message_to_json_compatible(self) -> list[dict]:
         json_compatible = []
