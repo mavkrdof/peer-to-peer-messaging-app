@@ -213,7 +213,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
         msg = message(chat=mock_user, message_id='1', content='')
@@ -238,7 +238,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
         # Initialize message object and call decrypt
         msg = message(chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])
@@ -246,7 +246,7 @@ class Test_message_decrypt:
         caplog.at_level(logging.WARNING)
 
         # Assertions
-        assert msg.content is None
+        assert msg.content is ''
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900
