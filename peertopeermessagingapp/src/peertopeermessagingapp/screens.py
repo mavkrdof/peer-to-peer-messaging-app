@@ -213,7 +213,7 @@ class home_screen(screen):
         returns:
             none
         """
-        chat_list: dict = self.GUI_manager.app.backend.user_data.get_chat_list()
+        chat_list: dict = self.GUI_manager.app.backend.user_data.get_chat_dict()
         for key, chat in chat_list.items():
             chat_button = toga.Button(
                 id=f'chat:{key}',
@@ -224,9 +224,10 @@ class home_screen(screen):
             self.chat_box.add(chat_button)
 
     def display_chat(self, button) -> None:
-        self.GUI_manager.change_screen('chat')
         current_chat = button.id[5:]
         self.GUI_manager.current_chat = current_chat
+        self.logger.info(msg=f'Current chat: {current_chat}')
+        self.GUI_manager.change_screen('chat')
 
     def update(self) -> None:
         self.chat_box.clear()
@@ -1134,7 +1135,8 @@ class chat_screen(screen):  # TODO add message display
         Args:
             GUI_manager (peertopeermessagingapp.screens.GUI_manager): the GUI manager
         """
-        super().__init__(GUI_manager=GUI_manager, name='chats')
+        super().__init__(GUI_manager=GUI_manager, name='chat')
+        self.__message_list = []
 
     def init_GUI(self) -> None:
         """
@@ -1171,6 +1173,11 @@ class chat_screen(screen):  # TODO add message display
             direction='row',
             background_color=self.GUI_manager.theme['background']
         )
+        for msg in self.__message_list:
+            msg.style.update(
+                background_color=self.GUI_manager.theme['foreground'],
+                color=self.GUI_manager.theme['font_color']
+            )
 
     def create_message_bar(self) -> None:
         self.__message_bar_box = toga.Box(
@@ -1190,6 +1197,17 @@ class chat_screen(screen):  # TODO add message display
             id='message_scroll_box',
         )
 
+    def populate_message_scroll(self) -> None:
+        self.__message_list = []
+        for msg in self.GUI_manager.app.backend.user_data.get_chat_dict()[self.GUI_manager.current_chat].get_messages():  # TODO might have to reverse list
+            msg_graphical = toga.Label(
+                text=msg.content,
+                id=f'msg:{self.GUI_manager.current_chat}{msg.message_id}',
+            )
+            self.__message_list.append(msg_graphical)
+        for graphical_msg in self.__message_list:
+            self.__message_scroll_box.add(graphical_msg)
+
     def send_message(self, *args, **kwargs) -> None:
         """
         send_message activates relevant backend functions to send a message
@@ -1197,6 +1215,13 @@ class chat_screen(screen):  # TODO add message display
         message = self.__message_entry.value
         chat = self.GUI_manager.current_chat
         self.GUI_manager.app.backend.send_message(message, chat)
+
+    def update(self) -> None:
+        """
+        update updates any dynamic elements on the screen (e.g. chat messages)
+        """
+        self.populate_message_scroll()
+        super().update()
 
 
 class create_chat_screen(screen):
@@ -1398,3 +1423,4 @@ class create_chat_screen(screen):
         name = self.__name_field.value
         icon = self.__icon_field.value
         self.GUI_manager.app.backend.user_data.add_chat(name, icon)
+        self.GUI_manager.change_screen(new_screen='home')

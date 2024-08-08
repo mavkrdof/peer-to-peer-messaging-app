@@ -1,6 +1,8 @@
 import pytest
 from src.peertopeermessagingapp.user_data import user_data
-from src.peertopeermessagingapp.RSA_cryptosystem import encrypt_chunked_padded, decrypt_padded, gen_keys
+from src.peertopeermessagingapp.RSA_encrypt import encrypt_chunked_padded
+from src.peertopeermessagingapp.RSA_decrypt import decrypt_padded
+from src.peertopeermessagingapp.RSA_gen_keys import gen_keys
 from src.peertopeermessagingapp.message import message
 import json
 
@@ -131,7 +133,7 @@ class Test_message_encrypt:
     def test_encrypts_valid_message_data_correctly(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)
-        msg = message(chat=mock_user, message_id="1")
+        msg = message(chat=mock_user, message_id="1", content="")
         msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -156,7 +158,7 @@ class Test_message_encrypt:
     def test_handles_empty_plain_text_without_errors(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)  # TODO
-        msg = message(chat=mock_user, message_id="2")
+        msg = message(chat=mock_user, message_id="2", content="")
         msg.content = ""
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -183,7 +185,7 @@ class Test_message_encrypt:
         mock_user = mocker.Mock()
         mock_user.public_key = ('force error', 67890)
         # an encryption key as type string will cause an encryption failure
-        msg = message(chat=mock_user, message_id="1")
+        msg = message(chat=mock_user, message_id="1", content='')
         msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -211,10 +213,10 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id='1')
+        msg = message(chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])  # Random data
 
         # Assertions
@@ -236,17 +238,15 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA.decrypt_padded', return_value=decrypted_data)
-        # TODO: take note of the fact that mocker calls must not be too the
-        # TODO cont: actual module but to the module calling that module
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id='1')
+        msg = message(chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])
 
         caplog.at_level(logging.WARNING)
 
         # Assertions
-        assert msg.content is None
+        assert msg.content == ''
         assert msg.sender == 'user123'
         assert msg.sent_time_stamp == 1622547800
         assert msg.received_time_stamp == 1622547900

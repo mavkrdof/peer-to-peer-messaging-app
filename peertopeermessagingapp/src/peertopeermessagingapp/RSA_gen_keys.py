@@ -1,5 +1,5 @@
 import logging
-import math_stuff
+import peertopeermessagingapp.math_stuff as math_stuff
 import time
 
 

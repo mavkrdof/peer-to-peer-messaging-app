@@ -31,7 +31,7 @@ class user_data:
         self.__public_key: list[int] = []  # TODO
         self.logger = logging.getLogger(name=__name__)
 
-    def get_chat_list(self) -> dict:
+    def get_chat_dict(self) -> dict:
         return self.__chats
 
     def set_user_data(self, user_data) -> None:  # TODO make less bad
@@ -85,7 +85,7 @@ class user_data:
 
     def send_message(self, message: message, chat: str):
         if self.__chats.__contains__(chat):
-            self.__chats[chat].send_message()
+            self.__chats[chat].send_message(message=message)
         else:
             logging.warning(f'no chat named {chat} found.')
 
@@ -215,7 +215,7 @@ class user_data:
 
     def collect_data_to_save(self) -> dict:
         chat_dict = {}
-        for chat_object_name, chat_object in self.get_chat_list().items():
+        for chat_object_name, chat_object in self.get_chat_dict().items():
             chat_dict[chat_object_name] = chat_object.convert_to_dict()
         data_to_save = {
             'private_key_n': self.get_private_key(key='n'),

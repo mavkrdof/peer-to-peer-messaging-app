@@ -52,7 +52,7 @@ class message:
     def convert_to_dict(self) -> dict:
         message_dict = {
             'test': self.content,
-            'chat': self.chat.id,
+            'chat': self.chat.name,
             'sender': self.sender,
             'sent_time_stamp': self.sent_time_stamp,
             'received_time_stamp': self.received_time_stamp,
