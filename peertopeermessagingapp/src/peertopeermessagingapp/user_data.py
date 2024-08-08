@@ -145,7 +145,7 @@ class user_data:
         """
         # check if login is valid
         self.logger.debug('decrypting decrypt checker...')
-        decrypt_checker = RSA_decrypt.decrypt_padded(
+        decrypt_checker = RSA_decrypt.decrypt_data(
             encrypted=data['decrypt_checker'],
             private_key_n=privateKN,
             private_key_d=privateKD
@@ -156,7 +156,7 @@ class user_data:
             self.logger.debug('decrypt checker valid')
             # decrypt user data
             self.logger.debug('decrypting user data...')
-            user_data_decrypted = RSA_decrypt.decrypt_padded(
+            user_data_decrypted = RSA_decrypt.decrypt_data(
                 encrypted=data['data'],
                 private_key_d=privateKD,
                 private_key_n=privateKN

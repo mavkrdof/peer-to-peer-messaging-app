@@ -1,13 +1,13 @@
 import pytest
 from src.peertopeermessagingapp.user_data import user_data
-from src.peertopeermessagingapp.RSA_encrypt import encrypt_chunked_padded
-from src.peertopeermessagingapp.RSA_decrypt import decrypt_padded
+from src.peertopeermessagingapp.RSA_encrypt import encrypt_data
+from src.peertopeermessagingapp.RSA_decrypt import decrypt_data
 from src.peertopeermessagingapp.RSA_gen_keys import gen_keys
 from src.peertopeermessagingapp.message import message
 import json
 
 
-class Test_Encrypt_Chunked_Padded:
+class Test_Encrypt_data:
 
     # encrypts plain text correctly with valid public keys and plain text
     def test_encrypts_and_decrypts_plain_text_correctly(self) -> None:
@@ -16,12 +16,12 @@ class Test_Encrypt_Chunked_Padded:
             complexity=2
         )
         plainText = "hello"
-        result = encrypt_chunked_padded(
+        result = encrypt_data(
             public_key_n=public[0],
             public_key_e=public[1],
             plain_text=plainText
             )
-        decrypted = decrypt_padded(
+        decrypted = decrypt_data(
             encrypted=result,
             private_key_d=private[1],
             private_key_n=private[0]
@@ -34,7 +34,7 @@ class Test_Encrypt_Chunked_Padded:
         publicKE = 17
         plainText = "hello"
         with pytest.raises(ValueError, match="expected publicKN type int instead got type <class 'str'>"):
-            encrypt_chunked_padded(
+            encrypt_data(
                 public_key_n=publicKN,
                 public_key_e=publicKE,
                 plain_text=plainText
@@ -47,12 +47,12 @@ class Test_Encrypt_Chunked_Padded:
             complexity=2
         )
         plainText = "hello$%$_#@_@!)"
-        result = encrypt_chunked_padded(
+        result = encrypt_data(
             public_key_n=public[0],
             public_key_e=public[1],
             plain_text=plainText
             )
-        decrypted = decrypt_padded(
+        decrypted = decrypt_data(
             encrypted=result,
             private_key_d=private[1],
             private_key_n=private[0]
@@ -71,60 +71,17 @@ class Test_Encrypt_Chunked_Padded:
                      'f8h328h2fhsho[ecdnano[h[hr[238ehd[oshfofhwodfhweo[fh'
                      ]
         for plain_text in test_text:
-            result = encrypt_chunked_padded(
+            result = encrypt_data(
                 public_key_n=public[0],
                 public_key_e=public[1],
                 plain_text=plain_text
                 )
-            decrypted = decrypt_padded(
+            decrypted = decrypt_data(
                 encrypted=result,
                 private_key_d=private[1],
                 private_key_n=private[0]
             )
             assert decrypted == plain_text
-
-# the below are to annoying to test take too much processing time
-# TODO optimise key generation
-
-    # def test_gen_key_with_varying_complexity(self) -> None:
-    #     for complexity in range(1, 4):
-    #         seed = 10
-    #         private, public = genKeys(
-    #             seed=seed,
-    #             complexity=complexity
-    #             )
-    #         plainText = "hello"
-    #         result = encryptChunkedPadded(
-    #             publicKN=public[0],
-    #             publicKE=public[1],
-    #             plainText=plainText
-    #             )
-    #         decrypted = decrypt_padded(
-    #             encrypted=result,
-    #             privateKD=private[1],
-    #             privateKN=private[0]
-    #         )
-    #         assert decrypted == plainText
-
-    # def test_gen_key_with_varying_seed(self) -> None:
-    #     for seed in range(10, 22, 4):
-    #         seed *= 10
-    #         private, public = genKeys(
-    #             seed=seed,
-    #             complexity=2
-    #             )
-    #         plainText = "hello"
-    #         result = encryptChunkedPadded(
-    #             publicKN=public[0],
-    #             publicKE=public[1],
-    #             plainText=plainText
-    #             )
-    #         decrypted = decrypt_padded(
-    #             encrypted=result,
-    #             privateKD=private[1],
-    #             privateKN=private[0]
-    #         )
-    #         assert decrypted == plainText
 
 
 class Test_message_encrypt:
@@ -141,16 +98,20 @@ class Test_message_encrypt:
 
         encrypted_data = msg.encrypt()
         valid_encrypted_data = [
-            6211, 8659, 3094, 195, 6190, 3985, 2511, 4285,
-            2440, 2770, 1080, 10609, 1120, 8680, 5044, 8371,
-            4416, 11154, 6076, 6211, 1654, 7255, 11859, 9576,
-            4285, 5061, 5086, 4716, 6745, 121, 1120, 8359, 5961,
-            1741, 10540, 121, 9025, 4875, 2511, 1120, 11149, 5961,
-            106, 10356, 10021, 2511, 4285, 4086, 1375, 7396, 9271,
-            841, 2296, 5961, 2065, 6411, 4116, 7570, 10540, 8374,
-            5545, 5271, 4069, 9115, 3199, 1, 1375, 1975, 5980, 9751,
-            1585, 8695, 8781, 11700, 6076, 2511, 1171, 874, 2806,
-            1794, 8359, 4285, 4875, 7080, 7570, 10750, 8430, 5955, 3001, 9340
+            3264, 11851, 5449, 5844, 5989, 1110, 1585, 8695,
+            10021, 121, 1275, 10021, 11851, 10354, 6994,
+            11851, 10389, 121, 5844, 5844, 10356, 2086, 6994,
+            849, 10356, 9786, 5844, 3700, 7344, 11851, 2086,
+            6994, 11851, 10840, 121, 1585, 3700, 121, 9786,
+            11851, 10354, 6994, 11851, 10284, 10840, 121,
+            9786, 8695, 7471, 1555, 2511, 11851, 2086, 6994,
+            11851, 10840, 121, 1585, 10021, 8695, 10021, 1110,
+            646, 121, 8695, 10840, 10021, 5989, 646, 5449, 11851, 10354,
+            6994, 7471, 11211, 1555, 1555, 6919, 9124, 8290, 5056, 2784,
+            2784, 2086, 6994, 11851, 9786, 121, 7536, 121, 1110, 5119, 121, 3700,
+            8695, 10021, 1110, 646, 121, 8695, 10840, 10021, 5989, 646, 5449,
+            11851, 10354, 6994, 7471, 11211, 1555, 1555, 6919, 9124,
+            8290, 129, 2784, 2784, 6490
             ]
         assert encrypted_data == valid_encrypted_data
 
@@ -166,15 +127,19 @@ class Test_message_encrypt:
 
         encrypted_data = msg.encrypt()
         valid_encrypted_data = [
-            6211, 8659, 3094, 195, 6190, 3985, 2511, 4285, 2440, 2770,
-            1080, 10609, 1120, 511, 11154, 3196, 10540, 3210, 9271,
-            10356, 9346, 2065, 3199, 6679, 106, 10356, 7065, 11950,
-            10540, 11461, 9115, 3199, 8230, 4596, 4596, 6085, 8781,
-            11700, 6076, 2511, 1171, 874, 2806, 1794, 8359, 4285, 4875,
-            7080, 7570, 10750, 8430, 5830, 3001, 9361, 4285, 5061, 2406,
-            9556, 1585, 6309, 4596, 9576, 9271, 9556, 6610, 9585, 106,
-            646, 10501, 2440, 1080, 10609, 11950, 8365, 1555, 4555,
-            3600, 5884, 1335, 9024
+            3264, 11851, 5449, 5844, 5989, 1110, 1585, 8695,
+            10021, 121, 1275, 10021, 11851, 10354, 6994, 11851,
+            11851, 2086, 6994, 11851, 10840, 121, 1585, 3700,
+            121, 9786, 11851, 10354, 6994, 11851, 10284, 10840,
+            121, 9786, 8695, 7471, 1555, 2511, 11851, 2086, 6994,
+            11851, 10840, 121, 1585, 10021, 8695, 10021, 1110,
+            646, 121, 8695, 10840, 10021, 5989, 646, 5449, 11851,
+            10354, 6994, 7471, 11211, 1555, 1555, 6919, 9124,
+            8290, 5056, 2784, 2784, 2086, 6994, 11851, 9786,
+            121, 7536, 121, 1110, 5119, 121, 3700, 8695, 10021,
+            1110, 646, 121, 8695, 10840, 10021, 5989, 646, 5449,
+            11851, 10354, 6994, 7471, 11211, 1555, 1555, 6919,
+            9124, 8290, 129, 2784, 2784, 6490
             ]
         assert encrypted_data == valid_encrypted_data
 
@@ -213,7 +178,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_data', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
         msg = message(chat=mock_user, message_id='1', content='')
@@ -238,7 +203,7 @@ class Test_message_decrypt:
             'sent_time_stamp': 1622547800,
             'received_time_stamp': 1622547900
         })
-        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_padded', return_value=decrypted_data)
+        mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_data', return_value=decrypted_data)
         # Initialize message object and call decrypt
         msg = message(chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])
@@ -266,15 +231,7 @@ class Test_user_data_store_load:
         user.set_user_data({'public_key_n': 323, 'public_key_e': 65537})
         encrypted_user_data = user.encrypt_user_data()
         valid_decrypt_checker = [
-                    45,
-                    45,
-                    101,
-                    78,
-                    45,
-                    185,
-                    45,
-                    298,
-                    83
+                    48, 16, 115, 48, 83
                 ]
         assert encrypted_user_data['decrypt_checker'] == valid_decrypt_checker
 
@@ -282,77 +239,25 @@ class Test_user_data_store_load:
         user = user_data(None)  # None is placeholder as unused
         username = 'test1'
         data = {
-            'decrypt_checker': [45, 45, 101, 78, 45, 185, 45, 298, 83],
+            'decrypt_checker': [48, 16, 115, 48, 83],
             'data': [
-                45,
-                45,
-                176,
-                241,
-                279,
-                46,
-                45,
-                155,
-                13,
-                78,
-                251,
-                175,
-                264,
-                243,
-                95,
-                78,
-                224,
-                1,
-                46,
-                78,
-                95,
-                45,
-                0,
-                204,
-                175,
-                233,
-                117,
-                175,
-                78,
-                84,
-                175,
-                78,
-                282,
-                241,
-                20,
-                204,
-                45,
-                276,
-                85,
-                264,
-                251,
-                297,
-                78,
-                84,
-                252,
-                264,
-                136,
-                296,
-                78,
-                45,
-                276,
-                264,
-                136,
-                1,
-                241,
-                295,
-                58,
-                241,
-                20,
-                139,
-                175,
-                64,
-                223,
-                175,
-                78,
-                123,
-                46,
-                175
+                55, 204, 180, 114, 173, 271, 29, 48,
+                16, 95, 141, 16, 87, 95, 280, 204,
+                58, 117, 136, 84, 136, 282, 117,
+                204, 180, 114, 173, 271, 29, 48, 16,
+                95, 141, 16, 87, 95, 270, 204, 58,
+                117, 83, 123, 282, 117, 204, 180, 32,
+                13, 193, 173, 252, 95, 141, 16, 87, 95,
+                280, 204, 58, 117, 136, 84, 136, 282,
+                117, 204, 180, 32, 13, 193, 173, 252,
+                95, 141, 16, 87, 95, 16, 204, 58, 117,
+                139, 223, 223, 136, 123, 282, 117, 204,
+                48, 36, 16, 262, 16, 204, 58, 117, 55,
+                204, 48, 36, 173, 280, 69, 204, 58, 117,
+                204, 48, 16, 115, 48, 204, 159, 282, 117,
+                204, 252, 36, 29, 48, 115, 204, 58, 117,
+                55, 159, 159
                 ]
             }
-        decrypted_user_data = user.decrypt_user_data(data, username, privateKN=323, privateKD=17)
+        decrypted_user_data = user.decrypt_user_data(data=data, username=username, privateKN=323, privateKD=17)
         assert decrypted_user_data

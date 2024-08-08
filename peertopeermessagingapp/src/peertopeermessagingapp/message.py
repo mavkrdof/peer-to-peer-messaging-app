@@ -110,7 +110,7 @@ class message:
         Args:
             message_data (list[int]): the data to decrypt as a list of integers
         """
-        decrypted_raw: str = RSA_decrypt.decrypt_padded(
+        decrypted_raw: str = RSA_decrypt.decrypt_data(
             encrypted=message_data,
             private_key_d=self.chat.private_key[1],
             private_key_n=self.chat.private_key[0]

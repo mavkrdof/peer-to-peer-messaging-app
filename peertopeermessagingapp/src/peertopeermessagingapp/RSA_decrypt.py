@@ -2,7 +2,7 @@
 import logging
 
 
-def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int) -> str:
+def decrypt_data(encrypted: list[int], private_key_n: int, private_key_d: int) -> str:
     """
     decrypts encrypted text
     args:
@@ -28,13 +28,11 @@ def decrypt_padded(encrypted: list[int], private_key_n: int, private_key_d: int)
                     decrypted_base10 = []
                     for e_chunk in encrypted:
                         decrypted_base10.append(
-                            str(
-                                object=decrypt(
+                            decrypt(
                                     private_key_n=private_key_n,
                                     private_key_d=private_key_d,
                                     to_decrypt=e_chunk
                                     )
-                                )
                             )
                     logging.debug(f'{__name__}:decrypt_padded: successfully decrypted data into base 10')
 
