@@ -164,7 +164,6 @@ class user_data:
             # format as dictionary and store in memory
             self.logger.debug('Successfully decrypted user data')
             self.logger.debug('formatting json data as dictionary...')
-            user_data_decrypted = user_data_decrypted[:-1] + '}'  # TODO This is a quick patch to fix a decryption error should find a better solution
             self.__user_data = json.loads(user_data_decrypted)
             self.logger.debug('successfully formatted json')
             self.logger.debug('setting vars...')
