@@ -93,7 +93,7 @@ class message:
         }
         message_data_json = json.dumps(obj=message_data)
         try:
-            encrypted = RSA_encrypt.encrypt_chunked_padded(
+            encrypted = RSA_encrypt.encrypt_data(
                 public_key_n=self.chat.public_key[0],
                 public_key_e=self.chat.public_key[1],
                 plain_text=message_data_json

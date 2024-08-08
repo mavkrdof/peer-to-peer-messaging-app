@@ -195,7 +195,7 @@ class user_data:
         """
         encrypted_data = {
             'username': self.__username,
-            'decrypt_checker': RSA_encrypt.encrypt_chunked_padded(
+            'decrypt_checker': RSA_encrypt.encrypt_data(
                 plain_text=self.__username,  # TODO make dict to make clearer
                 public_key_n=self.__public_key[0],
                 public_key_e=self.__public_key[1],
@@ -204,7 +204,7 @@ class user_data:
 
         data_to_save = self.collect_data_to_save()
 
-        encrypted_data['data'] = RSA_encrypt.encrypt_chunked_padded(
+        encrypted_data['data'] = RSA_encrypt.encrypt_data(
             plain_text=json.dumps(
                 obj=data_to_save,  # TODO figure out how to store data
                 ),
