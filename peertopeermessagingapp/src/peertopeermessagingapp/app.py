@@ -32,7 +32,7 @@ class PeertoPeerMessagingApp(toga.App):
 
     def exit(self) -> None:
         try:
-            self.backend.user_data.save_to_file()
+            self.backend.user_data.save_to_file()  # when data is saved using this func it is mangled
         finally:
             super().exit()
 

@@ -24,8 +24,12 @@ class Backend_manager:
 
     def send_message(self, message_text: str, chat: str) -> None:
         msg_id = f'{time.time_ns}'
-        msg = message(chat=chat, message_id=msg_id, content=message_text)
-        self.user_data.send_message(message=msg, chat=chat)
+        if chat in self.user_data.get_chat_dict():
+            chat_obj = self.user_data.get_chat_dict()[chat]
+            msg = message(chat=chat_obj, message_id=msg_id, content=message_text)
+            self.user_data.send_message(message=msg, chat=chat)
+        else:
+            self.logger.warning(f'no chat named {chat}')
 
     def validate_login(self, username: str, password: str) -> int:
         self.logger.debug('extracting private keys from password...')
