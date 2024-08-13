@@ -5,8 +5,10 @@ import peertopeermessagingapp.RSA_encrypt as RSA_encrypt
 import peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 import peertopeermessagingapp.chat as chat
 from peertopeermessagingapp.message import message
+from dataclasses import dataclass
 
 
+@dataclass
 class user_data:
     """
     vars
@@ -26,15 +28,15 @@ class user_data:
         self.__chats = {}
         self.__settings = {}
         self.__app = app
-        self.__user_data = {}
+        self.__user_data = {}  # TODO Remove
         self.__private_key: list[int] = []
-        self.__public_key: list[int] = []  # TODO
+        self.__public_key: list[int] = []
         self.logger = logging.getLogger(name=__name__)
 
     def get_chat_dict(self) -> dict:
         return self.__chats
 
-    def set_user_data(self, user_data) -> None:  # TODO make less bad
+    def set_user_data(self, user_data) -> None:
         self.__user_data = user_data
 
     def get_private_key(self, key) -> int:
@@ -67,7 +69,7 @@ class user_data:
         else:
             raise ValueError(f'Expected username type str instead got {type(username)}')
 
-    def set_encryption_keys(self, private_key, public_key) -> None:
+    def set_encryption_keys(self, private_key: list[int], public_key: list[int]) -> None:  # TODO make by expanding the private and public keys from lists to ints
         if all(isinstance(item, int) for item in private_key):
             if all(isinstance(item, int) for item in public_key):
                 self.__private_key = private_key  # N, D
