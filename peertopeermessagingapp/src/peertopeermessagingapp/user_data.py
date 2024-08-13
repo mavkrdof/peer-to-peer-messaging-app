@@ -110,7 +110,6 @@ class user_data:
                     )
                 if is_decryption_valid:
                     logging.info('User data successfully decrypted!')
-                    self.__username = username
                     return True
                 else:
                     self.logger.warning('no matching user data in file')
@@ -161,6 +160,7 @@ class user_data:
                 private_key_d=privateKD,
                 private_key_n=privateKN
                 )
+
             # format as dictionary and store in memory
             self.logger.debug('Successfully decrypted user data')
             self.logger.debug('formatting json data as dictionary...')
@@ -174,8 +174,8 @@ class user_data:
                     privateKD
                     ],
                 public_key=[
+                    self.__user_data['public_key_n'],
                     self.__user_data['public_key_e'],
-                    self.__user_data['public_key_n']
                     ]
                 )
             self.logger.debug('successfully set vars')
@@ -196,8 +196,8 @@ class user_data:
             'username': self.__username,
             'decrypt_checker': RSA_encrypt.encrypt_data(
                 plain_text=self.__username,  # TODO make dict to make clearer
-                public_key_n=self.__public_key[0],
-                public_key_e=self.__public_key[1],
+                public_key_n=self.get_public_key(key='n'),
+                public_key_e=self.get_public_key(key='e'),
                 )
         }
 
@@ -207,8 +207,8 @@ class user_data:
             plain_text=json.dumps(
                 obj=data_to_save,  # TODO figure out how to store data
                 ),
-            public_key_n=self.__public_key[0],
-            public_key_e=self.__public_key[1],
+            public_key_n=self.get_public_key(key='n'),
+            public_key_e=self.get_public_key(key='e'),
             )
         return encrypted_data
 
@@ -231,10 +231,38 @@ class user_data:
         save_to_file saves encrypted user data to file
         """
         self.logger.debug('saving user data to file...')
-        if os.path.exists(self.__app.backend.user_data_filepath):  # checks if file exists
+        user_data_dict = self.load_user_data_from(self.__app.backend.user_data_filepath)
+
+        self.logger.debug('encrypting user data...')
+        user_data_dict[self.__username] = self.encrypt_user_data()  # replaces old user data with current user data to stored user data
+        self.logger.debug('successfully encrypted user data')
+        self.logger.debug('formatting user data as json...')
+        user_data_json: str = json.dumps(
+            obj=user_data_dict,
+            sort_keys=True,
+            indent=4
+            )  # converts dictionary to json
+        self.logger.debug('successfully formatted user data as json')
+        self.logger.debug('writing user data to file...')
+
+        self.save_data_to(self.__app.backend.user_data_filepath, user_data_json)
+
+    def save_data_to(self, file_path: str, user_data: str):
+        if os.path.exists(file_path):  # checks if file exists
+            mode = 'w'  # overwrites existing file
+            self.logger.debug('user data file found... writing to it')
+        else:
+            mode = 'x'  # creates new file
+            self.logger.debug('No user data file... creating one')
+        with open(file=file_path, mode=mode) as user_data_file:
+            user_data_file.write(user_data)  # writes the new json to the now empty user_data file
+        self.logger.debug('Successfully wrote user data to file')
+
+    def load_user_data_from(self, file_path: str) -> dict:
+        if os.path.exists(file_path):  # checks if file exists
             self.logger.debug('found existing user data file reading in...')
             # reads in the user_data file
-            with open(file=self.__app.backend.user_data_filepath, mode='r') as user_data_file:
+            with open(file=file_path, mode='r') as user_data_file:
                 user_data_raw: str = ''.join(user_data_file.readlines())
                 if user_data_raw == '':
                     user_data_dict = {}
@@ -244,25 +272,7 @@ class user_data:
         else:
             self.logger.debug('no preexisting user data file found')
             user_data_dict = {}
-        self.logger.debug('encrypting user data...')
-        user_data_dict[self.__username] = self.encrypt_user_data()  # appends current user data to stored user data
-        self.logger.debug('successfully encrypted user data')
-        self.logger.debug('formatting user data as json...')
-        user_data_json = json.dumps(
-            obj=user_data_dict,
-            sort_keys=True, indent=4
-            )  # converts dictionary to json
-        self.logger.debug('successfully formatted user data as json')
-        self.logger.debug('writing user data to file...')
-        if os.path.exists(self.__app.backend.user_data_filepath):
-            mode = 'w'
-            self.logger.debug('user data file found... writing to it')
-        else:
-            mode = 'x'
-            self.logger.debug('No user data file... creating one')
-        with open(file=self.__app.backend.user_data_filepath, mode=mode) as user_data_file:
-            user_data_file.write(user_data_json)  # writes the new json to the now empty user_data file
-        self.logger.debug('Successfully wrote user data to file')
+        return user_data_dict
 
     def add_chat(self, name, icon) -> None:
         """
