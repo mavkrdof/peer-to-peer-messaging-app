@@ -1,15 +1,21 @@
 import asyncio
+import json
 import logging
 
 
 # TODO must add the ability to manage an address book of all connected users (holding: ip, port and username(figure out how to deal with dupilicate usernames)) and pass that book onto new server when this server shuts down
-class Network_manager:  # TODO Server maintainance instance should be on a different port, define a message Structure eg need type, destination, content, make sure to check that their is not already a server running before creating your own
+class Network_manager:  # TODO Server maintenance instance should be on a different port, define a message Structure eg need type, destination, content, make sure to check that their is not already a server running before creating your own
     def __init__(self, app) -> None:
         self.app = app
         self.logger = logging.getLogger(name='{__name__}')
         self.message_separator: bytes = ''.encode()
         self.address_book: dict = {}
-        self.add_address(name='established_peer', ip='', port=0)  # a small server that holds the name and address of the current active server
+        self.own_address = {
+            'name': '',
+            'ip': '',
+            'port': 0
+        }
+        self.add_address(name='est_peer', ip='', port=0)  # a small server that holds the name and address of the current active server
 
     async def main(self, ip, port) -> None:
         async with asyncio.TaskGroup() as tg:
@@ -24,15 +30,14 @@ class Network_manager:  # TODO Server maintainance instance should be on a diffe
             tg.create_task(
                 self.send_message(
                     message='Hello, I am connected!',
-                    ip=self.address_book['server']['ip'],
-                    port=self.address_book['server']['port']
+                    address=self.address_book['server']
                     )
                 )
 
     async def is_active_server(self) -> bool:
         connection = await self.establish_connection(
-            ip=self.address_book['established_peer']['ip'],
-            port=self.address_book['established_peer']['port']
+            ip=self.address_book['est_peer']['ip'],
+            port=self.address_book['est_peer']['port']
             )
         if connection is None:
             self.logger.error('Connection to established peer Failed')
@@ -44,7 +49,7 @@ class Network_manager:  # TODO Server maintainance instance should be on a diffe
             response = await reader.readuntil(self.message_separator)
             parsed_response = self.parse_message(message=response)
             try:
-                if parsed_response['sender'] == self.address_book['established_peer']['name']:
+                if parsed_response['sender'] == self.address_book['est_peer']['name']:
                     if parsed_response['content'] == 'No Server':
                         return False
                     elif isinstance(parsed_response['content'], dict):
@@ -79,16 +84,19 @@ class Network_manager:  # TODO Server maintainance instance should be on a diffe
     def parse_message(self, message) -> dict:
         return message
 
-    async def send_message(self, message, ip, port) -> None:  # TODO pull from a queue
+    async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
         self.logger.info('Sending message...')
-        connection = await self.establish_connection(ip, port)
+        connection = await self.establish_connection(ip=address['ip'], port=address['port'])
         if connection is None:
             self.logger.error('Connection Failed')
         else:
             reader, writer = connection
             writer.write(message.encode())
             await writer.drain()
+            response: bytes = await reader.readuntil(separator=self.message_separator)
             self.logger.info('Successfully sent message')
+            parsed_message = self.parse_message(message=response)
+            return parsed_message
 
     async def establish_connection(self, ip, port) -> tuple[asyncio.StreamReader, asyncio.StreamWriter] | None:
         self.logger.info('Connecting...')
@@ -101,13 +109,44 @@ class Network_manager:  # TODO Server maintainance instance should be on a diffe
         except OSError as error:
             self.logger.error(error)
 
+    def create_message(self, content) -> str:
+        message = {
+            'content': content,
+            'sender': self.own_address['name']
+        }
+        message_json = json.dumps(message)
+        return message_json
+
     async def create_server(self, ip, port) -> None:
         self.logger.info('Creating server...')
         try:
-            server = await asyncio.start_server(self.listener, ip, port)
-            self.logger.info('Server created')
-            async with server:
-                await server.serve_forever()
+            self.logger.info('Requesting server privileges')
+            response = await self.send_message(
+                message=self.create_message(
+                    content=f'Request Server Privileges {self.own_address}'
+                    ),
+                address=self.address_book['est_peer']
+                )
+            if response is None:
+                self.logger.error('Established Peer response invalid')
+            else:
+                match response['content']:
+                    case 'Accepted':
+                        server = await asyncio.start_server(self.listener, ip, port)
+                        self.logger.info('Server created')
+                        await self.send_message(
+                            message=self.create_message(
+                                content=f'Server Established {self.own_address}'
+                                ),
+                            address=self.address_book['est_peer']
+                            )
+                        self.add_address(name='server', ip=ip, port=port)
+                        async with server:
+                            await server.serve_forever()
+                    case 'Rejected':
+                        self.logger.warn('Established peer rejected server privileges')
+                    case _:
+                        self.logger.error('Established Peer response invalid')
         except OSError as error:
             self.logger.error(error)
 
