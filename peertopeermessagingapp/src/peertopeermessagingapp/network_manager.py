@@ -8,9 +8,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
     def __init__(self, app) -> None:
         self.app = app
         self.logger = logging.getLogger(name='{__name__}')
-        self.message_separator: bytes = ''.encode()
+        self.message_separator: bytes = '\n'.encode()  # TODO decide message sep
         self.address_book: dict = {}
-        self.own_address = {
+        self.own_address = {  # TODO Finish
             'name': '',
             'ip': '',
             'port': 0
@@ -81,7 +81,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         }
         self.logger.debug(f'Successfully added address {name}')
 
-    def parse_message(self, message) -> dict:
+    def parse_message(self, message) -> dict:  # TODO Finish
         return message
 
     async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
@@ -109,7 +109,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         except OSError as error:
             self.logger.error(error)
 
-    def create_message(self, content) -> str:
+    def create_message(self, content) -> str:  # TODO finish
         message = {
             'content': content,
             'sender': self.own_address['name']
@@ -119,11 +119,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
 
     async def create_server(self, ip, port) -> None:
         self.logger.info('Creating server...')
+        server_address = {
+            'name': f'{self.own_address["name"]}-server',
+            'ip': ip,
+            'port': port
+        }
         try:
             self.logger.info('Requesting server privileges')
             response = await self.send_message(
                 message=self.create_message(
-                    content=f'Request Server Privileges {self.own_address}'
+                    content=f'Request Server Privileges {server_address}'
                     ),
                 address=self.address_book['est_peer']
                 )
@@ -136,7 +141,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                         self.logger.info('Server created')
                         await self.send_message(
                             message=self.create_message(
-                                content=f'Server Established {self.own_address}'
+                                content=f'Server Established {server_address}'
                                 ),
                             address=self.address_book['est_peer']
                             )
