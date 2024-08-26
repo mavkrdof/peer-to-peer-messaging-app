@@ -33,7 +33,7 @@ class message:
             decrypts message
     """
 
-    def __init__(self, chat, message_id: str, content: str) -> None:
+    def __init__(self, chat, message_id: str, content: str, app) -> None:
         """
         __init__ initializes the message data object
 
@@ -41,6 +41,7 @@ class message:
             chat (peertopeermessagingapp.chat.Chat): the chat that the message is from
             message_id (str): the id of the message
         """
+        self.app = app
         self.content = content
         self.chat = chat
         self.sender = None
@@ -51,8 +52,8 @@ class message:
 
     def convert_to_dict(self) -> dict:
         message_dict = {
-            'test': self.content,
-            'chat': self.chat.name,
+            'text': self.content,
+            'chat': self.chat.identifier,
             'sender': self.sender,
             'sent_time_stamp': self.sent_time_stamp,
             'received_time_stamp': self.received_time_stamp,
@@ -66,6 +67,10 @@ class message:
         """
         message_raw = self.chat.message_list[self.message_id]
         self.decrypt(message_data=message_raw)  # todo might not have to decrypt
+
+    def send(self) -> None:
+        message = self.convert_to_dict()
+        self.app.network_manager.add_message_to_queue(message)
 
     def store(self) -> None:
         """
