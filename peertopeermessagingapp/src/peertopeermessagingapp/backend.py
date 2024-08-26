@@ -26,7 +26,7 @@ class Backend_manager:
         msg_id = f'{time.time_ns}'
         if chat in self.user_data.get_chat_dict():
             chat_obj = self.user_data.get_chat_dict()[chat]
-            msg = message(chat=chat_obj, message_id=msg_id, content=message_text)
+            msg = message(chat=chat_obj, message_id=msg_id, content=message_text, app=self.app)
             self.user_data.send_message(message=msg, chat=chat)
         else:
             self.logger.warning(f'no chat named {chat}')
