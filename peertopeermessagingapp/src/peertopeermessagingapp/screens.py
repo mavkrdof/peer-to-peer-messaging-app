@@ -1202,7 +1202,6 @@ class chat_screen(screen):  # TODO add message display
         for msg in self.GUI_manager.app.backend.user_data.get_chat_dict()[self.GUI_manager.current_chat].get_messages():  # TODO might have to reverse list
             msg_graphical = toga.Label(
                 text=msg.content,
-                id=f'msg:{self.GUI_manager.current_chat}{msg.message_id}',
             )
             self.__message_list.append(msg_graphical)
         for graphical_msg in self.__message_list:
