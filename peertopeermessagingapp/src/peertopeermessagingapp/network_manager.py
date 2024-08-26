@@ -1,6 +1,8 @@
 import asyncio
 import json
 import logging
+import socket
+import time
 
 
 # TODO must add the ability to manage an address book of all connected users (holding: ip, port and username(figure out how to deal with dupilicate usernames)) and pass that book onto new server when this server shuts down
@@ -15,25 +17,22 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             'ip': '',
             'port': 0
         }
+        self.message_queue = asyncio.Queue()
         self.add_address(name='name_server', ip='127.0.0.1', port=8888)  # a small server that holds the name and address of the current active server
 
-    async def main(self, ip, port) -> None:
+    def start(self):
+        asyncio.run(self.main())  # TODO move into create chat serve func dont define ip and port here
+
+    async def main(self) -> None:
         server_exists = await self.is_active_server()
         if server_exists:
             self.logger.info('Found established server')
         else:
-            await self.create_chat_server(
-                ip=ip, port=port
-                )
+            await self.create_chat_server()
         async with asyncio.TaskGroup() as tg:
             tg.create_task(self.create_chat_client())
             tg.create_task(self.get_address_book())
-            tg.create_task(
-                self.send_message(
-                    message='Hello, I am connected!',
-                    address=self.address_book['chat_server']
-                    )
-                )
+            tg.create_task(self.send_messages_from_queue())
 
     async def is_active_server(self) -> bool:
         reader, writer = await self.establish_connection(
@@ -105,6 +104,36 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         message = json.loads(message)
         return message
 
+    async def add_message_to_queue(self, content) -> None:
+        self.logger.info('Adding message to queue...')
+        message = self.create_message(content=content, command='send message')
+        await self.message_queue.put(message)
+        self.logger.info('Message added to queue')
+
+    async def send_messages_from_queue(self) -> None:
+        running = True
+        while running:
+            try:
+                self.logger.info('Awaiting message from queue...')
+                message = await self.message_queue.get()
+                self.logger.info('Found message in queue...')
+                acknowledgement = await self.send_message(message=message, address=self.address_book['chat_server'])
+                parsed_acknowledgement = self.parse_message(message=acknowledgement)
+                if isinstance(parsed_acknowledgement, dict):
+                    if parsed_acknowledgement['command'] == 'message sent':
+                        self.logger.info('Message sent')
+                        continue  # skips message failure
+                # message failure
+                await self.add_message_to_queue(message)
+                self.app.GUI_manager.chat_screen.failed_to_send_message()
+                self.logger.error('Failed to send message')
+            except:
+                self.logger.error('Ecnountered an error')
+                # message failure
+                await self.add_message_to_queue(message)
+                self.app.GUI_manager.chat_screen.failed_to_send_message()
+                self.logger.error('Failed to send message')
+
     async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
         self.logger.info('Sending message...')
         reader, writer = await self.establish_connection(ip=address['ip'], port=address['port'])
@@ -172,7 +201,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         except OSError as error:
             self.logger.error(error)
 
-    async def create_chat_server(self, ip, port) -> None:
+    async def create_chat_server(self) -> None:
+        ip = socket.gethostbyname(socket.gethostname())
+        port = 8888
         self.logger.info('Creating server...')
         server_address = {
             'name': f'{self.own_address["name"]}-server',
@@ -217,29 +248,60 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             await server.serve_forever()
 
     async def client_listener(self, reader, writer) -> None:
-        try:
-            while True:
-                data: bytes = await reader.read(1024)
-                self.logger.info(f'Received: {data.decode()}')
-        except ConnectionResetError as error:
-            self.logger.error(error)
-        finally:
-            self.logger.info('Closing connection')
-            writer.close()
+        while True:
+            try:
+                message = await reader.readuntil(self.message_separator)
+            except ConnectionResetError as error:
+                self.logger.error(error)
+                break
+            except asyncio.exceptions.IncompleteReadError as error:
+                self.logger.error(error)
+                break
+            message = message.decode()
+            message = self.parse_message(message)
+            self.logger.info(f'Received message: {message}')
+            match message['command']:
+                case _:
+                    self.logger.error('Invalid command')
 
     async def server_listener(self, reader, writer) -> None:
-        try:
-            while True:
-                data: bytes = await reader.read(1024)
-                self.logger.info(f'Received: {data.decode()}')
-        except ConnectionResetError as error:
-            self.logger.error(error)
-        finally:
-            self.logger.info('Closing connection')
-            writer.close()
-
+        while True:
+            try:
+                message = await reader.readuntil(self.message_separator)
+            except ConnectionResetError as error:
+                self.logger.error(error)
+                break
+            except asyncio.exceptions.IncompleteReadError as error:
+                self.logger.error(error)
+                break
+            message = message.decode()
+            message = self.parse_message(message)
+            self.logger.info(f'Received message: {message}')
+            match message['command']:
+                case 'update address book':
+                    if isinstance(message['content'], dict):
+                        updated_client_address_book = {
+                            key: self.address_book.get(key, message['content'][key])
+                            for key in message['content']
+                        }
+                        response = self.create_message(
+                            content=updated_client_address_book,
+                            command='address book data'
+                            )
+                    writer.write(response.encode())
+                    await writer.drain()
+                case 'new client':
+                    if isinstance(message['content'], dict):
+                        if message.includes('ip') and message.includes('port') and message.includes('name'):
+                            self.add_address(
+                                name=message['content']['name'],
+                                ip=message['content']['ip'],
+                                port=message['content']['port']
+                                )
+                case _:
+                    self.logger.error('Invalid command')
 
 if __name__ == '__main__':
     logging.basicConfig(encoding='utf-8', level=logging.DEBUG, filemode='w')
     nm = Network_manager(app='test')
-    asyncio.run(nm.main(ip='127.0.0.1', port=4444))  # TODO move into create chat serve func dont define ip and port here
+    nm.start()
