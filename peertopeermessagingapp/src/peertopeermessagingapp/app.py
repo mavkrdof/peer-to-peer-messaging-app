@@ -9,6 +9,7 @@ import toga.style
 import toga.style.pack
 from peertopeermessagingapp.graphical_user_interface import GUI_manager
 from peertopeermessagingapp.backend import Backend_manager
+from peertopeermessagingapp.network_manager import Network_manager
 
 
 class PeertoPeerMessagingApp(toga.App):
@@ -22,6 +23,10 @@ class PeertoPeerMessagingApp(toga.App):
         # initialise Backend
         logging.basicConfig(level=logging.DEBUG)
         self.backend = Backend_manager(app=self)
+        # init network
+        self.network_manager = Network_manager(app=self)
+        self.network_manager.start()
+        # init logging
         logging.basicConfig(filename=self.backend.log_filepath, encoding='utf-8', level=logging.DEBUG, filemode='w')
         # initialise GUI
         self.GUI = GUI_manager(app=self)
