@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import socket
-import time
 
 
 # TODO must add the ability to manage an address book of all connected users (holding: ip, port and username(figure out how to deal with dupilicate usernames)) and pass that book onto new server when this server shuts down
@@ -18,10 +17,14 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             'port': 0
         }
         self.message_queue = asyncio.Queue()
-        self.add_address(name='name_server', ip='127.0.0.1', port=8888)  # a small server that holds the name and address of the current active server
+        self.add_address(
+            name='name_server',
+            ip='127.0.0.1',
+            port=8888
+            )  # a small server that holds the name and address of the current active server
 
     def start(self):
-        asyncio.run(self.main())  # TODO move into create chat serve func dont define ip and port here
+        asyncio.run(self.main())
 
     async def main(self) -> None:
         server_exists = await self.is_active_server()
@@ -33,6 +36,25 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             tg.create_task(self.create_chat_client())
             tg.create_task(self.get_address_book())
             tg.create_task(self.send_messages_from_queue())
+        # update address book
+        message = self.create_message(
+            content=self.address_book,
+            command='update address book'
+        )
+        await self.send_message(
+            address=self.address_book['chat_server'],
+            message=message
+        )
+
+    def load_address_book(self) -> None:
+        self.address_book = self.app.backend.user_data.address_book
+        if isinstance(self.address_book, dict):
+            pass
+        else:
+            self.address_book = {}
+
+    def save_address_book(self) -> None:
+        self.app.backend.user_data.address_book = self.address_book
 
     async def is_active_server(self) -> bool:
         reader, writer = await self.establish_connection(
@@ -44,12 +66,17 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             return False
         else:
             self.logger.info('connections to name_server established')
-            writer.write(self.create_message(command='Request Current Server Ip and Port', content='').encode())  # request the current server ip and port from the established peer
+            writer.write(
+                self.create_message(
+                    command='Request Current Server Ip and Port',
+                    content=''
+                    ).encode()
+                )  # request the current server ip and port from the established peer
             await writer.drain()
             self.logger.info('requested server ip and port from name server awaiting response...')
             parsed_response = await self.read_and_parse_response(reader)
             if parsed_response is None:
-                self.logger.warning('invalid resonse')
+                self.logger.warning('invalid response')
                 return False
             self.logger.info(f'Response: {parsed_response}')
             try:
@@ -97,6 +124,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                 'port': port,
             }
             self.logger.debug(f'Successfully added address {name}')
+            self.logger.debug('Saving address book...')
+            self.save_address_book()
+            self.logger.debug('saved address book')
         else:
             self.logger.error('Invalid address data')
 
@@ -229,7 +259,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                         await self.send_message(
                             message=self.create_message(
                                 content=server_address,
-                                command='Server Established', 
+                                command='Server Established',
                                 ),
                             address=self.address_book['name_server']
                             )
@@ -300,6 +330,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                                 )
                 case _:
                     self.logger.error('Invalid command')
+
 
 if __name__ == '__main__':
     logging.basicConfig(encoding='utf-8', level=logging.DEBUG, filemode='w')

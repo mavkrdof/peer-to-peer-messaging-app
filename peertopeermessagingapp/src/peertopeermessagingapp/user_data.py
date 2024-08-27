@@ -32,6 +32,7 @@ class user_data:
         self.__private_key: list[int] = []
         self.__public_key: list[int] = []
         self.logger = logging.getLogger(name=__name__)
+        self.address_book = {}
 
     def get_chat_dict(self) -> dict:
         return self.__chats
@@ -180,6 +181,8 @@ class user_data:
                     self.__user_data['public_key_e'],
                     ]
                 )
+            if self.__user_data.__contains__('address_book'):
+                self.address_book = self.__user_data['address_book']
             self.logger.debug('successfully set vars')
             return True
         else:
@@ -224,7 +227,8 @@ class user_data:
             'public_key_n': self.get_public_key(key='n'),
             'public_key_e': self.get_public_key(key='e'),
             'theme': self.__app.GUI.theme,
-            'chats': chat_dict
+            'chats': chat_dict,
+            'address_book': self.address_book
         }
         return data_to_save
 

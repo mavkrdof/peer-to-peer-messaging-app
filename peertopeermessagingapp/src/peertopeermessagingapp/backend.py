@@ -9,6 +9,7 @@ from peertopeermessagingapp.message import message
 # TODO add tests for funcs
 class Backend_manager:
     def __init__(self, app) -> None:
+        self.logged_in = False
         self.__password_separator = '-'
         self.app = app
         self.user_data = user_data(app=self.app)
@@ -43,6 +44,7 @@ class Backend_manager:
             # checks if user data for the username and pword are in storage if so reads it in else returns false
             if self.user_data.read_from_file(username=username, privateKN=privateKN, privateKD=privateKD):
                 self.logger.debug('Valid Login')
+                self.update_logged_in_status(status=True)
                 return 1  # Valid login
             else:
                 self.logger.debug('Invalid login: No account with that password and username')
@@ -72,8 +74,23 @@ class Backend_manager:
             return None
         self.logger.info('Saving User Data...')
         self.save_user_data()
+        self.update_logged_in_status(True)
         self.logger.info('Successfully saved user data')
         return private_key
 
     def save_user_data(self) -> None:
         self.user_data.save_to_file()
+
+    def update_logged_in_status(self, status: bool) -> None:
+        if status:
+            self.logged_in = True
+            self.init_network()
+        else:
+            self.logged_in = False
+            self.user_data = user_data(app=self.app)  # clears user data
+
+    def logout(self) -> None:
+        self.update_logged_in_status(status=False)
+
+    def init_network(self) -> None:
+        self.app.network_manager.start()
