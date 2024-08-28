@@ -25,7 +25,6 @@ class PeertoPeerMessagingApp(toga.App):
         self.backend = Backend_manager(app=self)
         # init network
         self.network_manager = Network_manager(app=self)
-        self.network_manager.start()
         # init logging
         logging.basicConfig(filename=self.backend.log_filepath, encoding='utf-8', level=logging.DEBUG, filemode='w')
         # initialise GUI
