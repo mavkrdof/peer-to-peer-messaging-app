@@ -291,7 +291,7 @@ class user_data:
         if self.__chats.__contains__(name):
             self.logger.warning(f'chat {name} already exists')
         else:
-            new_chat = chat.Chat()
+            new_chat = chat.Chat(app=self.__app)
             new_chat.create_chat(name=name, icon=icon)  # TODO move create_chat into init
             self.__chats[name] = (new_chat)
 

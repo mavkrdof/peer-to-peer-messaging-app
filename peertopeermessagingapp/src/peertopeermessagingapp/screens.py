@@ -178,6 +178,12 @@ class home_screen(screen):
             color=self.GUI_manager.theme['font_color'],
             background_color=self.GUI_manager.theme['foreground']
         )
+        self.reload_address_book_button.style.update(
+            flex=0.5,
+            padding_right=10,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['foreground']
+        )
         for button in self.chat_buttons:
             button.style.update(
                 flex=0.5,
@@ -190,8 +196,9 @@ class home_screen(screen):
     def add_to_box(self) -> None:
         # add to title box
         self.title_box.add(self.add_chat_button)
-        self.box.add(self.title_box)
+        self.title_box.add(self.reload_address_book_button)
         # add to main box
+        self.box.add(self.title_box)
         self.box.add(self.chat_list_scroll)
 
     def create_title_box(self) -> None:
@@ -203,6 +210,10 @@ class home_screen(screen):
             id="add_chat",
             text='Add Chat',
             on_press=self.GUI_manager.change_screen,
+        )
+        self.reload_address_book_button = toga.Button(
+            text='Reload Address Book',
+            on_press=self.GUI_manager.app.network_manager.add_message_to_queue('update address book')
         )
 
     def populate_chat_list(self) -> None:
@@ -708,6 +719,27 @@ class settings_screen(screen):
                 color=self.GUI_manager.theme['font_color'],
                 background_color=self.GUI_manager.theme['foreground']
             ),  # type: ignore
+        self.name_server_ip_box.style.update(
+            direction='row',
+            padding=10,
+            flex=1,
+            background_color=self.GUI_manager.theme['middleground']
+            )
+        self.name_server_ip_label.style.update(
+                flex=0.25,
+                padding_right=10,
+                text_align='center',
+                font_size=20,
+                font_weight='bold',
+                font_family='monospace',
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['middleground']
+            )
+        self.name_server_ip_input.style.update(
+                flex=0.75,
+                color=self.GUI_manager.theme['font_color'],
+                background_color=self.GUI_manager.theme['foreground']
+            ),  # type: ignore
 
     def add_to_box(self):
         # add to __foreground_color_select_box
@@ -722,12 +754,16 @@ class settings_screen(screen):
         # add to __background_color_select_box
         self.__background_color_select_box.add(self.__background_color_select_label)
         self.__background_color_select_box.add(self.__background_color_select)
+        # add to name server box
+        self.name_server_ip_box.add(self.name_server_ip_input)
+        self.name_server_ip_box.add(self.name_server_ip_label)
         # add to __theme_customise_box
         self.__theme_customise_box.add(self.__middleground_color_select_box)
         self.__theme_customise_box.add(self.__background_color_select_box)
         self.__theme_customise_box.add(self.__foreground_color_select_box)
         self.__theme_customise_box.add(self.__font_color_select_box)
         # add to main box
+        self.box.add(self.name_server_ip_box)
         self.box.add(self.__theme_customise_box)
 
     def init_GUI(self) -> None:
@@ -787,6 +823,13 @@ class settings_screen(screen):
             on_change=self.change_theme,
             items=self.valid_colors,
         )
+
+    def network_settings_select(self) -> None:
+        self.name_server_ip_box = toga.Box()
+        self.name_server_ip_label = toga.Label(
+            text='Name Server IP:'
+        )
+        self.name_server_ip_input = toga.TextInput()
 
     def change_theme(self, button: toga.Selection) -> None:
         self.GUI_manager.theme[button.id] = button.value.lower()  # type: ignore

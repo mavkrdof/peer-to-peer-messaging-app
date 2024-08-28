@@ -21,10 +21,11 @@ class Chat:
             the id of the chat
     """
 
-    def __init__(self) -> None:
+    def __init__(self, app) -> None:
         """
         __init__ initialises the chat data object
         """
+        self.app = app
         self.members = None
         self.name = 'chat'  # TODO initialise here
         self.identifier = None
@@ -84,6 +85,7 @@ class Chat:
             user_id (str): the id of the user to add
         """
         self.users.append(user_id)
+        self.app.network_manager.add_address(name=user_id, ip='', port=0)
 
     def delete_chat(self) -> None:
         """

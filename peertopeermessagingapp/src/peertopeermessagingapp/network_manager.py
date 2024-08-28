@@ -134,8 +134,10 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         message = json.loads(message)
         return message
 
-    async def add_message_to_queue(self, content) -> None:
+    async def add_message_to_queue(self, content) -> None:  # TODO Remove async as means cant be called from outside
         self.logger.info('Adding message to queue...')
+        if content == 'update address book':
+            await self.message_queue.put(content)
         message = self.create_message(content=content, command='send message')
         await self.message_queue.put(message)
         self.logger.info('Message added to queue')
@@ -146,19 +148,23 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             try:
                 self.logger.info('Awaiting message from queue...')
                 message = await self.message_queue.get()
-                self.logger.info('Found message in queue...')
-                acknowledgement = await self.send_message(message=message, address=self.address_book['chat_server'])
-                parsed_acknowledgement = self.parse_message(message=acknowledgement)
-                if isinstance(parsed_acknowledgement, dict):
-                    if parsed_acknowledgement['command'] == 'message sent':
-                        self.logger.info('Message sent')
-                        continue  # skips message failure
-                # message failure
-                await self.add_message_to_queue(message)
-                self.app.GUI_manager.chat_screen.failed_to_send_message()
-                self.logger.error('Failed to send message')
+                if message == 'update address book':
+                    await self.get_address_book()
+                    continue
+                else:
+                    self.logger.info('Found message in queue...')
+                    acknowledgement = await self.send_message(message=message, address=self.address_book['chat_server'])
+                    parsed_acknowledgement = self.parse_message(message=acknowledgement)
+                    if isinstance(parsed_acknowledgement, dict):
+                        if parsed_acknowledgement['command'] == 'message sent':
+                            self.logger.info('Message sent')
+                            continue  # skips message failure
+                    # message failure
+                    await self.add_message_to_queue(message)
+                    self.app.GUI_manager.chat_screen.failed_to_send_message()
+                    self.logger.error('Failed to send message')
             except:
-                self.logger.error('Ecnountered an error')
+                self.logger.error('Encountered an error')
                 # message failure
                 await self.add_message_to_queue(message)
                 self.app.GUI_manager.chat_screen.failed_to_send_message()
