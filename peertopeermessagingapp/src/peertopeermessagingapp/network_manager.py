@@ -17,13 +17,14 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             'port': 0
         }
         self.message_queue = asyncio.Queue()
+
+    def start(self) -> None:
         self.add_address(
             name='name_server',
-            ip='127.0.0.1',
-            port=8888
+            ip='127.100.1',  # default place holder value
+            port=8888  # TODO should be loaded from constant
             )  # a small server that holds the name and address of the current active server
-
-    def start(self):
+        self.load_address_book()
         asyncio.run(self.main())
 
     async def main(self) -> None:

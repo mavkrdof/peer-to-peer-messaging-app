@@ -827,9 +827,15 @@ class settings_screen(screen):
     def network_settings_select(self) -> None:
         self.name_server_ip_box = toga.Box()
         self.name_server_ip_label = toga.Label(
-            text='Name Server IP:'
+            text='Name Server IP:',
         )
-        self.name_server_ip_input = toga.TextInput()
+        self.name_server_ip_input = toga.TextInput(
+            on_confirm=self.update_name_server_ip
+        )
+
+    def update_name_server_ip(self, widget: toga.TextInput, **kwargs) -> None:
+        ip = widget.value
+        self.GUI_manager.app.backend.change_name_server_ip(ip)
 
     def change_theme(self, button: toga.Selection) -> None:
         self.GUI_manager.theme[button.id] = button.value.lower()  # type: ignore

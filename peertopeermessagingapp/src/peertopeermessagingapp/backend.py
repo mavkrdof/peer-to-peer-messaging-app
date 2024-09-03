@@ -94,3 +94,6 @@ class Backend_manager:
 
     def init_network(self) -> None:
         self.app.network_manager.start()
+
+    def change_name_server_ip(self, ip) -> None:
+        self.app.network_manager.add_address(name='name_server', ip=ip, port=8888)  # TODO set port from constant
