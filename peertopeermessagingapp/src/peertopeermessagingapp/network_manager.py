@@ -14,7 +14,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         self.own_address = {  # TODO Finish
             'name': '',
             'ip': '',
-            'port': 0
+            'port': 0,
+            'public_key_n': 0,
+            'public_key_e': 0
         }
         self.message_queue = asyncio.Queue()
 
@@ -22,7 +24,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         self.add_address(
             name='name_server',
             ip='127.100.1',  # default place holder value
-            port=8888  # TODO should be loaded from constant
+            port=8888,  # TODO should be loaded from constant
+            public_key_e=0,  # unecrypted comms
+            public_key_n=0
             )  # a small server that holds the name and address of the current active server
         self.load_address_book()
         asyncio.run(self.main())
@@ -90,7 +94,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                         self.add_address(
                             name='chat_server',
                             ip=parsed_response['content']['ip'],
-                            port=parsed_response['content']['port']
+                            port=parsed_response['content']['port'],
+                            public_key_e=0,  # unencrypted comms
+                            public_key_n=0
                         )
                         return True
                     else:
@@ -113,7 +119,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         except asyncio.exceptions.IncompleteReadError as error:
             self.logger.error(error)
 
-    def add_address(self, name: str, ip: str, port: int) -> None:
+    def add_address(self, name: str, ip: str, port: int, public_key_n: int, public_key_e: int) -> None:
         if isinstance(name, str) and isinstance(ip, str) and isinstance(port, int):
             if self.address_book.__contains__(name):
                 self.logger.info(f'Address book already contains {name} replacing data')
@@ -123,6 +129,8 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                 'name': name,
                 'ip': ip,
                 'port': port,
+                'public_key_n': public_key_n,
+                'public_key_e': public_key_e
             }
             self.logger.debug(f'Successfully added address {name}')
             self.logger.debug('Saving address book...')
@@ -164,8 +172,8 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                     await self.add_message_to_queue(message)
                     self.app.GUI_manager.chat_screen.failed_to_send_message()
                     self.logger.error('Failed to send message')
-            except:
-                self.logger.error('Encountered an error')
+            except Exception as e:
+                self.logger.error(f'Encountered error: {e}')
                 # message failure
                 await self.add_message_to_queue(message)
                 self.app.GUI_manager.chat_screen.failed_to_send_message()
@@ -201,7 +209,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                 self.add_address(
                     name=key,
                     ip=parsed_message['content'][key]['ip'],
-                    port=parsed_message['content'][key]['port']
+                    port=parsed_message['content'][key]['port'],
+                    public_key_e=parsed_message['content'][key]['public_key_e'],
+                    public_key_n=parsed_message['content'][key]['public_key_n']
                     )
         self.logger.info('Address book updated')
 
@@ -270,7 +280,13 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                                 ),
                             address=self.address_book['name_server']
                             )
-                        self.add_address(name='chat_server', ip=ip, port=port)
+                        self.add_address(
+                            name='chat_server',
+                            ip=ip,
+                            port=port,
+                            public_key_e=0,  # unencrypted comms
+                            public_key_n=0
+                            )
                         async with asyncio.TaskGroup() as tg:
                             tg.create_task(self.init_server(server))
                     case 'rejected':
@@ -333,7 +349,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                             self.add_address(
                                 name=message['content']['name'],
                                 ip=message['content']['ip'],
-                                port=message['content']['port']
+                                port=message['content']['port'],
+                                public_key_e=message['content']['public_key_e'],
+                                public_key_n=message['content']['public_key_n']
                                 )
                 case _:
                     self.logger.error('Invalid command')
