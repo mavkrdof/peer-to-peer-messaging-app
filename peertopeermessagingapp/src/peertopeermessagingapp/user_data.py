@@ -34,6 +34,12 @@ class user_data:
         self.logger = logging.getLogger(name=__name__)
         self.address_book = {}
 
+    def get_address(self, name) -> dict | None:
+        if self.address_book.__contains__(name):
+            return self.address_book[name]
+        else:
+            self.logger.error(f'Address book does not contain {name}')
+
     def get_chat_dict(self) -> dict:
         return self.__chats
 
