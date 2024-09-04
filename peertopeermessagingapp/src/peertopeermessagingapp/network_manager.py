@@ -2,6 +2,8 @@ import asyncio
 import json
 import logging
 import socket
+import peertopeermessagingapp.src.peertopeermessagingapp.RSA_encrypt as RSA_encrypt
+import peertopeermessagingapp.src.peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 
 
 # TODO must add the ability to manage an address book of all connected users (holding: ip, port and username(figure out how to deal with dupilicate usernames)) and pass that book onto new server when this server shuts down
@@ -25,7 +27,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             name='name_server',
             ip='127.100.1',  # default place holder value
             port=8888,  # TODO should be loaded from constant
-            public_key_e=0,  # unecrypted comms
+            public_key_e=0,  # unencrypted comms
             public_key_n=0
             )  # a small server that holds the name and address of the current active server
         self.load_address_book()
@@ -44,12 +46,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         # update address book
         message = self.create_message(
             content=self.address_book,
-            command='update address book'
+            command='update address book',
+            target='chat_server'
         )
-        await self.send_message(
-            address=self.address_book['chat_server'],
-            message=message
-        )
+        if message is None:
+            self.logger.error('No message to send')
+        else:
+            await self.send_message(
+                address=self.address_book['chat_server'],
+                message=message
+            )
 
     def load_address_book(self) -> None:
         self.address_book = self.app.backend.user_data.address_book
@@ -71,43 +77,50 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             return False
         else:
             self.logger.info('connections to name_server established')
-            writer.write(
-                self.create_message(
+            request_chat_server_message = self.create_message(
+                    target='name_server',
                     command='Request Current Server Ip and Port',
                     content=''
-                    ).encode()
-                )  # request the current server ip and port from the established peer
-            await writer.drain()
-            self.logger.info('requested server ip and port from name server awaiting response...')
-            parsed_response = await self.read_and_parse_response(reader)
-            if parsed_response is None:
-                self.logger.warning('invalid response')
+                    )
+            if request_chat_server_message is None:
+                self.logger.error('no message to send')
                 return False
-            self.logger.info(f'Response: {parsed_response}')
-            try:
-                if parsed_response['sender'] == self.address_book['name_server']['name']:
-                    if parsed_response['content'] == 'no chat server':
-                        self.logger.info('No chat server established')
-                        return False
-                    elif parsed_response['command'] == 'server exists':
-                        self.logger.info('found established chat server')
-                        self.add_address(
-                            name='chat_server',
-                            ip=parsed_response['content']['ip'],
-                            port=parsed_response['content']['port'],
-                            public_key_e=0,  # unencrypted comms
-                            public_key_n=0
-                        )
-                        return True
-                    else:
+            else:
+                writer.write(
+                    request_chat_server_message.encode()
+                    )  # request the current server ip and port from the established peer
+                await writer.drain()
+                self.logger.info('requested server ip and port from name server awaiting response...')
+                parsed_response = await self.read_and_parse_response(reader)
+                if parsed_response is None:
+                    self.logger.warning('invalid response')
+                    return False
+                else:
+                    self.logger.info(f'Response: {parsed_response}')
+                    try:
+                        if parsed_response['sender'] == self.address_book['name_server']['name']:
+                            if parsed_response['content'] == 'no chat server':
+                                self.logger.info('No chat server established')
+                                return False
+                            elif parsed_response['command'] == 'server exists':
+                                self.logger.info('found established chat server')
+                                self.add_address(
+                                    name='chat_server',
+                                    ip=parsed_response['content']['ip'],
+                                    port=parsed_response['content']['port'],
+                                    public_key_e=0,  # unencrypted comms
+                                    public_key_n=0
+                                )
+                                return True
+                            else:
+                                self.logger.error('Establish peer returned invalid Response')
+                                return False
+                        else:
+                            self.logger.error('Establish peer returned invalid Response')
+                            return False
+                    except ValueError:
                         self.logger.error('Establish peer returned invalid Response')
                         return False
-                else:
-                    self.logger.error('Establish peer returned invalid Response')
-                    return False
-            except ValueError:
-                self.logger.error('Establish peer returned invalid Response')
-                return False
 
     async def read_and_parse_response(self, reader) -> dict | None:
         try:
@@ -143,12 +156,20 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         message = json.loads(message)
         return message
 
-    async def add_message_to_queue(self, content) -> None:  # TODO Remove async as means cant be called from outside
+    async def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
         self.logger.info('Adding message to queue...')
         if content == 'update address book':
             await self.message_queue.put(content)
-        message = self.create_message(content=content, command='send message')
-        await self.message_queue.put(message)
+        message = self.create_message(
+            target=target,
+            content=content,
+            command='send message'
+            )
+        queue_item = {
+            'message': message,
+            'target': target
+        }
+        await self.message_queue.put(queue_item)
         self.logger.info('Message added to queue')
 
     async def send_messages_from_queue(self) -> None:
@@ -157,25 +178,33 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             try:
                 self.logger.info('Awaiting message from queue...')
                 message = await self.message_queue.get()
+            except Exception as e:
+                self.logger.error(f'Failed to get message from queue {e}')
+            try:
                 if message == 'update address book':
                     await self.get_address_book()
                     continue
                 else:
                     self.logger.info('Found message in queue...')
-                    acknowledgement = await self.send_message(message=message, address=self.address_book['chat_server'])
+                    acknowledgement = await self.send_message(
+                        message=message['message'],
+                        address=self.address_book[message['target']]
+                        )
                     parsed_acknowledgement = self.parse_message(message=acknowledgement)
                     if isinstance(parsed_acknowledgement, dict):
                         if parsed_acknowledgement['command'] == 'message sent':
                             self.logger.info('Message sent')
                             continue  # skips message failure
                     # message failure
-                    await self.add_message_to_queue(message)
+                    await self.add_message_to_queue(
+                        content=message['message'],
+                        target=message['target']
+                        )
                     self.app.GUI_manager.chat_screen.failed_to_send_message()
                     self.logger.error('Failed to send message')
             except Exception as e:
                 self.logger.error(f'Encountered error: {e}')
-                # message failure
-                await self.add_message_to_queue(message)
+                # TODO determine if the above code is necessary
                 self.app.GUI_manager.chat_screen.failed_to_send_message()
                 self.logger.error('Failed to send message')
 
@@ -194,26 +223,31 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
 
     async def get_address_book(self) -> None:
         self.logger.info('Updating address book...')
-        response = await self.send_message(
-            message=self.create_message(
+        message = self.create_message(
+                target='chat_server',
                 command='requesting address book',
                 content=''
-                ),
-            address=self.address_book['chat_server']
-        )
-        parsed_message = self.parse_message(message=response)
-        if parsed_message is None:
-            self.logger.error('Failed to get address book')
-        elif isinstance(parsed_message, dict):
-            for key in parsed_message['content']:
-                self.add_address(
-                    name=key,
-                    ip=parsed_message['content'][key]['ip'],
-                    port=parsed_message['content'][key]['port'],
-                    public_key_e=parsed_message['content'][key]['public_key_e'],
-                    public_key_n=parsed_message['content'][key]['public_key_n']
-                    )
-        self.logger.info('Address book updated')
+                )
+        if message is None:
+            self.logger.error('no message to send')
+        else:
+            response = await self.send_message(
+                message=message,
+                address=self.address_book['chat_server']
+            )
+            parsed_message = self.parse_message(message=response)
+            if parsed_message is None:
+                self.logger.error('Failed to get address book')
+            elif isinstance(parsed_message, dict):
+                for key in parsed_message['content']:
+                    self.add_address(
+                        name=key,
+                        ip=parsed_message['content'][key]['ip'],
+                        port=parsed_message['content'][key]['port'],
+                        public_key_e=parsed_message['content'][key]['public_key_e'],
+                        public_key_n=parsed_message['content'][key]['public_key_n']
+                        )
+            self.logger.info('Address book updated')
 
     async def establish_connection(self, ip, port) -> tuple[asyncio.StreamReader | None, asyncio.StreamWriter | None]:
         self.logger.info('Connecting...')
@@ -228,16 +262,41 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.error(error)
         return reader, writer
 
-    def create_message(self, content, command) -> str:  # TODO finish
-        if isinstance(content, str):
+    def create_message(self, content, command: str, target: str) -> str | None:  # TODO finish
+        if self.address_book.__contains__(target):
+            target_address = self.address_book['target']
+            content = json.dumps(content)
+            content = self.encrypt_message_content(
+                public_key_e=target_address['public_key_e'],
+                public_key_n=target_address['public_key_n'],
+                content=content
+                )
             content.replace(self.message_separator.decode(), '')
-        message = {
-            'command': command,
-            'content': content,
-            'sender': self.own_address['name']
-        }
-        message_json = json.dumps(message) + self.message_separator.decode()
-        return message_json
+            message = {
+                'command': command,
+                'content': content,
+                'sender': self.own_address['name']
+            }
+            message_json = json.dumps(message) + self.message_separator.decode()
+            return message_json
+
+    def encrypt_message_content(self, public_key_n: int, public_key_e: int, content: str) -> str:
+        encrypted = RSA_encrypt.encrypt_data(
+            public_key_e=public_key_e,
+            public_key_n=public_key_n,
+            plain_text=content
+            )
+        str_encrypted = json.dumps(encrypted)
+        return str_encrypted
+
+    def decrypt_message_content(self, private_key_n: int, private_key_d: int, content: str) -> str:
+        int_content = json.loads(content)
+        decrypted = RSA_decrypt.decrypt_data(
+            private_key_d=private_key_d,
+            private_key_n=private_key_n,
+            encrypted=int_content
+            )
+        return decrypted
 
     async def create_chat_client(self) -> None:
         self.logger.info('Creating client...')
@@ -259,40 +318,50 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         }
         try:
             self.logger.info('Requesting server privileges')
-            response = await self.send_message(
-                message=self.create_message(
+            request_server_message = self.create_message(
+                    target='name_server',
                     command='Request Server Privileges',
                     content=server_address
-                    ),
-                address=self.address_book['name_server']
-                )
-            if response is None:
-                self.logger.error('Established Peer response invalid')
+                    )
+            if request_server_message is None:
+                self.logger.error('no message to send')
             else:
-                match response['command']:
-                    case 'accepted':
-                        server = await asyncio.start_server(self.server_listener, ip, port)
-                        self.logger.info('Server created')
-                        await self.send_message(
-                            message=self.create_message(
-                                content=server_address,
-                                command='Server Established',
-                                ),
-                            address=self.address_book['name_server']
-                            )
-                        self.add_address(
-                            name='chat_server',
-                            ip=ip,
-                            port=port,
-                            public_key_e=0,  # unencrypted comms
-                            public_key_n=0
-                            )
-                        async with asyncio.TaskGroup() as tg:
-                            tg.create_task(self.init_server(server))
-                    case 'rejected':
-                        self.logger.warn('Established peer rejected server privileges')
-                    case _:
-                        self.logger.error('Established Peer response invalid')
+                response = await self.send_message(
+                    message=request_server_message,
+                    address=self.address_book['name_server']
+                    )
+                if response is None:
+                    self.logger.error('Established Peer response invalid')
+                else:
+                    match response['command']:
+                        case 'accepted':
+                            server = await asyncio.start_server(self.server_listener, ip, port)
+                            self.logger.info('Server created')
+                            server_established_message = self.create_message(
+                                    target='name_server',
+                                    content=server_address,
+                                    command='Server Established',
+                                    )
+                            if server_established_message is None:
+                                self.logger.error('no message to send')
+                            else:
+                                await self.send_message(
+                                    message=server_established_message,
+                                    address=self.address_book['name_server']
+                                    )
+                                self.add_address(
+                                    name='chat_server',
+                                    ip=ip,
+                                    port=port,
+                                    public_key_e=0,  # unencrypted comms
+                                    public_key_n=0
+                                    )
+                            async with asyncio.TaskGroup() as tg:
+                                tg.create_task(self.init_server(server))
+                        case 'rejected':
+                            self.logger.warn('Established peer rejected server privileges')
+                        case _:
+                            self.logger.error('Established Peer response invalid')
         except OSError as error:
             self.logger.error(error)
 
@@ -338,11 +407,15 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                             for key in message['content']
                         }
                         response = self.create_message(
+                            target=message['sender'],
                             content=updated_client_address_book,
                             command='address book data'
                             )
-                    writer.write(response.encode())
-                    await writer.drain()
+                    if response is None:
+                        self.logger.error('no message to send')
+                    else:
+                        writer.write(response.encode())
+                        await writer.drain()
                 case 'new client':
                     if isinstance(message['content'], dict):
                         if message.includes('ip') and message.includes('port') and message.includes('name'):
