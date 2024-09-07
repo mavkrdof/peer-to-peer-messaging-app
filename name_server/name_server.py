@@ -5,6 +5,38 @@ import os
 
 
 class Name_server:
+    """
+     Name_server the name server class deals with directing new clents to chat servers
+     should be used on a static ip address
+     does not require much proccessing power as only contatacted once per client
+     vars:
+        logger: logging object
+            the error and info logger for the name server class
+        save_file: str
+            the path to the save file
+        address_book: dict
+            holds the addres of the current chat_server if any
+        own_address: dict
+            holds the address of the name server
+        message_separator: bytes
+            the message separator for communication over the network
+        server_locked_in: bool
+            whether or not a chat server has locked in hosting
+            esures the name server can only have one chat server
+    methods:
+        add_address(name: str, ip: str, port: int)
+            adds a new address to the address book
+        read_in_address_book(save_file: str)
+            reads in the address book from file
+        save_address_book()
+            saves the address book to file
+        is_active_server()
+            checks if there is an active server
+        create_chat_server()
+            creates a new chat server
+        listner(server: asyncio.Server)
+            listens for new clients
+    """
     def __init__(self) -> None:
         """
         __init__ Initilizes variables for the name server
