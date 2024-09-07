@@ -2,7 +2,7 @@ import logging
 import random  # NOT required if NOT using prime from cache
 import csv
 import time  # NOT required if NOT using prime from cache
-import peertopeermessagingapp.math_stuff as math_stuff
+import math_stuff as math_stuff
 """
 a module implementing RSA encryption
 Inspiration: https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Operation
