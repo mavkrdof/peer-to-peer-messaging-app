@@ -6,6 +6,24 @@ import os
 
 class Name_server:
     def __init__(self) -> None:
+        """
+        __init__ Initilizes variables for the name server
+        params:
+            logger: logging object
+                the error and info logger for the name server class
+            save_file: str
+                the path to the save file
+            address_book: dict
+                holds the addres of the current chat_server if any
+            own_address: dict
+                holds the address of the name server
+            message_separator: bytes
+                the message separator for communication over the network
+            server_locked_in: bool
+                whether or not a chat server has locked in hosting
+                esures the name server can only have one chat server
+        returns: None
+        """
         self.logger = logging.getLogger(name='{__name__}')
         logging.basicConfig(encoding='utf-8', level=logging.DEBUG, filemode='w')
         self.save_file = 'address_book.json'
@@ -19,6 +37,14 @@ class Name_server:
         self.server_locked_in = False
 
     def add_address(self, name: str, ip: str, port: int) -> None:
+        """
+        add_address adds a new address to the address book
+
+        Args:
+            name (str): the name of the address
+            ip (str): the ip of the address
+            port (int): the port of the address
+        """
         if isinstance(name, str) and isinstance(ip, str) and isinstance(port, int):
             if self.address_book.__contains__(name):
                 self.logger.info(f'Address book already contains {name} replacing data')
@@ -35,6 +61,15 @@ class Name_server:
             self.logger.error('Invalid address data')
 
     def read_in_address_book(self, save_file: str) -> dict:
+        """
+        read_in_address_book reads in the address book from file
+
+        Args:
+            save_file (str): the path to the save file for the address book
+
+        Returns:
+            dict: the address book as read in from file
+        """
         if os.path.exists(save_file):
             with open(save_file, 'r') as file:
                 address_book = json.load(file)
@@ -43,6 +78,12 @@ class Name_server:
             return {}
 
     def is_active_server(self) -> bool:
+        """
+        is_active_server checks if the name server knows of an active chat server
+
+        Returns:
+            bool: whether or not the name server knows of an active chat server
+        """
         if self.address_book.__contains__('chat_server'):
             self.logger.info('Chat server is active')
             return True
@@ -54,6 +95,9 @@ class Name_server:
             return False
 
     async def create_name_server(self) -> None:
+        """
+        create_name_server hosts a new server on the network at the port and ip defined in the own_address variable
+        """
         try:
             self.logger.info('Creating server...')
             server = await asyncio.start_server(self.listener, self.own_address['ip'], self.own_address['port'])
@@ -64,6 +108,16 @@ class Name_server:
             self.logger.error(error)
 
     def create_message(self, content, command) -> str:  # TODO finish
+        """
+        create_message formats a message to be sent over the network
+
+        Args:
+            content (any): the content of the message
+            command (any): the command of the message
+
+        Returns:
+            str: a formatted message
+        """
         if isinstance(content, str):
             content.replace(self.message_separator.decode(), '')
         message = {
@@ -75,6 +129,13 @@ class Name_server:
         return message_json
 
     async def listener(self, reader, writer) -> None:
+        """
+        listener the listner for the name server runs on a seperate thread and listens for incoming messages
+
+        Args:
+            reader (asyncio.streams.StreamReader): reads from the network stream
+            writer (asyncio.streams.StreamWriter): writes to the network stream
+        """
         while True:
             try:
                 message = await reader.readuntil(self.message_separator)
@@ -128,11 +189,26 @@ class Name_server:
                 case _:
                     self.logger.error('Invalid command')
 
-    def parse_message(self, message):
-        message = json.loads(message)
-        return message
+    def parse_message(self, message: str) -> dict:
+        """
+        parse_message parses messages into a dictionary so that they can be processed
+
+        Args:
+            message (str): the message to be parsed
+
+        Returns:
+            dict: a parsed message
+        """
+        parsed_message = json.loads(message)
+        return parsed_message
 
     def remove_address(self, address: str):
+        """
+        remove_address removes an address from the address book
+
+        Args:
+            address (str): the address to be removed
+        """
         if address in self.address_book.keys():
             self.logger.info(f'Removing address {address}')
             self.address_book.pop(address)
@@ -141,6 +217,9 @@ class Name_server:
             self.logger.error(f'Address {address} not found')
 
     def save_address_book(self):
+        """
+        save_address_book saves the address book to file
+        """
         self.logger.info('Saving address book...')
         if os.path.exists(self.save_file):
             with open(self.save_file, 'w') as file:
