@@ -152,9 +152,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         else:
             self.logger.error('Invalid address data')
 
-    def parse_message(self, message):
-        message = json.loads(message)
-        return message
+    def parse_message(self, message) -> dict:
+        parsed_message = json.loads(message)
+        encrypted_message_content = parsed_message['content']
+        message_content = self.decrypt_message_content(
+            private_key_d=self.app.backend.user_data.get_private_key('d'),
+            private_key_n=self.app.backend.user_data.get_private_key('n'),
+            content=encrypted_message_content
+            )
+        parsed_message['content'] = message_content
+        return parsed_message
 
     async def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
         self.logger.info('Adding message to queue...')
@@ -289,14 +296,22 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         str_encrypted = json.dumps(encrypted)
         return str_encrypted
 
-    def decrypt_message_content(self, private_key_n: int, private_key_d: int, content: str) -> str:
-        int_content = json.loads(content)
-        decrypted = RSA_decrypt.decrypt_data(
-            private_key_d=private_key_d,
-            private_key_n=private_key_n,
-            encrypted=int_content
-            )
-        return decrypted
+    def decrypt_message_content(self, private_key_n: int, private_key_d: int, content: str):
+        parsed_content = json.loads(content)
+        if parsed_content is None:
+            return ''
+        if isinstance(parsed_content, list):
+            if [isinstance(i, int) for i in parsed_content].count(False) > 0:
+                return parsed_content
+            else:
+                decrypted = RSA_decrypt.decrypt_data(
+                    private_key_d=private_key_d,
+                    private_key_n=private_key_n,
+                    encrypted=parsed_content
+                    )
+                return decrypted
+        else:
+            return parsed_content
 
     async def create_chat_client(self) -> None:
         self.logger.info('Creating client...')
