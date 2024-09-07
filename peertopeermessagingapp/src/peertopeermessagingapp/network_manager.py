@@ -62,19 +62,19 @@ class Network_manager:
         self.logger = logging.getLogger(name='{__name__}')
         self.message_separator: bytes = '\n'.encode()  # TODO decide message sep
         self.address_book: dict = {}
-        self.own_address = {  # TODO Finish
-            'name': '',
-            'ip': '',
-            'port': 0,
-            'public_key_n': 0,
-            'public_key_e': 0
-        }
         self.message_queue = asyncio.Queue()
 
     def start(self) -> None:
         """
         start starts the network manager
         """
+        self.own_address = {
+            'name': self.app.backend.user_data.name,
+            'ip': socket.gethostbyname(socket.gethostname()),
+            'port': 8000,
+            'public_key_n': self.app.backend.user_data.get_public_key('n'),
+            'public_key_e': self.app.backend.user_data.get_public_key('e')
+        }
         self.add_address(
             name='name_server',
             ip='127.100.1',  # default place holder value
