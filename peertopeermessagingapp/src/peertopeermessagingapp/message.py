@@ -9,8 +9,8 @@ import logging
 
 class message:
     """
-    vars:
-        plain_text: str
+    attrs:
+        content: str
             the plain text of the message
         user: <user_data>
             the user that the message is accessed by.
@@ -22,14 +22,20 @@ class message:
             the time at which the message was received
         message_id: str
             the id of the message
+        app: app
+            the main app object
+        logger: logging object
+            the error and info logger for the message class
     methods:
         read_in: none
             reads the message in from storage
         store: none
             stores the message
-        encrypt: none
+        convert_to_dict: dict
+            converts the message to a dictionary
+        encrypt: none  # TODO May be able to remove
             encrypts relevant data for storage
-        decrypt: list[int]
+        decrypt: list[int]  # TODO May be able to remove
             decrypts message
     """
 
@@ -37,9 +43,23 @@ class message:
         """
         __init__ initializes the message data object
 
-        Args:
-            chat (peertopeermessagingapp.chat.Chat): the chat that the message is from
-            message_id (str): the id of the message
+        attrs:
+            content: str
+                the plain text of the message
+            user: <user_data>
+                the user that the message is accessed by.
+            sender: str
+                the id of the user the message is from
+            sent_time_stamp: int
+                the time at which message was sent
+            received_time_stamp: int
+                the time at which the message was received
+            message_id: str
+                the id of the message
+            app: app
+                the main app object
+            logger: logging object
+                the error and info logger for the message class
         """
         self.app = app
         self.content = content
@@ -51,6 +71,12 @@ class message:
         self.logger = logging.getLogger(name='{__name__}:{self.chat}:{self.id}')
 
     def convert_to_dict(self) -> dict:
+        """
+        convert_to_dict converts the message to a dictionary
+
+        Returns:
+            dict: message data stored in a dictionary
+        """
         message_dict = {
             'text': self.content,
             'chat': self.chat.identifier,
