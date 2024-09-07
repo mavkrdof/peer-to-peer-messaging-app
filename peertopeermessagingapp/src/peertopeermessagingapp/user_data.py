@@ -11,11 +11,71 @@ from dataclasses import dataclass
 @dataclass
 class user_data:
     """
-    vars
-        private_key: [int, int]
-            the private key [N, D]
-        public_key: [int, int]
-            the public key [N, E]
+    attrs:
+        __username: str
+            the username of the user
+        __chats: dict
+            the chats of the user
+        __settings: dict
+            the settings of the user
+        __app: peertopeermessagingapp.app.PeertoPeerMessagingApp
+            the toga application
+        __user_data: dict
+            the user data of the user
+        __private_key: list[int]
+            the private key of the user
+        __public_key: list[int]
+            the public key of the user
+        logger: logging.Logger
+            the info and error logger
+        address_book: dict
+            the address book of the user
+    methods:
+        get_address(name)
+            returns an address from the address book if it exists
+        get_chat_dict()
+            returns the chats of the user
+        set_user_data(user_data)
+            sets the user data
+        get_private_key(key)
+            returns the private key of the user
+            key can be 'n' or 'd'
+        get_public_key(key)
+            returns the public key of the user
+            key can be 'n' or 'e'
+        save_user_data()
+            saves the user data to the user data file
+        set_username(username)
+            sets the username of the user
+        get_user_data()
+            returns the user data
+        set_encryption_keys(private_key, public_key)
+            sets the encryption keys of the user
+        send_message(message, chat)
+            sends a message to a chat
+        read_from_file()
+            reads the user data from the user data file
+        no_account_data()
+            runs if there is no user data file found
+        decrypt_user_data(data, username, privateKN, privateKD)
+            validates the password
+            returns True if the password is valid
+            returns False if the password is invalid
+            decrypts the user data if password is valid
+        encrypt_user_data(data, username, publicKN, publicKE)
+            encrypts the user data
+        collect_data_to_save()
+            collects the data to save into a dictionary
+        save_to_file()
+            saves the encrypted user data to the user data file
+        save_data_to(file, data)
+            writes the new json to the now empty user_data file
+        load_user_data_from(file)
+            loads the user data from the user data file
+        add_chat(chat)
+            adds a chat to the user data
+        remove_chat(chat)
+            removes a chat from the user data
     """
     def __init__(self, app) -> None:  # TODO: make private variable accessible eg add funcs to access them
         """
@@ -23,6 +83,25 @@ class user_data:
         Args:
             app (peertopeermessagingapp.app.PeertoPeerMessagingApp): the toga application
             username (str): the username of the user
+        attrs:
+            __username: str
+                the username of the user
+            __chats: dict
+                the chats of the user
+            __settings: dict
+                the settings of the user
+            __app: peertopeermessagingapp.app.PeertoPeerMessagingApp
+                the toga application
+            __user_data: dict
+                the user data of the user
+            __private_key: list[int]
+                the private key of the user
+            __public_key: list[int]
+                the public key of the user
+            logger: logging.Logger
+                the info and error logger
+            address_book: dict
+                the address book of the user
         """
         self.__username = None
         self.__chats = {}
@@ -35,18 +114,53 @@ class user_data:
         self.address_book = {}
 
     def get_address(self, name) -> dict | None:
+        """
+        get_address gets an address from the address book if it exists
+
+        Args:
+            name (str): the name of the address to get
+
+        Returns:
+            dict | None: the address if it exists or None if it does not exist
+        """
         if self.address_book.__contains__(name):
             return self.address_book[name]
         else:
             self.logger.error(f'Address book does not contain {name}')
 
     def get_chat_dict(self) -> dict:
+        """
+        get_chat_dict returns the chats of the user
+
+        Returns:
+            dict: the chats of the user
+        """
         return self.__chats
 
     def set_user_data(self, user_data) -> None:
+        """
+        set_user_data sets the user data of the user
+
+        Args:
+            user_data (dict): the new user data
+        """
         self.__user_data = user_data
 
     def get_private_key(self, key) -> int:
+        """
+        get_private_key returns either private key n or d depending on the key
+
+        Args:
+            key (str): the private key to return, valid keys are 'n' or 'd'
+
+        Raises:
+            ValueError: private key is undefined
+                raises ValueError if the private key is undefined
+            ValueError: invalid key
+                raises ValueError if the key is invalid
+        Returns:
+            int: the private key n or d
+        """
         if self.__private_key is []:
             raise ValueError('Private key is undefined')
         else:
@@ -59,6 +173,21 @@ class user_data:
                     raise ValueError(f'Invalid key expected n or d instead got {key}')
 
     def get_public_key(self, key) -> int:
+        """
+        get_public_key returns either public key n or e depending on the key
+
+        Args:
+            key (str): the public key to return, valid keys are 'n' or 'e'
+
+        Raises:
+            ValueError: public key is undefined
+                raises ValueError if the public key is undefined
+            ValueError: invalid key
+                raises ValueError if the key is invalid
+
+        Returns:
+            int: the public key n or e
+        """
         if self.__public_key is []:
             raise ValueError('Public key is undefined')
         else:
@@ -77,6 +206,19 @@ class user_data:
             raise ValueError(f'Expected username type str instead got {type(username)}')
 
     def set_encryption_keys(self, private_key: list[int], public_key: list[int]) -> None:  # TODO make by expanding the private and public keys from lists to ints
+        """
+        set_encryption_keys sets the encryption keys of the user
+
+        Args:
+            private_key (list[int]): the private key of the user
+            public_key (list[int]): the public key of the user
+
+        Raises:
+            ValueError: private_key is not an int
+                raises ValueError if the private key is not an int
+            ValueError: public_key is not an int
+                raises ValueError if the public key is not an int
+        """
         if all(isinstance(item, int) for item in private_key):
             if all(isinstance(item, int) for item in public_key):
                 self.__private_key = private_key  # N, D
@@ -93,6 +235,13 @@ class user_data:
                 )
 
     def send_message(self, message: message, chat: str):
+        """
+        send_message sends a message to a chat
+
+        Args:
+            message (message): the message to send
+            chat (str): the name of the chat to send the message to
+        """
         if self.__chats.__contains__(chat):
             self.__chats[chat].send_message(message=message)
         else:
@@ -224,6 +373,12 @@ class user_data:
         return encrypted_data
 
     def collect_data_to_save(self) -> dict:
+        """
+        collect_data_to_save collects data to save to file
+
+        Returns:
+            dict: a dictionary of data to save
+        """
         chat_dict = {}
         for chat_object_name, chat_object in self.get_chat_dict().items():
             chat_dict[chat_object_name] = chat_object.convert_to_dict()
@@ -260,6 +415,13 @@ class user_data:
         self.save_data_to(self.__app.backend.user_data_filepath, user_data_json)
 
     def save_data_to(self, file_path: str, user_data: str):
+        """
+        save_data_to saves user data to file
+
+        Args:
+            file_path (str): the file path to save to
+            user_data (str): the user data to save
+        """
         if os.path.exists(file_path):  # checks if file exists
             mode = 'w'  # overwrites existing file
             self.logger.debug('user data file found... writing to it')
@@ -271,6 +433,15 @@ class user_data:
         self.logger.debug('Successfully wrote user data to file')
 
     def load_user_data_from(self, file_path: str) -> dict:
+        """
+        load_user_data_from loads user data from file
+
+        Args:
+            file_path (str): the file path to load from
+
+        Returns:
+            dict: the loaded user data
+        """
         if os.path.exists(file_path):  # checks if file exists
             self.logger.debug('found existing user data file reading in...')
             # reads in the user_data file
