@@ -5,6 +5,7 @@ import socket
 import peertopeermessagingapp.src.peertopeermessagingapp.RSA_encrypt as RSA_encrypt
 import peertopeermessagingapp.src.peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 
+
 # TODO chat server shuting down
 class Network_manager:
     """
