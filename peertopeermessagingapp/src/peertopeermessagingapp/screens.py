@@ -157,6 +157,9 @@ class home_screen(screen):
         self.add_to_box()
 
     def set_style(self) -> None:
+        """
+        set_style sets the style for all GUI elements
+        """
         self.chat_box.style.update(
             flex=1,
             direction='column',
@@ -194,6 +197,9 @@ class home_screen(screen):
         super().set_style()
 
     def add_to_box(self) -> None:
+        """
+        add_to_box adds content to the screens main box
+        """
         # add to title box
         self.title_box.add(self.add_chat_button)
         self.title_box.add(self.reload_address_book_button)
@@ -235,12 +241,22 @@ class home_screen(screen):
             self.chat_box.add(chat_button)
 
     def display_chat(self, button) -> None:
+        """
+        display_chat displays the chat
+
+        Args:
+            button (toga.Button): the button that was pressed
+            the name of the chat is then extracted from the id of the button
+        """
         current_chat = button.id[5:]
         self.GUI_manager.current_chat = current_chat
         self.logger.info(msg=f'Current chat: {current_chat}')
         self.GUI_manager.change_screen('chat')
 
     def update(self) -> None:
+        """
+        update updates any dynamic elements on the screen (e.g. chat messages)
+        """
         self.chat_box.clear()
         self.populate_chat_list()
         super().update()
@@ -297,6 +313,9 @@ class nav_bar(screen):
         self.set_style()
 
     def set_style(self):
+        """
+        set_style sets the style for all GUI elements
+        """
         self.settings_button.style.update(
             padding=10,
             flex=0.2,
@@ -433,6 +452,9 @@ class login_screen(screen):
         self.box.add(self.right_pad_box)
 
     def set_style(self):
+        """
+        set_style sets the style for all GUI elements
+        """
         self.box.style.update(
             direction='row',
             background_color=self.GUI_manager.theme['background']
@@ -564,12 +586,18 @@ class login_screen(screen):
         self.__username_box.add(self.__username_field)
 
     def login_error_field(self):
+        """
+        login_error_field creates the login error field
+        """
         self.__login_error_label = toga.Label(
             id='login_error_label',
             text=''
         )
 
     def content_padding(self) -> None:
+        """
+        content_padding generates the content padding for the box
+        """
         self.content_width_percent = 0.33
         self.pad_width_percent = (1-self.content_width_percent)/2
         self.left_pad_box = toga.Box()
@@ -637,6 +665,9 @@ class settings_screen(screen):
         self.valid_colors = [color for color in dir(toga.constants) if color.isalpha()]
 
     def set_style(self):  # TODO FIX
+        """
+        set_style sets the style for all GUI elements
+        """
         self.__theme_customise_box.style.update(
             direction='column',
             padding=10,
@@ -742,6 +773,9 @@ class settings_screen(screen):
             ),  # type: ignore
 
     def add_to_box(self):
+        """
+        add_to_box adds content to the screens main box
+        """
         # add to __foreground_color_select_box
         self.__foreground_color_select_box.add(self.__foreground_color_select_label)
         self.__foreground_color_select_box.add(self.__foreground_color_select)
@@ -781,6 +815,9 @@ class settings_screen(screen):
         self.set_style()
 
     def background_color_select(self):
+        """
+        background_color_select initialises the background color select inputs
+        """
         self.__background_color_select_box = toga.Box()
         self.__background_color_select_label = toga.Label(
             text='Background Color',
@@ -792,6 +829,9 @@ class settings_screen(screen):
         )
 
     def middleground_color_select(self) -> None:
+        """
+        middleground_color_select initialises the middleground color select inputs
+        """
         self.__middleground_color_select_box = toga.Box()
         self.__middleground_color_select_label = toga.Label(
             text='Middleground Color',
@@ -803,6 +843,9 @@ class settings_screen(screen):
         )
 
     def foreground_color_select(self) -> None:
+        """
+        foreground_color_select initialises the foreground color select inputs
+        """
         self.__foreground_color_select_box = toga.Box()
         self.__foreground_color_select_label = toga.Label(
             text='Foreground Color',
@@ -814,6 +857,9 @@ class settings_screen(screen):
         )
 
     def font_color_color_select(self) -> None:
+        """
+        font_color_color_select initialises the font color select inputs
+        """
         self.__font_color_select_box = toga.Box()
         self.__font_color_select_label = toga.Label(
             text='Font Color',
@@ -825,6 +871,9 @@ class settings_screen(screen):
         )
 
     def network_settings_select(self) -> None:
+        """
+        network_settings_select initialises the network settings select inputs
+        """
         self.name_server_ip_box = toga.Box()
         self.name_server_ip_label = toga.Label(
             text='Name Server IP:',
@@ -834,10 +883,26 @@ class settings_screen(screen):
         )
 
     def update_name_server_ip(self, widget: toga.TextInput, **kwargs) -> None:
+        """
+        update_name_server_ip updates the name server ip
+
+        Args:
+            widget (toga.TextInput): the text input widget
+                the ip is extracted from the text input value
+            **kwargs: the keyword arguments
+                unused just to match the function signature of the on_confirm event
+        """
         ip = widget.value
         self.GUI_manager.app.backend.change_name_server_ip(ip)
 
     def change_theme(self, button: toga.Selection) -> None:
+        """
+        change_theme changes the theme
+
+        Args:
+            button (toga.Selection): the button that was pressed
+            the theme element is then extracted from the id of the button
+        """
         self.GUI_manager.theme[button.id] = button.value.lower()  # type: ignore
         self.GUI_manager.update_screens()
 
@@ -915,6 +980,9 @@ class create_account_screen(screen):
         self.box.add(self.__right_pad_box)
 
     def set_style(self):
+        """
+        set_style sets the style of the screen
+        """
         self.box.style.update(
             direction='row',
             background_color=self.GUI_manager.theme['background']
@@ -1065,6 +1133,9 @@ class create_account_screen(screen):
         )
 
     def already_have_account_field(self) -> None:
+        """
+        already_have_account_field creates the already have account field
+        """
         self.__already_have_account_box = toga.Box()
         self.__already_have_account_checkbox = toga.Selection(
             items=[False, True],
@@ -1075,6 +1146,12 @@ class create_account_screen(screen):
         )
 
     def already_have_account(self, checkBox: toga.Selection) -> None:
+        """
+        already_have_account is called when the already have account checkbox is changed
+
+        Args:
+            checkBox (toga.Selection): the already have account checkbox
+        """
         if checkBox.value:
             self.__password_label.text = 'Current Password'
         else:
@@ -1197,6 +1274,9 @@ class chat_screen(screen):  # TODO add message display
         self.add_to_box()
 
     def add_to_box(self) -> None:
+        """
+        add_to_box adds content to the main box
+        """
         # message bar
         self.__message_bar_box.add(self.__message_entry)
         self.__message_bar_box.add(self.__send_button)
@@ -1205,6 +1285,9 @@ class chat_screen(screen):  # TODO add message display
         self.box.add(self.__message_scroll_box)
 
     def set_style(self):
+        """
+        set_style sets the style for all GUI elements
+        """
         self.__message_bar_box.style.update(
             direction='row',
             background_color=self.GUI_manager.theme['middleground']
@@ -1229,6 +1312,9 @@ class chat_screen(screen):  # TODO add message display
             )
 
     def create_message_bar(self) -> None:
+        """
+        create_message_bar creates the message bar
+        """
         self.__message_bar_box = toga.Box(
             id='message_bar_box',
         )
@@ -1242,11 +1328,17 @@ class chat_screen(screen):  # TODO add message display
         )
 
     def create_message_scroll(self) -> None:
+        """
+        create_message_scroll creates the message scroll
+        """
         self.__message_scroll_box = toga.Box(
             id='message_scroll_box',
         )
 
     def populate_message_scroll(self) -> None:
+        """
+        populate_message_scroll populates the message scroll
+        """
         self.__message_list = []
         for msg in self.GUI_manager.app.backend.user_data.get_chat_dict()[self.GUI_manager.current_chat].get_messages():  # TODO might have to reverse list
             msg_graphical = toga.Label(
@@ -1335,6 +1427,9 @@ class create_chat_screen(screen):
         self.box.add(self.right_pad_box)
 
     def set_style(self) -> None:
+        """
+        set_style sets the style for all GUI elements
+        """
         self.box.style.update(
             direction='row',
             background_color=self.GUI_manager.theme['background']
