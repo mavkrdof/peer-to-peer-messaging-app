@@ -5,10 +5,59 @@ import socket
 import peertopeermessagingapp.src.peertopeermessagingapp.RSA_encrypt as RSA_encrypt
 import peertopeermessagingapp.src.peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 
-
-# TODO must add the ability to manage an address book of all connected users (holding: ip, port and username(figure out how to deal with dupilicate usernames)) and pass that book onto new server when this server shuts down
-class Network_manager:  # TODO Server maintenance instance should be on a different port, define a message Structure eg need type, destination, content, make sure to check that their is not already a server running before creating your own
+# TODO chat server shuting down
+class Network_manager:
+    """
+    Network_manager manages the network of the application
+    attrs:
+        app: app
+            the app class
+        logger: logging object
+            the error and info logger for the name server class
+        message_separator: bytes
+            the message separator for communication over the network
+        address_book: dict
+            holds the addres of the current chat_server if any
+        own_address: dict
+            holds the address of the name server
+        message_queue: asyncio.Queue
+            the message queue for the network manager
+    methods:
+        start(self)
+            starts the network manager
+        add_address(self, name: str, ip: str, port: int, public_key_e: int, public_key_n: int)
+            adds a new address to the address book
+        load_address_book(self)
+            loads the address book from file
+        save_address_book(self)
+            saves the address book to file
+        is_active_server(self)
+            checks if there is an active server
+        create_chat_server(self)
+            creates a new chat server
+        listner(server: asyncio.Server)
+            listens for new clients
+    """
     def __init__(self, app) -> None:
+        """
+        __init__ initialises the network manager
+
+        Args:
+            app (_type_): the app class
+        attrs:
+            app: app
+                the app class
+            logger: logging object
+                the error and info logger for the name server class
+            message_separator: bytes
+                the message separator for communication over the network
+            address_book: dict
+                holds the addres of the current chat_server if any
+            own_address: dict
+                holds the address of the name server
+            message_queue: asyncio.Queue
+                the message queue for the network manager
+        """
         self.app = app
         self.logger = logging.getLogger(name='{__name__}')
         self.message_separator: bytes = '\n'.encode()  # TODO decide message sep
@@ -23,6 +72,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         self.message_queue = asyncio.Queue()
 
     def start(self) -> None:
+        """
+        start starts the network manager
+        """
         self.add_address(
             name='name_server',
             ip='127.100.1',  # default place holder value
@@ -34,6 +86,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         asyncio.run(self.main())
 
     async def main(self) -> None:
+        """
+        main starts all the main processes of the network manager
+        """
         server_exists = await self.is_active_server()
         if server_exists:
             self.logger.info('Found established server')
@@ -58,6 +113,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             )
 
     def load_address_book(self) -> None:
+        """
+        load_address_book loads the address book from user_data
+        """
         self.address_book = self.app.backend.user_data.address_book
         if isinstance(self.address_book, dict):
             pass
@@ -65,9 +123,18 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.address_book = {}
 
     def save_address_book(self) -> None:
+        """
+        save_address_book saves the address book to user_data
+        """
         self.app.backend.user_data.address_book = self.address_book
 
     async def is_active_server(self) -> bool:
+        """
+        is_active_server checks if the name server knows of an active chat server
+
+        Returns:
+            bool: whether or not the name server knows of an active chat server
+        """
         reader, writer = await self.establish_connection(
             ip=self.address_book['name_server']['ip'],
             port=self.address_book['name_server']['port']
@@ -123,6 +190,15 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                         return False
 
     async def read_and_parse_response(self, reader) -> dict | None:
+        """
+        read_and_parse_response reads the response to a message and parses it
+
+        Args:
+            reader (asyncio.StreamReader): allows reading from the network stream
+
+        Returns:
+            dict | None: the parsed response
+        """
         try:
             response = await reader.readuntil(self.message_separator)
             parsed_response = self.parse_message(message=response)
@@ -133,6 +209,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.error(error)
 
     def add_address(self, name: str, ip: str, port: int, public_key_n: int, public_key_e: int) -> None:
+        """
+        add_address adds an address to the address book
+
+        Args:
+            name (str): the name of the address
+            ip (str): the ip of the address
+            port (int): the port of the address
+            public_key_n (int): the n value of the public key of the address
+            public_key_e (int): the e value of the public key of the address
+        """
         if isinstance(name, str) and isinstance(ip, str) and isinstance(port, int):
             if self.address_book.__contains__(name):
                 self.logger.info(f'Address book already contains {name} replacing data')
@@ -153,6 +239,15 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.error('Invalid address data')
 
     def parse_message(self, message) -> dict:
+        """
+        parse_message parses messages into a dictionary so that they can be processed
+
+        Args:
+            message (str): the message to be parsed
+
+        Returns:
+            dict: the parsed message
+        """
         parsed_message = json.loads(message)
         encrypted_message_content = parsed_message['content']
         message_content = self.decrypt_message_content(
@@ -164,6 +259,13 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         return parsed_message
 
     async def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
+        """
+        add_message_to_queue adds a message to the message queue
+
+        Args:
+            content (str): the content of the message
+            target (str): the target of the message
+        """
         self.logger.info('Adding message to queue...')
         if content == 'update address book':
             await self.message_queue.put(content)
@@ -180,6 +282,10 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         self.logger.info('Message added to queue')
 
     async def send_messages_from_queue(self) -> None:
+        """
+        send_messages_from_queue sends messages from the message queue
+        runs on a separate thread to allow separation between the asynchronous network manager and the rest of the application
+        """
         running = True
         while running:
             try:
@@ -216,6 +322,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                 self.logger.error('Failed to send message')
 
     async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
+        """
+        send_message sends a message to a specific address
+
+        Args:
+            message (str): the message to be sent, in json format usually
+            address (dict): the name of the address to send the message to
+
+        Returns:
+            dict | None: a parsed resonse from the reciever
+        """
         self.logger.info('Sending message...')
         reader, writer = await self.establish_connection(ip=address['ip'], port=address['port'])
         if reader is None or writer is None:
@@ -225,10 +341,13 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             await writer.drain()
             response: bytes = await reader.readuntil(separator=self.message_separator)
             self.logger.info('Successfully sent message')
-            parsed_message = self.parse_message(message=response)
-            return parsed_message
+            parsed_response = self.parse_message(message=response)
+            return parsed_response
 
     async def get_address_book(self) -> None:
+        """
+        get_address_book upadates the address book from the chat server
+        """
         self.logger.info('Updating address book...')
         message = self.create_message(
                 target='chat_server',
@@ -257,6 +376,16 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.info('Address book updated')
 
     async def establish_connection(self, ip, port) -> tuple[asyncio.StreamReader | None, asyncio.StreamWriter | None]:
+        """
+        establish_connection establishes a connection to a specific address
+
+        Args:
+            ip (str): the ip of the address
+            port (int): the port of the address
+
+        Returns:
+            tuple[asyncio.StreamReader | None, asyncio.StreamWriter | None]: a stream reader and writer if connection was successful else None
+        """
         self.logger.info('Connecting...')
         reader, writer = None, None
         try:
@@ -270,6 +399,17 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         return reader, writer
 
     def create_message(self, content, command: str, target: str) -> str | None:  # TODO finish
+        """
+        create_message formats a message to be sent over the network
+
+        Args:
+            content (any): the content of the message
+            command (str): the command of the message
+            target (str): the name of the address to send the message to
+
+        Returns:
+            str | None: a formatted message
+        """
         if self.address_book.__contains__(target):
             target_address = self.address_book['target']
             content = json.dumps(content)
@@ -288,6 +428,17 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             return message_json
 
     def encrypt_message_content(self, public_key_n: int, public_key_e: int, content: str) -> str:
+        """
+        encrypt_message_content encrypts the content of the message if public key is not 0
+
+        Args:
+            public_key_n (int): the public key n of the address
+            public_key_e (int): the public key e of the address
+            content (str): the content to be encrypted
+
+        Returns:
+            str: the encrypted content converted to a json formatted string
+        """
         encrypted = RSA_encrypt.encrypt_data(
             public_key_e=public_key_e,
             public_key_n=public_key_n,
@@ -297,6 +448,17 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
         return str_encrypted
 
     def decrypt_message_content(self, private_key_n: int, private_key_d: int, content: str):
+        """
+        decrypt_message_content decrypts the content of the message the content is a json formatted string
+
+        Args:
+            private_key_n (int): own private key n
+            private_key_d (int): own private key d
+            content (str): the content to be decrypted
+
+        Returns:
+            any: the decrypted content
+        """
         parsed_content = json.loads(content)
         if parsed_content is None:
             return ''
@@ -314,6 +476,9 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             return parsed_content
 
     async def create_chat_client(self) -> None:
+        """
+        create_chat_client creates a client server at the port and ip defined in the own_address variable
+        """
         self.logger.info('Creating client...')
         try:
             server = await asyncio.start_server(self.client_listener, self.own_address['ip'], self.own_address['port'])
@@ -323,6 +488,11 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.error(error)
 
     async def create_chat_server(self) -> None:
+        """
+        create_chat_server requests the name server to create a chat server
+        if the name server accepts the request, it creates the chat server
+        at the port 8888 and a ip that is the ip of the machine
+        """
         ip = socket.gethostbyname(socket.gethostname())
         port = 8888
         self.logger.info('Creating server...')
@@ -381,10 +551,23 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
             self.logger.error(error)
 
     async def init_server(self, server):
+        """
+        init_server initializes the server
+
+        Args:
+            server (asyncio.Server): the server to be initialized
+        """
         async with server:
             await server.serve_forever()
 
     async def client_listener(self, reader, writer) -> None:
+        """
+        client_listener the listener for the client
+
+        Args:
+            reader (asyncio.streams.StreamReader): allows reading from the network stream
+            writer (asyncio.streams.StreamWriter): allows writing to the network stream
+        """
         while True:
             try:
                 message = await reader.readuntil(self.message_separator)
@@ -402,6 +585,13 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                     self.logger.error('Invalid command')
 
     async def server_listener(self, reader, writer) -> None:
+        """
+        server_listener the listener for the server
+
+        Args:
+            reader (asyncio.streams.StreamReader): allows reading from the network stream
+            writer (asyncio.streams.StreamWriter): allows writing to the network stream
+        """
         while True:
             try:
                 message = await reader.readuntil(self.message_separator)
