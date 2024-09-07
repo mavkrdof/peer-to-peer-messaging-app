@@ -44,6 +44,10 @@ class GUI_manager:
             goes back to the previous screen
         change_screen: none
             changes the current screen being displayed
+        main_box_update: none
+            updates the main box
+        update_screens: none
+            updates the style of all screens
     """
 
     def __init__(self, app) -> None:
@@ -106,12 +110,18 @@ class GUI_manager:
         self.change_screen(new_screen='login')
 
     def main_box_update(self) -> None:
+        """
+        main_box_update updates the style of the main box
+        """
         self.main_box.style.update(
             direction="column",
             background_color=self.theme['background']
         )
 
     def update_screens(self):
+        """
+        update_screens updates the style of all screens
+        """
         self.current_screen.update()
         self.nav_bar.update()
         self.main_box_update()
