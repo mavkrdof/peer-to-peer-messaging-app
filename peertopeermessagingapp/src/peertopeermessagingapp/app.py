@@ -13,6 +13,22 @@ from peertopeermessagingapp.network_manager import Network_manager
 
 
 class PeertoPeerMessagingApp(toga.App):
+    """
+    PeertoPeerMessagingApp the main app class
+
+    Args:
+        toga (Toga.app): the toga app
+    vars:
+        backend (Backend_manager): the backend manager of the application
+        network_manager (Network_manager): the network manager of the application
+        GUI (GUI_manager): the GUI manager of the application
+        main_window (toga.MainWindow): the main window of the application
+    methods:
+        startup:
+            starts the app
+        exit:
+            exits the app
+    """
     def startup(self) -> None:
         """
         Constructs and shows the Toga application.
