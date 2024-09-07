@@ -433,7 +433,7 @@ class Network_manager:  # TODO Server maintenance instance should be on a differ
                         await writer.drain()
                 case 'new client':
                     if isinstance(message['content'], dict):
-                        if message.includes('ip') and message.includes('port') and message.includes('name'):
+                        if message.__contains__('ip') and message.__contains__('port') and message.__contains__('name'):
                             self.add_address(
                                 name=message['content']['name'],
                                 ip=message['content']['ip'],
