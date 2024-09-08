@@ -33,6 +33,8 @@ class Chat:
             the error and info logger for the chat class
         __messages: list[message]
             the messages in the chat
+        message_received(message)
+            runs when a message is received deals with storing the message in the chat
     """
 
     def __init__(self, app) -> None:
@@ -77,7 +79,10 @@ class Chat:
             chat=self,
             message_id=f'{sender_id}:{recieved_time}',
             content=message_content,
-            app=self.app
+            app=self.app,
+            sender=sender_id,
+            sent_time=sent_time,
+            received_time=recieved_time
             )
         self.__messages.append(message_var)
         self.logger.debug('Successfully stored message')

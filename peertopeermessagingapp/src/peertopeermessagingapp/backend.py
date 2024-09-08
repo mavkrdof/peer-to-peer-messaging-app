@@ -129,11 +129,19 @@ class Backend_manager:
             content (dict): the content of the message
             sender (str): the sender of the message
         """
-        self.logger.debug(f'Received message')
+        self.logger.debug('Received message')
         if content.__contains__('chat'):
             if self.user_data.get_chat_dict().__contains__(content['chat']):
                 chat = self.user_data.get_chat_dict()[content['chat']]
-                chat.message_received(content=content, sender=sender)
+                if content.__contains__('sent_time'):
+                    sent_time = content['sent_time']
+                    chat.message_received(content=content, sender=sender, sent_time=sent_time)
+                else:
+                    self.logger.debug('Received message with no sent time')
+            else:
+                self.logger.warning(f'no chat named {content["chat"]}')
+        else:
+            self.logger.warning('Received message with no chat')
 
     def validate_login(self, username: str, password: str) -> int:
         """
