@@ -39,7 +39,7 @@ class message:
             decrypts message
     """
 
-    def __init__(self, chat, message_id: str, content: str, app) -> None:
+    def __init__(self, chat, message_id: str, content: str, app, sender='', sent_time=0, received_time=0) -> None:
         """
         __init__ initializes the message data object
 
@@ -62,12 +62,12 @@ class message:
                 the error and info logger for the message class
         """
         self.app = app
-        self.content = content
+        self.content: str = content
         self.chat = chat
-        self.sender = None
-        self.sent_time_stamp = None
-        self.received_time_stamp = None
-        self.message_id = message_id
+        self.sender: str = sender
+        self.sent_time_stamp: float = sent_time
+        self.received_time_stamp: float = received_time
+        self.message_id: str = message_id
         self.logger = logging.getLogger(name='{__name__}:{self.chat}:{self.id}')
 
     def convert_to_dict(self) -> dict:
