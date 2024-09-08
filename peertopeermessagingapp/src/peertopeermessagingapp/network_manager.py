@@ -279,7 +279,7 @@ class Network_manager:
             'message': message,
             'target': target
         }
-        await self.message_queue.put(queue_item)
+        self.message_queue.put_nowait(queue_item)
         self.logger.info('Message added to queue')
 
     async def send_messages_from_queue(self) -> None:
@@ -310,7 +310,7 @@ class Network_manager:
                             self.logger.info('Message sent')
                             continue  # skips message failure
                     # message failure
-                    await self.add_message_to_queue(
+                    self.add_message_to_queue(
                         content=message['message'],
                         target=message['target']
                         )
