@@ -39,7 +39,7 @@ class message:
             decrypts message
     """
 
-    def __init__(self, chat, message_id: str, content: str, app, sender='', sent_time=0, received_time=0) -> None:
+    def __init__(self, chat, message_id: str, content: str, app, sender='', sent_time=0.0, received_time=0.0) -> None:
         """
         __init__ initializes the message data object
 
