@@ -259,7 +259,7 @@ class Network_manager:
         parsed_message['content'] = message_content
         return parsed_message
 
-    async def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
+    def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
         """
         add_message_to_queue adds a message to the message queue
 
@@ -269,7 +269,7 @@ class Network_manager:
         """
         self.logger.info('Adding message to queue...')
         if content == 'update address book':
-            await self.message_queue.put(content)
+            self.message_queue.put_nowait(content)
         message = self.create_message(
             target=target,
             content=content,
