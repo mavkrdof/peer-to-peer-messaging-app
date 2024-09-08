@@ -59,7 +59,7 @@ class Chat:
         self.name = 'chat'  # TODO initialise here
         self.identifier = None
         self.icon_max_len = 4
-        self.users: list = []
+        self.users: list = []  # list of user ids
         self.logger = logging.getLogger(name='{__name__}:{name}')
         self.__messages: list[message] = []
 
@@ -112,6 +112,8 @@ class Chat:
         self.logger.debug('Storing message...')
         self.__messages.append(message)
         self.logger.debug('Successfully stored message')
+        for user in self.users:
+            self.app.network_manager.add_message_to_queue(content=message, target=user)
         self.logger.info('Sending message...')
         # self.logger.info('Successfully sent message')
 
