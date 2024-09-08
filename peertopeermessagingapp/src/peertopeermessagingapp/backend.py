@@ -58,6 +58,8 @@ class Backend_manager:
             deals with the backend logic for logging out
         init_network()
             deals with the backend logic for initializing network
+        message_received(content, sender)
+            deals with the backend logic for recieving a message
     """
     def __init__(self, app) -> None:
         """
@@ -118,6 +120,20 @@ class Backend_manager:
             self.user_data.send_message(message=msg, chat=chat)
         else:
             self.logger.warning(f'no chat named {chat}')
+
+    def receive_message(self, content: dict, sender: str) -> None:
+        """
+        receive_message deals with the backend logic for recieving a message
+
+        Args:
+            content (dict): the content of the message
+            sender (str): the sender of the message
+        """
+        self.logger.debug(f'Received message')
+        if content.__contains__('chat'):
+            if self.user_data.get_chat_dict().__contains__(content['chat']):
+                chat = self.user_data.get_chat_dict()[content['chat']]
+                chat.message_received(content=content, sender=sender)
 
     def validate_login(self, username: str, password: str) -> int:
         """

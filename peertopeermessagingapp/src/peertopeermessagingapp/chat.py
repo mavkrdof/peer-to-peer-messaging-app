@@ -63,6 +63,25 @@ class Chat:
         self.logger = logging.getLogger(name='{__name__}:{name}')
         self.__messages: list[message] = []
 
+    def messager_recieved(self, message_content: str, sender_id: str, sent_time: float) -> None:
+        """
+        messager_recieved handles the recieving of a message
+
+        Args:
+            message (message): the message recieved
+        """
+        self.logger.info('Message recieved')
+        self.logger.debug('Storing message')
+        recieved_time = time.time()
+        message_var = message(
+            chat=self,
+            message_id=f'{sender_id}:{recieved_time}',
+            content=message_content,
+            app=self.app
+            )
+        self.__messages.append(message_var)
+        self.logger.debug('Successfully stored message')
+
     def get_messages(self) -> list[message]:
         """
         get_messages gets the messages in the chat

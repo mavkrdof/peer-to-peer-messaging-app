@@ -484,12 +484,6 @@ class user_data:
         else:
             self.logger.warning(f'No chat called {chat} found')
 
-    def get_chats(self) -> None:
-        """
-        get_chats returns a list of the users chats
-        """
-        pass
-
     def update_settings(self, settings: dict) -> None:
         """
         update_settings updates the user settings

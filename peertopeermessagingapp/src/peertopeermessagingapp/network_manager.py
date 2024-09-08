@@ -38,6 +38,8 @@ class Network_manager:
             creates a new chat server
         listner(server: asyncio.Server)
             listens for new clients
+        handle_chat_message(message)
+            handles the recieving of a chat message
     """
     def __init__(self, app) -> None:
         """
@@ -273,7 +275,7 @@ class Network_manager:
         message = self.create_message(
             target=target,
             content=content,
-            command='send message'
+            command='message'
             )
         queue_item = {
             'message': message,
@@ -427,6 +429,21 @@ class Network_manager:
             }
             message_json = json.dumps(message) + self.message_separator.decode()
             return message_json
+
+    def handle_chat_message(self, message: dict) -> None:
+        """
+        handle_chat_message handles the recieving of a chat message
+
+        Args:
+            message (dict): the message to be added to the queue
+        """
+        if message.__contains__('content') and message.__contains__('sender'):
+            self.app.backend.message_received(
+                content=message['content'],
+                sender=message['sender']
+                )
+        else:
+            self.logger.error('Invalid message')
 
     def encrypt_message_content(self, public_key_n: int, public_key_e: int, content: str) -> str:
         """
@@ -582,6 +599,8 @@ class Network_manager:
             message = self.parse_message(message)
             self.logger.info(f'Received message: {message}')
             match message['command']:
+                case 'message':
+                    self.handle_chat_message(message)
                 case _:
                     self.logger.error('Invalid command')
 
