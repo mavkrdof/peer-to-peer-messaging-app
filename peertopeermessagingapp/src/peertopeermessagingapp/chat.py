@@ -58,7 +58,7 @@ class Chat:
         """
         self.app = app
         self.members = None
-        self.name = 'chat'  # TODO initialise here
+        self.name = ''  # is also the name of the user the chat is with
         self.identifier = None
         self.icon_max_len = 4
         self.users: list = []  # list of user ids
@@ -136,10 +136,10 @@ class Chat:
         self.logger.debug('Storing message...')
         self.__messages.append(message)
         self.logger.debug('Successfully stored message')
-        for user in self.users:
-            self.app.network_manager.add_message_to_queue(content=message, target=user)
         self.logger.info('Sending message...')
-        # self.logger.info('Successfully sent message')
+        message_dict = message.convert_to_dict()
+        self.app.network_manager.add_message_to_queue(content=message_dict, target=self.name)
+        self.logger.info('Successfully sent message')
 
     def create_chat(self, name: str, icon: str) -> None:
         """
@@ -151,21 +151,21 @@ class Chat:
         """
         if isinstance(name, str):
             self.name = name
+            self.users.append(name)  # as name == the user the chat is with will have to change if group chats are implemented
             if isinstance(icon, str):
                 if len(icon) <= self.icon_max_len:
                     self.icon = icon
                     # set id
                     self.identifier = f'{name}{time.time}'
 
-    def add_user(self, user_id: str) -> None:
+    def add_user(self, user_id: str) -> None:  # Unused as multiple users is not implemented
         """
         add_user adds a user to the chat
 
         Args:
             user_id (str): the id of the user to add
         """
-        self.users.append(user_id)
-        self.app.network_manager.add_address(name=user_id, ip='', port=0)
+        pass
 
     def delete_chat(self) -> None:  # TODO
         """

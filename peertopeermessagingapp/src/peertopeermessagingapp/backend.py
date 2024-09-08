@@ -121,27 +121,22 @@ class Backend_manager:
         else:
             self.logger.warning(f'no chat named {chat}')
 
-    def receive_message(self, content: dict, sender: str) -> None:
+    def receive_message(self, content: dict, sender: str, target: str) -> None:
         """
         receive_message deals with the backend logic for recieving a message
 
         Args:
             content (dict): the content of the message
             sender (str): the sender of the message
+            target (str): the target of the message
         """
         self.logger.debug('Received message')
-        if content.__contains__('chat'):
-            if self.user_data.get_chat_dict().__contains__(content['chat']):
-                chat = self.user_data.get_chat_dict()[content['chat']]
-                if content.__contains__('sent_time'):
-                    sent_time = content['sent_time']
-                    chat.message_received(content=content, sender=sender, sent_time=sent_time)
-                else:
-                    self.logger.debug('Received message with no sent time')
-            else:
-                self.logger.warning(f'no chat named {content["chat"]}')
+        chat = self.user_data.get_chat_dict()[target]  # will have to fix this if group chats are implemented
+        if content.keys().__contains__('sent_time_stamp'):
+            sent_time = content['sent_time_stamp']
+            chat.message_received(content=content['text'], sender=sender, sent_time=sent_time)
         else:
-            self.logger.warning('Received message with no chat')
+            self.logger.debug('Received message with no sent time')
 
     def validate_login(self, username: str, password: str) -> int:
         """

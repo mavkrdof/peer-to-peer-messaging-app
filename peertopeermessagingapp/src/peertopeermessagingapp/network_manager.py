@@ -440,7 +440,8 @@ class Network_manager:
         if message.__contains__('content') and message.__contains__('sender'):
             self.app.backend.message_received(
                 content=message['content'],
-                sender=message['sender']
+                sender=message['sender'],
+                target=message['target']
                 )
         else:
             self.logger.error('Invalid message')

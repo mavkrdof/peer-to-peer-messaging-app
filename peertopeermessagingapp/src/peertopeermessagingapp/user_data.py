@@ -76,6 +76,8 @@ class user_data:
             adds a chat to the user data
         remove_chat(chat)
             removes a chat from the user data
+        get_known_users()
+            returns a list of the known users
     """
     def __init__(self, app) -> None:  # TODO: make private variable accessible eg add funcs to access them
         """
@@ -112,6 +114,19 @@ class user_data:
         self.__public_key: list[int] = []
         self.logger = logging.getLogger(name=__name__)
         self.address_book = {}
+
+    def get_known_users(self) -> list[str]:
+        """
+        get_known_users returns a list of the known users
+
+        Returns:
+            list[str]: a list of the known users
+        """
+        if self.address_book is None:
+            self.logger.error('Address book is None')
+            return []
+        else:
+            return list(self.address_book.keys())
 
     def get_address(self, name) -> dict | None:
         """

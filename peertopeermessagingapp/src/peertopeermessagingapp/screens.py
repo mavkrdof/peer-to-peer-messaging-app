@@ -1538,8 +1538,11 @@ class create_chat_screen(screen):
         Generates a name entry field in the GUI with a label and input box for the user to enter the chats name.
         """
         self.__name_box = toga.Box()
-        self.__name_field = toga.TextInput(
-            on_confirm=self.create_chat
+        # self.__name_field = toga.TextInput(
+        #     on_confirm=self.create_chat
+        # )
+        self.__name_field = toga.Selection(
+            items=self.GUI_manager.app.backend.user_data.get_known_users(),
         )
         self.__name_label = toga.Label(
             text='Name',
