@@ -134,19 +134,7 @@ class Network_manager:
         self.logger.info('Tasks started')
         # update address book
         self.logger.debug('Updating address book...')
-        message = self.create_message(
-            content=self.address_book,
-            command='update address book',
-            target='chat_server'
-        )
-        if message is None:
-            self.logger.error('No message to send')
-        else:
-            await self.send_message(
-                address=self.address_book['chat_server'],
-                message=message
-            )
-        self.logger.debug('Address book updated')
+        await self.get_address_book()
         # await shutown event
         await self.shutdown_event.wait()
         if self.shutdown_event.is_set():
@@ -351,6 +339,13 @@ class Network_manager:
         parsed_message['content'] = message_content
         return parsed_message
 
+    def report_dead_chat_server(self) -> None:
+        """
+        report_dead_chat_server reports that the chat server is dead
+        """
+        self.logger.info('Reporting dead chat server...')
+        self.add_message_to_queue(content='chat server is dead', target='name_server')  # TODO check if this works
+
     def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
         """
         add_message_to_queue adds a message to the message queue
@@ -457,6 +452,8 @@ class Network_manager:
             parsed_message = self.parse_message(message=response)
             if parsed_message is None:
                 self.logger.error('Failed to get address book')
+                self.logger.debug('Assuming that the chat server is dead')
+                self.report_dead_chat_server()
             elif isinstance(parsed_message, dict):
                 for key in parsed_message['content']:
                     self.add_address(
