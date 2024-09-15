@@ -180,8 +180,8 @@ class Name_server:
             message = message.decode()
             message = self.parse_message(message)
             self.logger.info(f'Received message: {message}')
-            match message['command']:
-                case 'Request Server Privileges':
+            match message['command'].lower():
+                case 'request server privileges':
                     if self.is_active_server():
                         response = self.create_message(
                             content='',
@@ -196,13 +196,13 @@ class Name_server:
                     writer.write(response.encode())
                     await writer.drain()
                     self.logger.info(f'Server locked in: {self.server_locked_in}')
-                case 'Server Established':
+                case 'server established':
                     self.add_address(name='chat_server', ip=message['content']['ip'], port=message['content']['port'])
                     self.logger.info(f'Added chat server to address book {message["content"]}')
-                case 'Server Terminated':
+                case 'server terminated':
                     self.remove_address('chat_server')
                     self.logger.info('Removed chat server from address book')
-                case 'Request Current Server Ip and Port':
+                case 'request current server ip and port':
                     if self.is_active_server():
                         response = self.create_message(
                             content=self.address_book['chat_server'],
@@ -218,8 +218,92 @@ class Name_server:
                     writer.write(response.encode())
                     await writer.drain()
                     self.logger.info(f'Response sent: {response}')
+                case 'chat server terminated':
+                    if self.ping_chat_server():
+                        self.logger.info('Chat server is still alive')
+                    else:
+                        self.logger.info('Chat server is dead')
+                        self.remove_address('chat_server')
+                        self.logger.info('Removed chat server from address book')
+                        self.server_locked_in = False
+                        # response
+                        response = self.create_message(
+                            content='',
+                            command='chat server dead'
+                        )
+                    writer.write(response.encode())
                 case _:
                     self.logger.error('Invalid command')
+
+    def ping_chat_server(self) -> bool:
+        """
+        ping_chat_server pings the chat server
+
+        Returns:
+            bool: whether or not the chat server is still alive
+        """
+        if self.address_book.__contains__('chat_server'):
+            self.logger.info('Pinging chat server...')
+            message = self.create_message(
+                content='',
+                command='ping'
+            )
+            response = self.send_message(
+                message=message,
+                address=self.address_book['chat_server']
+            )
+            if response is None:
+                return False
+            else:
+                return True
+        else:
+            return False
+
+    async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
+        """
+        send_message sends a message to a specific address
+
+        Args:
+            message (str): the message to be sent, in json format usually
+            address (dict): the name of the address to send the message to
+
+        Returns:
+            dict | None: a parsed resonse from the reciever
+        """
+        self.logger.info('Sending message...')
+        reader, writer = await self.establish_connection(ip=address['ip'], port=address['port'])
+        if reader is None or writer is None:
+            self.logger.error('Connection Failed')
+        else:
+            writer.write(message.encode())
+            await writer.drain()
+            response: bytes = await reader.readuntil(separator=self.message_separator)
+            self.logger.info('Successfully sent message')
+            parsed_response = self.parse_message(message=response.decode())
+            return parsed_response
+
+    async def establish_connection(self, ip, port) -> tuple[asyncio.StreamReader | None, asyncio.StreamWriter | None]:
+        """
+        establish_connection establishes a connection to a specific address
+
+        Args:
+            ip (str): the ip of the address
+            port (int): the port of the address
+
+        Returns:
+            tuple[asyncio.StreamReader | None, asyncio.StreamWriter | None]: a stream reader and writer if connection was successful else None
+        """
+        self.logger.info('Connecting...')
+        reader, writer = None, None
+        try:
+            reader, writer = await asyncio.open_connection(ip, port)
+            self.logger.info('Connected')
+            return reader, writer
+        except ConnectionRefusedError as error:
+            self.logger.error(error)
+        except OSError as error:
+            self.logger.error(error)
+        return reader, writer
 
     def parse_message(self, message: str) -> dict:
         """

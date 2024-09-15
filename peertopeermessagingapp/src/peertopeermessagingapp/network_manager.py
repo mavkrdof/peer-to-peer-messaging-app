@@ -186,7 +186,7 @@ class Network_manager:
             try:
                 await self.chat_server_task
             except asyncio.CancelledError:
-                self.logger.info('Chat server shutdown')
+                self.logger.info('chat server terminated')
                 self.logger.info('Notifying name server')
                 message = self.create_message(
                     content=self.address_book['chat_server'],
