@@ -23,6 +23,12 @@ class Network_manager:
             holds the address of the name server
         message_queue: asyncio.Queue
             the message queue for the network manager
+        chat_server_task: asyncio.Task
+            the task for the chat server
+        client_server_task: asyncio.Task
+            the task for the client server
+        message_queue_task: asyncio.Task
+            the task for the message queue
     methods:
         start(self)
             starts the network manager
@@ -60,48 +66,72 @@ class Network_manager:
                 holds the address of the name server
             message_queue: asyncio.Queue
                 the message queue for the network manager
+            chat_server_task: asyncio.Task
+                the task for the chat server
+            client_server_task: asyncio.Task
+                the task for the client server
+            message_queue_task: asyncio.Task
+                the task for the message queue
         """
         self.app = app
         self.logger = logging.getLogger(name='{__name__}')
         self.message_separator: bytes = '\n'.encode()  # TODO decide message sep
         self.address_book: dict = {}
         self.message_queue = asyncio.Queue()
+        self.chat_server_task: asyncio.Task | None = None  # type: ignore
+        self.client_server_task: asyncio.Task | None = None
+        self.message_queue_task: asyncio.Task | None = None
+        self.shutdown_event = asyncio.Event()
 
     def start(self) -> None:
         """
         start starts the network manager
         """
-        self.own_address = {
-            'name': self.app.backend.user_data.name,
-            'ip': socket.gethostbyname(socket.gethostname()),
-            'port': 8000,
-            'public_key_n': self.app.backend.user_data.get_public_key('n'),
-            'public_key_e': self.app.backend.user_data.get_public_key('e')
-        }
-        self.add_address(
-            name='name_server',
-            ip='127.100.1',  # default place holder value
-            port=8888,  # TODO should be loaded from constant
-            public_key_e=0,  # unencrypted comms
-            public_key_n=0
-            )  # a small server that holds the name and address of the current active server
-        self.load_address_book()
-        asyncio.run(self.main())
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            self.logger.info('No event loop running')
+            self.logger.info('Starting network manager...')
+            self.own_address = {
+                'name': self.app.backend.user_data.name,
+                'ip': socket.gethostbyname(socket.gethostname()),
+                'port': 8000,
+                'public_key_n': self.app.backend.user_data.get_public_key('n'),
+                'public_key_e': self.app.backend.user_data.get_public_key('e')
+            }
+            self.add_address(
+                name='name_server',
+                ip='127.100.1',  # default place holder value
+                port=8888,  # TODO should be loaded from constant
+                public_key_e=0,  # unencrypted comms
+                public_key_n=0
+                )  # a small server that holds the name and address of the current active server
+            self.load_address_book()
+            self.logger.info('Creating new event loop...')
+            asyncio.run(self.main())
+            self.logger.info('Network manager shut down')
+        self.logger.warning('Event loop already running')
 
     async def main(self) -> None:
         """
         main starts all the main processes of the network manager
         """
+        self.logger.debug('Checking for established server...')
         server_exists = await self.is_active_server()
         if server_exists:
             self.logger.info('Found established server')
         else:
+            self.logger.info('Attempting to establishing server...')
             await self.create_chat_server()
+        # start tasks
+        self.logger.info('Starting tasks...')
         async with asyncio.TaskGroup() as tg:
-            tg.create_task(self.create_chat_client())
+            self.client_server_task = tg.create_task(self.create_chat_client())
             tg.create_task(self.get_address_book())
-            tg.create_task(self.send_messages_from_queue())
+            self.message_queue_task = tg.create_task(self.send_messages_from_queue())
+        self.logger.info('Tasks started')
         # update address book
+        self.logger.debug('Updating address book...')
         message = self.create_message(
             content=self.address_book,
             command='update address book',
@@ -114,6 +144,46 @@ class Network_manager:
                 address=self.address_book['chat_server'],
                 message=message
             )
+        self.logger.debug('Address book updated')
+        # await shutown event
+        await self.shutdown_event.wait()
+        if self.shutdown_event.is_set():
+            await self.__shutdown_network_manager()
+
+    async def __shutdown_network_manager(self) -> None:
+        """
+        shutdown_network_manager shuts down the network manager
+        """
+        self.save_address_book()
+        if self.chat_server_task is not None:
+            self.logger.info('Shutting down chat server')
+            self.chat_server_task.cancel()
+            try:
+                await self.chat_server_task
+            except asyncio.CancelledError:
+                self.logger.info('Chat server shutdown')
+        else:
+            self.logger.warning('No chat server to shutdown')
+
+        if self.client_server_task is not None:
+            self.logger.info('Shutting down client server')
+            self.client_server_task.cancel()
+            try:
+                await self.client_server_task
+            except asyncio.CancelledError:
+                self.logger.info('Client server shutdown')
+        else:
+            self.logger.error('No client server to shutdown')
+
+        if self.message_queue_task is not None:
+            self.logger.info('Shutting down message queue')
+            self.message_queue_task.cancel()
+            try:
+                await self.message_queue_task
+            except asyncio.CancelledError:
+                self.logger.info('Message queue shutdown')
+        else:
+            self.logger.error('No message queue to shutdown')
 
     def load_address_book(self) -> None:
         """
@@ -560,8 +630,7 @@ class Network_manager:
                                     public_key_e=0,  # unencrypted comms
                                     public_key_n=0
                                     )
-                            async with asyncio.TaskGroup() as tg:
-                                tg.create_task(self.init_server(server))
+                            self.chat_server_task: asyncio.Task = asyncio.create_task(self.init_server(server))
                         case 'rejected':
                             self.logger.warn('Established peer rejected server privileges')
                         case _:
