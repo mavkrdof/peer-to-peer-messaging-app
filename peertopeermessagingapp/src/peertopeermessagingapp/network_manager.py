@@ -209,7 +209,7 @@ class Network_manager:
         """
         self.app.backend.user_data.address_book = self.address_book
 
-    async def is_active_server(self) -> bool:
+    async def is_active_server(self) -> bool:  # TODO add the ability to get the updated server location if server is locked in but not currently active
         """
         is_active_server checks if the name server knows of an active chat server
 
@@ -339,12 +339,39 @@ class Network_manager:
         parsed_message['content'] = message_content
         return parsed_message
 
-    def report_dead_chat_server(self) -> None:
+    async def report_dead_chat_server(self) -> None:
         """
         report_dead_chat_server reports that the chat server is dead
         """
         self.logger.info('Reporting dead chat server...')
-        self.add_message_to_queue(content='chat server is dead', target='name_server')  # TODO check if this works
+        message = self.create_message(
+            content=self.address_book['chat_server'],
+            command='chat server shutdown',
+            target='name_server'
+        )
+        if message is None:
+            self.logger.error('No message to send')
+        else:
+            response_reader = await self.send_message(
+                address=self.address_book['name_server'],
+                message=message
+            )
+            parsed_response = await self.read_and_parse_response(response_reader)
+            if parsed_response is None:
+                self.logger.warning('Invalid response')
+            else:
+                if parsed_response['command'] == 'chat server dead':
+                    self.logger.info('Chat server dead')
+                    self.logger.debug('Removing chat server from address book')
+                    self.address_book.pop('chat_server')
+                    self.logger.debug('Chat server removed from address book')
+                    self.logger.debug('Saving address book...')
+                    self.save_address_book()
+                    self.logger.debug('saved address book')
+                    self.logger.info('Attempting to creat new chat server...')
+                    await self.create_chat_server()
+                else:
+                    self.logger.info('Chat server not dead')
 
     def add_message_to_queue(self, content, target) -> None:  # TODO Remove async as means cant be called from outside
         """
@@ -453,7 +480,7 @@ class Network_manager:
             if parsed_message is None:
                 self.logger.error('Failed to get address book')
                 self.logger.debug('Assuming that the chat server is dead')
-                self.report_dead_chat_server()
+                await self.report_dead_chat_server()
             elif isinstance(parsed_message, dict):
                 for key in parsed_message['content']:
                     self.add_address(
@@ -650,6 +677,7 @@ class Network_manager:
                             self.chat_server_task: asyncio.Task = asyncio.create_task(self.init_server(server))
                         case 'rejected':
                             self.logger.warn('Established peer rejected server privileges')
+                            await self.is_active_server()
                         case _:
                             self.logger.error('Established Peer response invalid')
         except OSError as error:
