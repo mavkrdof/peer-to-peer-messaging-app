@@ -46,6 +46,8 @@ class Network_manager:
             listens for new clients
         handle_chat_message(message)
             handles the recieving of a chat message
+        __shutdown_network_manager(self)
+            shuts down the network manager
     """
     def __init__(self, app) -> None:
         """
@@ -155,15 +157,7 @@ class Network_manager:
         shutdown_network_manager shuts down the network manager
         """
         self.save_address_book()
-        if self.chat_server_task is not None:
-            self.logger.info('Shutting down chat server')
-            self.chat_server_task.cancel()
-            try:
-                await self.chat_server_task
-            except asyncio.CancelledError:
-                self.logger.info('Chat server shutdown')
-        else:
-            self.logger.warning('No chat server to shutdown')
+        await self.__shutdown_chat_server()
 
         if self.client_server_task is not None:
             self.logger.info('Shutting down client server')
@@ -184,6 +178,32 @@ class Network_manager:
                 self.logger.info('Message queue shutdown')
         else:
             self.logger.error('No message queue to shutdown')
+
+    async def __shutdown_chat_server(self):
+        if self.chat_server_task is not None:
+            self.logger.info('Shutting down chat server')
+            self.chat_server_task.cancel()
+            try:
+                await self.chat_server_task
+            except asyncio.CancelledError:
+                self.logger.info('Chat server shutdown')
+                self.logger.info('Notifying name server')
+                message = self.create_message(
+                    content=self.address_book['chat_server'],
+                    command='chat server shutdown',
+                    target='name_server'
+                )
+                if message is None:
+                    self.logger.error('No message to send')
+                else:
+                    response_reader = await self.send_message(
+                        address=self.address_book['name_server'],
+                        message=message
+                    )
+                    parsed_response = await self.read_and_parse_response(response_reader)
+                    self.logger.debug(f'Name server Response: {parsed_response}')
+        else:
+            self.logger.warning('No chat server to shutdown')
 
     def load_address_book(self) -> None:
         """
