@@ -2,8 +2,8 @@ import asyncio
 import json
 import logging
 import socket
-import peertopeermessagingapp.src.peertopeermessagingapp.RSA_encrypt as RSA_encrypt
-import peertopeermessagingapp.src.peertopeermessagingapp.RSA_decrypt as RSA_decrypt
+import peertopeermessagingapp.RSA_encrypt as RSA_encrypt
+import peertopeermessagingapp.RSA_decrypt as RSA_decrypt
 
 
 # TODO chat server shuting down
@@ -18,7 +18,7 @@ class Network_manager:
         message_separator: bytes
             the message separator for communication over the network
         address_book: dict
-            holds the addres of the current chat_server if any
+            holds the address of the current chat_server if any
         own_address: dict
             holds the address of the name server
         message_queue: asyncio.Queue
@@ -42,10 +42,10 @@ class Network_manager:
             checks if there is an active server
         create_chat_server(self)
             creates a new chat server
-        listner(server: asyncio.Server)
+        listener(server: asyncio.Server)
             listens for new clients
         handle_chat_message(message)
-            handles the recieving of a chat message
+            handles the receiving of a chat message
         __shutdown_network_manager(self)
             shuts down the network manager
     """
@@ -63,7 +63,7 @@ class Network_manager:
             message_separator: bytes
                 the message separator for communication over the network
             address_book: dict
-                holds the addres of the current chat_server if any
+                holds the address of the current chat_server if any
             own_address: dict
                 holds the address of the name server
             message_queue: asyncio.Queue
@@ -331,11 +331,15 @@ class Network_manager:
         """
         parsed_message = json.loads(message)
         encrypted_message_content = parsed_message['content']
-        message_content = self.decrypt_message_content(
-            private_key_d=self.app.backend.user_data.get_private_key('d'),
-            private_key_n=self.app.backend.user_data.get_private_key('n'),
-            content=encrypted_message_content
-            )
+        if [isinstance(i, int) for i in encrypted_message_content].count(False) > 0:
+            self.logger.info('Message unencrypted')
+            message_content = encrypted_message_content
+        else:
+            message_content = self.decrypt_message_content(
+                private_key_d=self.app.backend.user_data.get_private_key('d'),
+                private_key_n=self.app.backend.user_data.get_private_key('n'),
+                content=encrypted_message_content
+                )
         parsed_message['content'] = message_content
         return parsed_message
 
@@ -528,13 +532,16 @@ class Network_manager:
             str | None: a formatted message
         """
         if self.address_book.__contains__(target):
-            target_address = self.address_book['target']
+            target_address = self.address_book[target]
             content = json.dumps(content)
-            content = self.encrypt_message_content(
-                public_key_e=target_address['public_key_e'],
-                public_key_n=target_address['public_key_n'],
-                content=content
-                )
+            if target_address['public_key_e'] == 0 and target_address['public_key_n'] == 0:
+                self.logger.info('Not Encrypting message')
+            else:
+                content = self.encrypt_message_content(
+                    public_key_e=target_address['public_key_e'],
+                    public_key_n=target_address['public_key_n'],
+                    content=content
+                    )
             content.replace(self.message_separator.decode(), '')
             message = {
                 'command': command,
@@ -596,15 +603,12 @@ class Network_manager:
         if parsed_content is None:
             return ''
         if isinstance(parsed_content, list):
-            if [isinstance(i, int) for i in parsed_content].count(False) > 0:
-                return parsed_content
-            else:
-                decrypted = RSA_decrypt.decrypt_data(
-                    private_key_d=private_key_d,
-                    private_key_n=private_key_n,
-                    encrypted=parsed_content
-                    )
-                return decrypted
+            decrypted = RSA_decrypt.decrypt_data(
+                private_key_d=private_key_d,
+                private_key_n=private_key_n,
+                encrypted=parsed_content
+                )
+            return decrypted
         else:
             return parsed_content
 

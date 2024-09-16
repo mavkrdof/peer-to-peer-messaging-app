@@ -5,6 +5,7 @@ from src.peertopeermessagingapp.RSA_decrypt import decrypt_data
 from src.peertopeermessagingapp.RSA_gen_keys import gen_keys
 from src.peertopeermessagingapp.message import message
 import json
+import src.peertopeermessagingapp.network_manager as network_manager
 
 
 class Test_Encrypt_data:
@@ -90,7 +91,7 @@ class Test_message_encrypt:
     def test_encrypts_valid_message_data_correctly(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)
-        msg = message(chat=mock_user, message_id="1", content="")
+        msg = message(app=None, chat=mock_user, message_id="1", content="")
         msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -119,7 +120,7 @@ class Test_message_encrypt:
     def test_handles_empty_plain_text_without_errors(self, mocker):
         mock_user = mocker.Mock()
         mock_user.public_key = (12345, 67890)  # TODO
-        msg = message(chat=mock_user, message_id="2", content="")
+        msg = message(app=None, chat=mock_user, message_id="2", content="")
         msg.content = ""
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -150,7 +151,7 @@ class Test_message_encrypt:
         mock_user = mocker.Mock()
         mock_user.public_key = ('force error', 67890)
         # an encryption key as type string will cause an encryption failure
-        msg = message(chat=mock_user, message_id="1", content='')
+        msg = message(app=None, chat=mock_user, message_id="1", content='')
         msg.content = "Hello, World!"
         msg.sender = "user_123"
         msg.sent_time_stamp = 1622547800
@@ -181,7 +182,7 @@ class Test_message_decrypt:
         mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_data', return_value=decrypted_data)
 
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id='1', content='')
+        msg = message(app=None, chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])  # Random data
 
         # Assertions
@@ -205,7 +206,7 @@ class Test_message_decrypt:
         })
         mocker.patch('src.peertopeermessagingapp.message.RSA_decrypt.decrypt_data', return_value=decrypted_data)
         # Initialize message object and call decrypt
-        msg = message(chat=mock_user, message_id='1', content='')
+        msg = message(app=None, chat=mock_user, message_id='1', content='')
         msg.decrypt(message_data=[111, 222, 333])
 
         caplog.at_level(logging.WARNING)
@@ -261,3 +262,45 @@ class Test_user_data_store_load:
             }
         decrypted_user_data = user.decrypt_user_data(data=data, username=username, privateKN=323, privateKD=17)
         assert decrypted_user_data
+
+
+class Test_network_messaging:
+    def test_message_create(self, mocker) -> None:
+        nm = network_manager.Network_manager(app=None)
+        nm.own_address = {
+            'name': 'self name'
+        }
+        target_name = 'test_address'
+        nm.address_book[target_name] = {
+            'name': target_name,
+            'ip': '',
+            'port': 0,
+            'public_key_e': 0,
+            'public_key_n': 0
+        }
+        content = {}
+        message = nm.create_message(
+            content=content,
+            command='command',
+            target=target_name
+        )
+        content_json = json.dumps(content)
+        expected_message = json.dumps(
+            {
+                'command': 'command',
+                'content': content_json.replace('\n', ''),
+                'sender': 'self name'
+            }
+        )
+        assert message == expected_message + '\n'
+
+    def test_parse_message(self, mocker) -> None:
+        nm = network_manager.Network_manager(None)
+        expected_message = {
+            'content': 'test content',
+            'command': 'test content',
+            'target_name': 'test name'
+        }
+        message_to_parse = json.dumps(expected_message)
+        parsed_message = nm.parse_message(message_to_parse)
+        assert parsed_message == expected_message
