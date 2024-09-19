@@ -219,7 +219,7 @@ class home_screen(screen):
         )
         self.reload_address_book_button = toga.Button(
             text='Reload Address Book',
-            on_press=self.GUI_manager.app.network_manager.add_message_to_queue('update address book')
+            on_press=self.GUI_manager.app.network_manager.add_message_to_queue('update address book', '')
         )
 
     def populate_chat_list(self) -> None:
@@ -810,6 +810,7 @@ class settings_screen(screen):
         self.middleground_color_select()
         self.foreground_color_select()
         self.font_color_color_select()
+        self.network_settings_select()
 
         self.add_to_box()
         self.set_style()
