@@ -308,7 +308,8 @@ class nav_bar(screen):
         """
         self.create_back_button()
         self.create_title()
-        self.settings()
+        self.create_settings_button()
+        self.create_restart_network_button()
         self.add_to_box()
         self.set_style()
 
@@ -317,6 +318,12 @@ class nav_bar(screen):
         set_style sets the style for all GUI elements
         """
         self.settings_button.style.update(
+            padding=10,
+            flex=0.2,
+            color=self.GUI_manager.theme['font_color'],
+            background_color=self.GUI_manager.theme['middleground']
+        )
+        self.restart_network_button.style.update(
             padding=10,
             flex=0.2,
             color=self.GUI_manager.theme['font_color'],
@@ -347,9 +354,23 @@ class nav_bar(screen):
         """
         self.box.add(self.back_button)
         self.box.add(self.title)
+        self.box.add(self.restart_network_button)
         self.box.add(self.settings_button)
 
-    def settings(self) -> None:
+    def restart_network(self, *args):
+        self.GUI_manager.app.backend.restart_network()
+
+    def create_restart_network_button(self) -> None:
+        """
+        restart_network_button creates the restart network button
+        """
+        self.restart_network_button = toga.Button(
+            id='restart_net_but',
+            text='RESTART NETWORK',
+            on_press=self.restart_network,
+        )
+
+    def create_settings_button(self) -> None:
         """
         settings creates the settings button
         """
@@ -1311,6 +1332,9 @@ class chat_screen(screen):  # TODO add message display
                 background_color=self.GUI_manager.theme['foreground'],
                 color=self.GUI_manager.theme['font_color']
             )
+
+    def failed_to_send_message(self):
+        pass
 
     def create_message_bar(self) -> None:
         """

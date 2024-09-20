@@ -84,35 +84,61 @@ class Network_manager:
         self.client_server_task: asyncio.Task | None = None
         self.message_queue_task: asyncio.Task | None = None
         self.shutdown_event = asyncio.Event()
+        self.main_task: asyncio.Task | None  = None
 
     def start(self) -> None:
         """
         start starts the network manager
         """
+        self.logger.info('Starting network manager...')
+        self.own_address = {
+            'name': self.app.backend.user_data.username,
+            'ip': socket.gethostbyname(socket.gethostname()),
+            'port': 8000,
+            'public_key_n': self.app.backend.user_data.get_public_key('n'),
+            'public_key_e': self.app.backend.user_data.get_public_key('e')
+        }
+        self.add_address(
+            name='name_server',
+            ip='127.100.1',  # default place holder value
+            port=8888,  # TODO should be loaded from constant
+            public_key_e=0,  # unencrypted comms
+            public_key_n=0
+            )  # a small server that holds the name and address of the current active server
+        self.load_address_book()
+        if self.main_task is None:
+            self.__boot_main_loop()
+        elif not self.main_task.done():
+            self.logger.debug('main task done')
+            self.__boot_main_loop()
+
+    def __boot_main_loop(self) -> None:
+        if self.is_event_loop():
+            self.logger.info('Starting local network with alternate method')
+            self.main_task = asyncio.create_task(self.main())
+        else:
+            self.logger.info('Creating new event loop...')
+            asyncio.run(self.main())  # TODO find whether or not their is another event loop and find fix: Error in handler: asyncio.run() cannot be called from a running event loop
+
+    def is_main_loop_running(self) -> None | bool:
+        if self.main_task is None:
+            if self.is_event_loop():
+                return False
+            else:
+                return True
+        elif self.main_task.done():
+            return True
+        else:
+            return False
+
+    def is_event_loop(self) -> bool:
         try:
             asyncio.get_running_loop()
+            self.logger.warning('Event loop already running')
+            return True
         except RuntimeError:
             self.logger.info('No event loop running')
-            self.logger.info('Starting network manager...')
-            self.own_address = {
-                'name': self.app.backend.user_data.name,
-                'ip': socket.gethostbyname(socket.gethostname()),
-                'port': 8000,
-                'public_key_n': self.app.backend.user_data.get_public_key('n'),
-                'public_key_e': self.app.backend.user_data.get_public_key('e')
-            }
-            self.add_address(
-                name='name_server',
-                ip='127.100.1',  # default place holder value
-                port=8888,  # TODO should be loaded from constant
-                public_key_e=0,  # unencrypted comms
-                public_key_n=0
-                )  # a small server that holds the name and address of the current active server
-            self.load_address_book()
-            self.logger.info('Creating new event loop...')
-            asyncio.run(self.main())
-            self.logger.info('Network manager shut down')
-        self.logger.warning('Event loop already running')
+            return False
 
     async def main(self) -> None:
         """
@@ -127,18 +153,29 @@ class Network_manager:
             await self.create_chat_server()
         # start tasks
         self.logger.info('Starting tasks...')
-        async with asyncio.TaskGroup() as tg:
-            self.client_server_task = tg.create_task(self.create_chat_client())
-            tg.create_task(self.get_address_book())
-            self.message_queue_task = tg.create_task(self.send_messages_from_queue())
+        self.client_server_task = asyncio.create_task(self.create_chat_client())
+        asyncio.create_task(self.get_address_book())
+        self.message_queue_task = asyncio.create_task(self.send_messages_from_queue())
         self.logger.info('Tasks started')
         # update address book
         self.logger.debug('Updating address book...')
-        await self.get_address_book()
-        # await shutown event
+        asyncio.create_task(self.get_address_book())
+        # await shutdown event
+        self.logger.debug('Finished booting local network awaiting shutdown')
         await self.shutdown_event.wait()
-        if self.shutdown_event.is_set():
-            await self.__shutdown_network_manager()
+        self.logger.info('Shutdown event triggered shutting down local network')
+        await self.__shutdown_network_manager()
+        self.logger.info('Shutdown complete clearing event')
+        # clear shutdown event
+        self.shutdown_event.clear()
+        self.logger.info('Shutdown event cleared')
+
+    def shutdown(self) -> None:
+        """
+        shutdown triggers the shutdown of the network manager and waits till shutdown event cleared or timeout
+        """
+        self.logger.info('Triggering local network shutdown')
+        self.shutdown_event.set()
 
     async def __shutdown_network_manager(self) -> None:
         """
@@ -432,12 +469,12 @@ class Network_manager:
                         content=message['message'],
                         target=message['target']
                         )
-                    self.app.GUI_manager.chat_screen.failed_to_send_message()
+                    self.app.GUI.chat_screen.failed_to_send_message()
                     self.logger.error('Failed to send message')
             except Exception as e:
                 self.logger.error(f'Encountered error: {e}')
                 # TODO determine if the above code is necessary
-                self.app.GUI_manager.chat_screen.failed_to_send_message()
+                self.app.GUI.chat_screen.failed_to_send_message()
                 self.logger.error('Failed to send message')
 
     async def send_message(self, message: str, address: dict) -> dict | None:  # TODO pull from a queue
@@ -449,7 +486,7 @@ class Network_manager:
             address (dict): the name of the address to send the message to
 
         Returns:
-            dict | None: a parsed resonse from the reciever
+            dict | None: a parsed response from the receiver
         """
         self.logger.info('Sending message...')
         reader, writer = await self.establish_connection(ip=address['ip'], port=address['port'])
@@ -465,7 +502,7 @@ class Network_manager:
 
     async def get_address_book(self) -> None:
         """
-        get_address_book upadates the address book from the chat server
+        get_address_book updates the address book from the chat server
         """
         self.logger.info('Updating address book...')
         message = self.create_message(
@@ -532,6 +569,7 @@ class Network_manager:
             str | None: a formatted message
         """
         if self.address_book.__contains__(target):
+            self.logger.debug('address found')
             target_address = self.address_book[target]
             content = json.dumps(content)
             if target_address['public_key_e'] == 0 and target_address['public_key_n'] == 0:
@@ -550,10 +588,13 @@ class Network_manager:
             }
             message_json = json.dumps(message) + self.message_separator.decode()
             return message_json
+        else:
+            self.logger.debug('address not found')
+            return None
 
     def handle_chat_message(self, message: dict) -> None:
         """
-        handle_chat_message handles the recieving of a chat message
+        handle_chat_message handles the receiving of a chat message
 
         Args:
             message (dict): the message to be added to the queue

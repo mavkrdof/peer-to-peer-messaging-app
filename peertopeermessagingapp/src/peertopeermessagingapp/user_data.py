@@ -105,7 +105,7 @@ class user_data:
             address_book: dict
                 the address book of the user
         """
-        self.__username = None
+        self.username = None
         self.__chats = {}
         self.__settings = {}
         self.__app = app
@@ -216,7 +216,7 @@ class user_data:
 
     def set_username(self, username) -> None:
         if isinstance(username, str):
-            self.__username = username
+            self.username = username
         else:
             raise ValueError(f'Expected username type str instead got {type(username)}')
 
@@ -340,7 +340,7 @@ class user_data:
             self.__user_data = json.loads(user_data_decrypted)
             self.logger.debug('successfully formatted json')
             self.logger.debug('setting vars...')
-            self.__username = username
+            self.username = username
             self.set_encryption_keys(
                 private_key=[
                     privateKN,
@@ -368,9 +368,9 @@ class user_data:
             dict: the encrypted user data in the form of a dict
         """
         encrypted_data = {
-            'username': self.__username,
+            'username': self.username,
             'decrypt_checker': RSA_encrypt.encrypt_data(
-                plain_text=self.__username,  # TODO make dict to make clearer
+                plain_text=self.username,  # TODO make dict to make clearer
                 public_key_n=self.get_public_key(key='n'),
                 public_key_e=self.get_public_key(key='e'),
                 )
@@ -416,7 +416,7 @@ class user_data:
         user_data_dict = self.load_user_data_from(self.__app.backend.user_data_filepath)
 
         self.logger.debug('encrypting user data...')
-        user_data_dict[self.__username] = self.encrypt_user_data()  # replaces old user data with current user data to stored user data
+        user_data_dict[self.username] = self.encrypt_user_data()  # replaces old user data with current user data to stored user data
         self.logger.debug('successfully encrypted user data')
         self.logger.debug('formatting user data as json...')
         user_data_json: str = json.dumps(
