@@ -353,6 +353,9 @@ class Network_manager:
             self.logger.debug('Saving address book...')
             self.save_address_book()
             self.logger.debug('saved address book')
+            # sync contact data from chat server
+            self.logger.debug('Syncing contact data...')
+            self.add_message_to_queue('update address book', 'chat_server')
         else:
             self.logger.error('Invalid address data')
 

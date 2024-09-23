@@ -1424,7 +1424,7 @@ class create_chat_screen(screen):
         init_GUI initilizes the GUI elements of the screen
         """
         self.content_padding()
-        self.name_entry_field()
+        self.contact_entry_field()
         self.icon_entry_field()
         self.buttons()
         self.add_content_to_box()
@@ -1434,8 +1434,8 @@ class create_chat_screen(screen):
         add_content_to_box adds the content of the screen to the box and sub boxes
         """
         # name
-        self.__name_box.add(self.__name_label)
-        self.__name_box.add(self.__name_field)
+        self.__contact_box.add(self.__contact_label)
+        self.__contact_box.add(self.__contact_field)
         # icon entry
         self.__icon_box.add(self.__icon_label)
         self.__icon_box.add(self.__icon_field)
@@ -1443,7 +1443,7 @@ class create_chat_screen(screen):
         self.__button_box.add(self.__cancel_button)
         self.__button_box.add(self.__create_chat_button)
         # add content to content_box
-        self.content_box.add(self.__name_box)
+        self.content_box.add(self.__contact_box)
         self.content_box.add(self.__icon_box)
         self.content_box.add(self.__button_box)
         # add content and pad boxes
@@ -1498,18 +1498,18 @@ class create_chat_screen(screen):
             color=self.GUI_manager.theme['font_color'],
             background_color=self.GUI_manager.theme['middleground']
         )
-        self.__name_box.style.update(
+        self.__contact_box.style.update(
             direction='row',
             padding=10,
             flex=1,
             alignment='center',
             background_color=self.GUI_manager.theme['middleground'],
         )
-        self.__name_field.style.update(
+        self.__contact_field.style.update(
             flex=0.75,
             background_color=self.GUI_manager.theme['foreground']
         )
-        self.__name_label.style.update(
+        self.__contact_label.style.update(
             flex=0.25,
             padding_right=10,
             text_align='center',
@@ -1558,19 +1558,16 @@ class create_chat_screen(screen):
             text='Icon',
         )
 
-    def name_entry_field(self) -> None:
+    def contact_entry_field(self) -> None:
         """
         Generates a name entry field in the GUI with a label and input box for the user to enter the chats name.
         """
-        self.__name_box = toga.Box()
-        # self.__name_field = toga.TextInput(
-        #     on_confirm=self.create_chat
-        # )
-        self.__name_field = toga.Selection(
-            items=self.GUI_manager.app.backend.user_data.get_known_users(),
+        self.__contact_box = toga.Box()
+        self.__contact_field = toga.TextInput(
+            on_confirm=self.create_chat
         )
-        self.__name_label = toga.Label(
-            text='Name',
+        self.__contact_label = toga.Label(
+            text='Contact',
         )
 
     def content_padding(self) -> None:
@@ -1591,7 +1588,7 @@ class create_chat_screen(screen):
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
-        name = self.__name_field.value
+        contact = self.__contact_field.value
         icon = self.__icon_field.value
-        self.GUI_manager.app.backend.user_data.add_chat(name, icon)
+        self.GUI_manager.app.backend.user_data.add_chat(contact, icon)
         self.GUI_manager.change_screen(new_screen='home')
