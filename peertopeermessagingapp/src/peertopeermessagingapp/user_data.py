@@ -483,6 +483,11 @@ class user_data:
         if self.__chats.__contains__(name):
             self.logger.warning(f'chat {name} already exists')
         else:
+            if self.address_book.__contains__(name):
+                self.logger.info(f'chat {name} already exists in address book')
+            else:
+                self.logger.info(f'adding new contact {name} to address book')
+                self.__app.network_manager.add_address(name=name, ip='', port=0, public_key_n=0, public_key_e=0)
             new_chat = chat.Chat(app=self.__app)
             new_chat.create_chat(name=name, icon=icon)  # TODO move create_chat into init
             self.__chats[name] = (new_chat)
