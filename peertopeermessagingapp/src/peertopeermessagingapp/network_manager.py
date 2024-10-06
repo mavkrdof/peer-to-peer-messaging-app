@@ -120,7 +120,13 @@ class Network_manager:
             self.logger.info('Creating new event loop...')
             asyncio.run(self.main())  # TODO find whether or not their is another event loop and find fix: Error in handler: asyncio.run() cannot be called from a running event loop
 
-    def is_main_loop_running(self) -> None | bool:
+    def is_main_loop_running(self) -> bool:
+        """
+        is_main_loop_running checks if a main loop is currently running
+
+        Returns:
+            bool: whether or not a main loop is running
+        """
         if self.main_task is None:
             if self.is_event_loop():
                 return False
@@ -132,6 +138,12 @@ class Network_manager:
             return False
 
     def is_event_loop(self) -> bool:
+        """
+        is_event_loop checks if an event loop is running
+
+        Returns:
+            bool: whether or not an event loop is running
+        """
         try:
             asyncio.get_running_loop()
             self.logger.warning('Event loop already running')
@@ -205,6 +217,9 @@ class Network_manager:
             self.logger.error('No message queue to shutdown')
 
     async def __shutdown_chat_server(self):
+        """
+        __shutdown_chat_server shuts down the chat server if it exists
+        """
         if self.chat_server_task is not None:
             self.logger.info('Shutting down chat server')
             self.chat_server_task.cancel()

@@ -255,6 +255,9 @@ class Backend_manager:
         self.app.network_manager.add_address(name='name_server', ip=ip, port=8888)  # TODO set port from constant
 
     def restart_network(self) -> None:
+        """
+        restart_network restarts the network manager
+        """
         self.app.network_manager.shutdown()
         while self.app.network_manager.is_main_loop_running():
             pass
