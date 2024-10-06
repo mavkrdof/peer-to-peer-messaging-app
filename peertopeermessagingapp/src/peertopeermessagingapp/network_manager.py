@@ -829,6 +829,17 @@ class Network_manager:
                                 public_key_e=message['content']['public_key_e'],
                                 public_key_n=message['content']['public_key_n']
                                 )
+                case 'ping':
+                    response = self.create_message(
+                            target=message['sender'],
+                            content='',
+                            command='pong'
+                            )
+                    if response is None:
+                        self.logger.error('no message to send')
+                    else:
+                        writer.write(response.encode())
+                        await writer.drain()
                 case _:
                     self.logger.error('Invalid command')
 
