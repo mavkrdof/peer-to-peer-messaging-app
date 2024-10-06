@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.19
+Name: peertopeermessagingapp
+Formal-Name: Peer to Peer Messaging App
+App-ID: com.example.peertopeermessagingapp
+Version: 0.0.1
+Home-page: https://example.com/peertopeermessagingapp
+Download-URL: https://example.com/peertopeermessagingapp
+Author: Connor Cuffe
+Author-email: CJCUF@schools.vic.edu.au
+Summary: A messaging app utilizing peer to peer technology, aimed at usage in high schools.
