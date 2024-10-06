@@ -1,1 +1,0 @@
-print('helloworld' is str, isinstance('helloworld', str))
